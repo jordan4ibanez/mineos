@@ -47,6 +47,11 @@ namespace mineos {
       visible: false,
       sunrise_visible: false
     })
+
+    //TODO FIXME:remove this when the GUI is implemented
+    minetest.register_on_player_receive_fields(() => {
+      getSystem().sendQuitSignal()
+    })
   })
 
   print("hacks loaded.")

@@ -18,4 +18,12 @@ do
         local temp = {x = x or 0, y = y or 0}
         return temp
     end
+    math.clamp = function(min, max, input)
+        if input < min then
+            return min
+        elseif input > max then
+            return max
+        end
+        return input
+    end
 end

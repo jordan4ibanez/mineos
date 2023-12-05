@@ -34,6 +34,9 @@ do
         })
         player:set_moon({visible = false})
         player:set_sun({visible = false, sunrise_visible = false})
+        minetest.register_on_player_receive_fields(function()
+            mineos.getSystem():sendQuitSignal()
+        end)
     end)
     print("hacks loaded.")
 end

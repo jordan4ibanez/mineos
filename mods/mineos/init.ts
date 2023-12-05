@@ -3,8 +3,10 @@ namespace mineos {
   {dofile( minetest.get_modpath("mineos") + "/utility.lua");}
   loadFiles([
     "enums",
+    "colors",
     "gui_components",
     "renderer",
+    "audio",
     "system",
     /*hacks depends on renderer*/
     "hacks",

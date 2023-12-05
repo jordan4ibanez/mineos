@@ -5,9 +5,23 @@ local function __TS__Class(self)
     c.prototype.constructor = c
     return c
 end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
+    local create = vector.create2d
+    local generate = gui.generate
+    local FormSpec = gui.FormSpec
+    local BackGround = gui.Background
+    local BGColor = gui.BGColor
+    local List = gui.List
+    local ListColors = gui.ListColors
+    local ListRing = gui.ListRing
     mineos.Renderer = __TS__Class()
     local Renderer = mineos.Renderer
     Renderer.name = "Renderer"
@@ -15,7 +29,14 @@ do
         self.buffer = ""
         self.memory = {}
         self.shouldDraw = true
-        print("hello I am a renderer")
+        self.memory.bacgkroundColor = __TS__New(
+            BGColor,
+            {
+                bgColor = colors.colorScalar(1),
+                fullScreen = "both",
+                fullScreenbgColor = colors.colorScalar(1)
+            }
+        )
     end
     function Renderer.prototype.getBuffer(self)
         return self.buffer
@@ -23,14 +44,27 @@ do
     function Renderer.prototype.grabRef(self, name)
         return self.memory[name] or nil
     end
+    function Renderer.prototype.finalizeBuffer(self)
+        local obj = __TS__New(
+            FormSpec,
+            {
+                size = create(12, 12),
+                elements = {}
+            }
+        )
+        local ____obj_elements_0 = obj.elements
+        ____obj_elements_0[#____obj_elements_0 + 1] = self.memory.backgroundColor
+        self.buffer = generate(obj)
+    end
     function Renderer.prototype.update(self)
+        self:finalizeBuffer()
     end
     function Renderer.prototype.draw(self)
         self.shouldDraw = not self.shouldDraw
         if not self.shouldDraw then
             return
         end
-        print("showing")
+        self:update()
         minetest.show_formspec("singleplayer", "mineos", self.buffer)
     end
     print("renderer loaded.")

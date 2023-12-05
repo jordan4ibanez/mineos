@@ -1,0 +1,1 @@
+mineos = mineos or ({})

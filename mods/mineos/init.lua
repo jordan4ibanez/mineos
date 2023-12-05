@@ -12,10 +12,13 @@ do
     end
     mineos.loadFiles({
         "enums",
+        "colors",
         "gui_components",
         "renderer",
+        "audio",
         "system",
-        "hacks"
+        "hacks",
+        "programs"
     })
     local system = __TS__New(mineos.System)
     system:triggerBoot()

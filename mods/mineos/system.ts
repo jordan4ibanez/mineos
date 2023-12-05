@@ -27,6 +27,7 @@ namespace mineos {
       this.booting = true
       print("loading mineos.")
     }
+
     doBoot(delta: number): void {
       this.bootProcess += delta
       // print("current boot: " + this.bootProcess)
@@ -34,6 +35,11 @@ namespace mineos {
 
     doRun(delta: number): void {
       print("system running.")
+    }
+
+    sendQuitSignal(): void {
+      print("quit signal received.")
+      this.quitReceived = true
     }
 
     doRender(delta: number): void {
@@ -47,6 +53,10 @@ namespace mineos {
 
 
     main(delta: number): void {
+      
+      //todo: This will do a shutdown process eventually
+      if (this.quitReceived) return
+
       if (this.booting) {
         this.doBoot(delta);
       } else {

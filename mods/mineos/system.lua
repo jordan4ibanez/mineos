@@ -166,6 +166,10 @@ do
     function System.prototype.doRun(self, delta)
         print("system running.")
     end
+    function System.prototype.sendQuitSignal(self)
+        print("quit signal received.")
+        self.quitReceived = true
+    end
     function System.prototype.doRender(self, delta)
         self.renderer:draw()
     end
@@ -173,6 +177,9 @@ do
         return self.renderer.buffer
     end
     function System.prototype.main(self, delta)
+        if self.quitReceived then
+            return
+        end
         if self.booting then
             self:doBoot(delta)
         else
