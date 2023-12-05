@@ -16,7 +16,7 @@ namespace mineos {
     quitReceived = false
     renderer = new Renderer();
 
-    programs: {[id: string] : Program} = {}
+    programs: {[id: string] : typeof Program} = {}
     currentProgram: Program | null = null
 
     constructor() {
@@ -26,6 +26,10 @@ namespace mineos {
       currentSystem = this
 
       this.triggerBoot();
+    }
+
+    registerProgram(name: string, program: typeof Program): void {
+      this.programs[name] = program            
     }
 
     triggerBoot(): void {
@@ -39,7 +43,7 @@ namespace mineos {
 
     changeProgram(newProgramName: string): void {
       // Can be null, which would basically freeze the program in memory.
-      this.currentProgram = this.programs[newProgramName]
+      this.currentProgram = new this.programs[newProgramName](this, this.renderer)
     }
 
     doRun(delta: number): void {
