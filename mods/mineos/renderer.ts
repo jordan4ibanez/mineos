@@ -4,6 +4,7 @@ namespace mineos {
   
     buffer = ""
     memory: {[id: string] : gui.Element} = {}
+    shouldDraw = true
 
     constructor() {
       print("hello I am a renderer")
@@ -15,6 +16,19 @@ namespace mineos {
 
     grabRef(name: string): gui.Element | null {
       return this.memory[name] || null
+    }
+
+    update(): void {
+
+    }
+
+    draw(): void {
+      this.shouldDraw = !this.shouldDraw
+      if (!this.shouldDraw) return
+
+      print("showing")
+
+      minetest.show_formspec("singleplayer", "mineos", this.buffer)
     }
   }
 

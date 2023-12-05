@@ -7,7 +7,8 @@ namespace mineos {
     "renderer",
     "system",
     /*hacks depends on renderer*/
-    "hacks"
+    "hacks",
+    "programs"
   ])
 
   // Begin mineos.

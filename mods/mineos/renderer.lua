@@ -13,10 +13,25 @@ do
     Renderer.name = "Renderer"
     function Renderer.prototype.____constructor(self)
         self.buffer = ""
+        self.memory = {}
+        self.shouldDraw = true
         print("hello I am a renderer")
     end
     function Renderer.prototype.getBuffer(self)
         return self.buffer
+    end
+    function Renderer.prototype.grabRef(self, name)
+        return self.memory[name] or nil
+    end
+    function Renderer.prototype.update(self)
+    end
+    function Renderer.prototype.draw(self)
+        self.shouldDraw = not self.shouldDraw
+        if not self.shouldDraw then
+            return
+        end
+        print("showing")
+        minetest.show_formspec("singleplayer", "mineos", self.buffer)
     end
     print("renderer loaded.")
 end

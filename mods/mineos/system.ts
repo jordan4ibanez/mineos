@@ -1,6 +1,13 @@
 namespace mineos {
   let currentSystem: System | null = null;
 
+  export function getSystem(): System {
+    if (currentSystem == null) {
+      throw new Error("system is not created.")
+    }
+    return currentSystem
+  }
+
   export class System {
 
     booting = false
@@ -22,7 +29,7 @@ namespace mineos {
     }
     doBoot(delta: number): void {
       this.bootProcess += delta
-      print("current boot: " + this.bootProcess)
+      // print("current boot: " + this.bootProcess)
     }
 
     doRun(delta: number): void {
@@ -30,7 +37,12 @@ namespace mineos {
     }
 
     doRender(delta: number): void {
-      print("rendering")
+      this.renderer.draw()
+      // print("rendering")
+    }
+
+    getFrameBuffer(): string {
+      return this.renderer.buffer
     }
 
 

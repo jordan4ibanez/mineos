@@ -1,11 +1,4 @@
 -- Lua Library inline imports
-local function __TS__Class(self)
-    local c = {prototype = {}}
-    c.prototype.__index = c.prototype
-    c.prototype.constructor = c
-    return c
-end
-
 local function __TS__StringIncludes(self, searchString, position)
     if not position then
         position = 1
@@ -20,6 +13,13 @@ local function __TS__New(target, ...)
     local instance = setmetatable({}, target.prototype)
     instance:____constructor(...)
     return instance
+end
+
+local function __TS__Class(self)
+    local c = {prototype = {}}
+    c.prototype.__index = c.prototype
+    c.prototype.constructor = c
+    return c
 end
 
 local function __TS__ClassExtends(target, base)
@@ -130,6 +130,15 @@ end
 mineos = mineos or ({})
 do
     local currentSystem = nil
+    function mineos.getSystem()
+        if currentSystem == nil then
+            error(
+                __TS__New(Error, "system is not created."),
+                0
+            )
+        end
+        return currentSystem
+    end
     mineos.System = __TS__Class()
     local System = mineos.System
     System.name = "System"
@@ -153,13 +162,15 @@ do
     end
     function System.prototype.doBoot(self, delta)
         self.bootProcess = self.bootProcess + delta
-        print("current boot: " .. tostring(self.bootProcess))
     end
     function System.prototype.doRun(self, delta)
         print("system running.")
     end
     function System.prototype.doRender(self, delta)
-        print("rendering")
+        self.renderer:draw()
+    end
+    function System.prototype.getFrameBuffer(self)
+        return self.renderer.buffer
     end
     function System.prototype.main(self, delta)
         if self.booting then

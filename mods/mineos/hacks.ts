@@ -47,9 +47,6 @@ namespace mineos {
       visible: false,
       sunrise_visible: false
     })
-
-    
-
   })
 
   print("hacks loaded.")
