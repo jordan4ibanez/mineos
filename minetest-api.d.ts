@@ -1305,19 +1305,19 @@ declare global {
   }
 
   export interface PhysicsOverride {
-    speed: number
-    jump: number
-    gravity: number
-    speed_climb: number
-    speed_crouch: number
-    liquid_fluidity: number
-    liquid_fluidity_smooth: number
-    liquid_sink: number
-    acceleration_default: number
-    acceleration_air: number
-    sneak: boolean
-    sneak_glitch: boolean
-    new_move: boolean
+    speed?: number
+    jump?: number
+    gravity?: number
+    speed_climb?: number
+    speed_crouch?: number
+    liquid_fluidity?: number
+    liquid_fluidity_smooth?: number
+    liquid_sink?: number
+    acceleration_default?: number
+    acceleration_air?: number
+    sneak?: boolean
+    sneak_glitch?: boolean
+    new_move?: boolean
   }
 
 
@@ -1483,32 +1483,33 @@ declare global {
   }
   
   export interface HudFlags {
-    hotbar: boolean
-    healthbar: boolean
-    crosshair: boolean
-    wielditem: boolean
-    breathbar: boolean
-    minimap: boolean
-    minimap_radar: boolean
-    basic_debug: boolean
+    hotbar?: boolean
+    healthbar?: boolean
+    crosshair?: boolean
+    wielditem?: boolean
+    breathbar?: boolean
+    minimap?: boolean
+    minimap_radar?: boolean
+    basic_debug?: boolean
+    chat?: boolean
   }
   
   export interface HudDefinition {
     hud_elem_type: HudElementType
     position: Vec2
     name: string
-    scale: Vec2
-    text: string
-    text2: string
-    number: number
-    item: number
-    direction: number
-    alignment: Vec2
-    offset: Vec2
-    world_pos: Vec3
-    size: Vec2
-    z_index: number
-    style: number
+    scale?: Vec2
+    text?: string
+    text2?: string
+    number?: number
+    item?: number
+    direction?: number
+    alignment?: Vec2
+    offset?: Vec2
+    world_pos?: Vec3
+    size?: Vec2
+    z_index?: number
+    style?: number
   }
   
   export interface TileAnimationDefinition {
