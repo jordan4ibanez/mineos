@@ -34,6 +34,7 @@ namespace mineos {
     }
 
     doRun(delta: number): void {
+      this.updateFrameBuffer(osFrameBufferPoll())
       print("system running.")
     }
 

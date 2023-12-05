@@ -164,6 +164,7 @@ do
         self.bootProcess = self.bootProcess + delta
     end
     function System.prototype.doRun(self, delta)
+        self:updateFrameBuffer(mineos.osFrameBufferPoll())
         print("system running.")
     end
     function System.prototype.sendQuitSignal(self)

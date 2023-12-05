@@ -21,7 +21,6 @@ namespace mineos {
 
   // Now begins mineos.
   minetest.register_globalstep((delta: number) => {
-    system.updateFrameBuffer(osFrameBufferPoll());
     system.main(delta)
   })  
 }
