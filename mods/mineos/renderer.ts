@@ -17,14 +17,17 @@ namespace mineos {
     shouldDraw = true
     frameBufferSize: Vec2 = create(0,0)
     frameBufferScale: Vec2 = create(0,0)
+    system: System
 
-    constructor() {
+    constructor(system: System) {
+      this.system = system
       // print("pushing the thing")
       this.memory["backgroundColor"] = new BGColor({
-        bgColor: colors.colorScalar(100),
+        bgColor: colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z),
         fullScreen: "both",
         fullScreenbgColor: colors.colorScalar(50)
       })
+
     }
 
     setClearColor(r: number, g: number, b: number): void {

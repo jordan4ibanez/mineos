@@ -25,20 +25,27 @@ do
     mineos.Renderer = __TS__Class()
     local Renderer = mineos.Renderer
     Renderer.name = "Renderer"
-    function Renderer.prototype.____constructor(self)
+    function Renderer.prototype.____constructor(self, system)
         self.buffer = ""
+        self.clearColor = vector.create(0, 0, 0)
         self.memory = {}
         self.shouldDraw = true
         self.frameBufferSize = create(0, 0)
         self.frameBufferScale = create(0, 0)
+        self.system = system
         self.memory.backgroundColor = __TS__New(
             BGColor,
             {
-                bgColor = colors.colorScalar(100),
+                bgColor = colors.color(self.clearColor.x, self.clearColor.y, self.clearColor.z),
                 fullScreen = "both",
                 fullScreenbgColor = colors.colorScalar(50)
             }
         )
+    end
+    function Renderer.prototype.setClearColor(self, r, g, b)
+        self.clearColor.x = r
+        self.clearColor.y = g
+        self.clearColor.z = b
     end
     function Renderer.prototype.getBuffer(self)
         return self.buffer

@@ -30,7 +30,9 @@ namespace mineos {
   }
   
   minetest.register_on_mods_loaded(() => {
-    getSystem().
+    for (const [name, clazz] of Object.entries(programFoundation)) {
+      getSystem().registerProgram(name, clazz)
+    }
   })
   export function grabFoundationalPrograms(): {[id: string] : typeof Program} {
     return programFoundation    

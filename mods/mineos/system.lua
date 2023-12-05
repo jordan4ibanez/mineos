@@ -147,9 +147,11 @@ do
         self.bootProcess = 0
         self.running = false
         self.quitReceived = false
-        self.renderer = __TS__New(mineos.Renderer)
+        self.renderer = __TS__New(mineos.Renderer, self)
         self.programs = {}
         self.currentProgram = nil
+        self.currentProgramName = ""
+        self.mousePos = vector.create2d(0, 0)
         if currentSystem ~= nil then
             error(
                 __TS__New(Error, "Cannot create more than one instance of mineos."),
@@ -159,12 +161,25 @@ do
         currentSystem = self
         self:triggerBoot()
     end
+    function System.prototype.registerProgram(self, name, program)
+        self.programs[name] = program
+    end
     function System.prototype.triggerBoot(self)
         self.booting = true
         print("loading mineos.")
     end
     function System.prototype.doBoot(self, delta)
-        self.bootProcess = self.bootProcess + delta
+        if self.currentProgramName ~= "bootProcedure" then
+            self:changeProgram("bootProcedure")
+        end
+        local ____opt_0 = self.currentProgram
+        if ____opt_0 ~= nil then
+            ____opt_0:main(delta)
+        end
+    end
+    function System.prototype.changeProgram(self, newProgramName)
+        self.currentProgramName = newProgramName
+        self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer)
     end
     function System.prototype.doRun(self, delta)
         print("system running.")

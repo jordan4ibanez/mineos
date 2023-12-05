@@ -14,17 +14,18 @@ namespace mineos {
     bootProcess = 0
     running = false
     quitReceived = false
-    renderer = new Renderer();
+    renderer = new Renderer(this);
 
     programs: {[id: string] : typeof Program} = {}
     currentProgram: Program | null = null
+    currentProgramName = ""
+    mousePos = vector.create2d(0,0)
 
     constructor() {
       if (currentSystem != null) {
         throw new Error("Cannot create more than one instance of mineos.");
       }
       currentSystem = this
-
       this.triggerBoot();
     }
 
@@ -38,11 +39,14 @@ namespace mineos {
     }
 
     doBoot(delta: number): void {
-      this.bootProcess += delta
+      if (this.currentProgramName != "bootProcedure") {
+        this.changeProgram("bootProcedure")
+      }
+      this.currentProgram?.main(delta)
     }
 
     changeProgram(newProgramName: string): void {
-      // Can be null, which would basically freeze the program in memory.
+      this.currentProgramName = newProgramName
       this.currentProgram = new this.programs[newProgramName](this, this.renderer)
     }
 
