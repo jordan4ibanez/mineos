@@ -39,7 +39,11 @@ do
         end)
     end)
     function mineos.osFrameBufferPoll()
-        local size = minetest.get_player_window_information("singleplayer").max_formspec_size
+        local monitorInformation = minetest.get_player_window_information("singleplayer")
+        if monitorInformation == nil then
+            return vector.create2d(1, 1)
+        end
+        local size = monitorInformation.max_formspec_size
         size.x = size.x * 1.1
         size.y = size.y * 1.1
         return size
