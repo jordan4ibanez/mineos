@@ -3,7 +3,7 @@ namespace mineos {
   export class Renderer {
   
     buffer = ""
-    // memory: Array<
+    memory: {[id: string] : gui.Element} = {}
 
     constructor() {
       print("hello I am a renderer")
@@ -11,6 +11,10 @@ namespace mineos {
 
     getBuffer(): string {
       return this.buffer
+    }
+
+    grabRef(name: string): gui.Element | null {
+      return this.memory[name] || null
     }
   }
 

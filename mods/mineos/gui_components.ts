@@ -1,4 +1,4 @@
-namespace mineos {
+namespace gui {
   // Extremely experimental formspec composable generation.
   //
   // Does a few things:
@@ -79,7 +79,7 @@ namespace mineos {
 
   //? Element prototype.
 
-  interface Element {
+  export interface Element {
 
   }
 

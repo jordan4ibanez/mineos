@@ -1,5 +1,5 @@
 namespace mineos {
-  let currentSystem: System | undefined = undefined;
+  let currentSystem: System | null = null;
 
   export class System {
 
