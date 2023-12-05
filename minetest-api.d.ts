@@ -1341,7 +1341,7 @@ declare global {
     day_horizon: DynamicColorSpec
     dawn_sky: DynamicColorSpec
     dawn_horizon: DynamicColorSpec
-    nigh_sky: DynamicColorSpec
+    night_sky: DynamicColorSpec
     night_horizon: DynamicColorSpec
     indoors: DynamicColorSpec
     fog_sun_tint: DynamicColorSpec
@@ -1366,18 +1366,18 @@ declare global {
 
   export interface SunParameters {
     visible: boolean
-    texture: string
-    tonemap: string
-    sunrise: string
+    texture?: string
+    tonemap?: string
+    sunrise?: string
     sunrise_visible: boolean
-    scale: number
+    scale?: number
   }
 
   export interface MoonParameters {
     visible: boolean
-    texture: string
-    tonemap: string
-    scale: number
+    texture?: string
+    tonemap?: string
+    scale?: number
   }
 
   export interface StarParameters {
