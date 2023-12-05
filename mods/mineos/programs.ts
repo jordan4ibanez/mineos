@@ -3,8 +3,10 @@ namespace mineos {
   let programFoundation: {[id: string] : typeof Program} = {}
 
   // Oh my god it's java in minetest. What have I doneeeeeeeeeee
+  // Mocha - Created by Prophet
+
   export interface ProgramInterface {
-    execute(delta: number): void;
+    main(delta: number): void;
   }
 
   export class Program implements ProgramInterface {
@@ -14,14 +16,14 @@ namespace mineos {
       this.system = system
       this.renderer = renderer
     }
-    execute(delta: number): void {
+    main(delta: number): void {
       
     }
   }
 
   programFoundation.bootProcedure = class BootProcedure extends Program {
     memoryTest = 0
-    execute(delta: number): void {      
+    main(delta: number): void {      
       this.memoryTest += delta
       print("booting! " + this.memoryTest)
     }
