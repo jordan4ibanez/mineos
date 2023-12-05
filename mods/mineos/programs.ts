@@ -29,6 +29,9 @@ namespace mineos {
     }
   }
   
+  minetest.register_on_mods_loaded(() => {
+    getSystem().
+  })
   export function grabFoundationalPrograms(): {[id: string] : typeof Program} {
     return programFoundation    
   }

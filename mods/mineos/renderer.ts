@@ -12,6 +12,7 @@ namespace mineos {
   export class Renderer {
   
     buffer = ""
+    clearColor: Vec3 = vector.create(0,0,0)
     memory: {[id: string] : gui.Element} = {}
     shouldDraw = true
     frameBufferSize: Vec2 = create(0,0)
@@ -24,6 +25,12 @@ namespace mineos {
         fullScreen: "both",
         fullScreenbgColor: colors.colorScalar(50)
       })
+    }
+
+    setClearColor(r: number, g: number, b: number): void {
+      this.clearColor.x = r
+      this.clearColor.y = g
+      this.clearColor.z = b
     }
 
     getBuffer(): string {
