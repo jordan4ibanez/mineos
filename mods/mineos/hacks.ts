@@ -67,5 +67,25 @@ namespace mineos {
     return $multi(size, scaling)
   }
 
+  // Shh, don't tell anyone this isn't actually talking to hardware.
+  export function osKeyboardPoll(key: string): boolean {
+    let a = minetest.get_player_by_name("singleplayer").get_player_control()
+    switch (key) {
+      case "up": return a.up
+      case "down": return a.down
+      case "left": return a.left
+      case "right": return a.right
+      case "jump": return a.jump
+      case "aux1": return a.aux1
+      case "sneak": return a.sneak
+      case "dig": return a.dig
+      case "place": return a.place
+      case "LMB": return a.LMB
+      case "RMB": return a.RMB
+      case "zoom": return a.zoom
+    }
+    return false
+  }
+
   print("hacks loaded.")
 }
