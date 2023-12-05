@@ -29,12 +29,13 @@ do
         self.buffer = ""
         self.memory = {}
         self.shouldDraw = true
-        self.memory.bacgkroundColor = __TS__New(
+        print("pushing the thing")
+        self.memory.backgroundColor = __TS__New(
             BGColor,
             {
-                bgColor = colors.colorScalar(1),
+                bgColor = colors.colorScalar(100),
                 fullScreen = "both",
-                fullScreenbgColor = colors.colorScalar(1)
+                fullScreenbgColor = colors.colorScalar(0)
             }
         )
     end
@@ -48,13 +49,14 @@ do
         local obj = __TS__New(
             FormSpec,
             {
-                size = create(12, 12),
+                size = create(100, 60),
                 elements = {}
             }
         )
         local ____obj_elements_0 = obj.elements
         ____obj_elements_0[#____obj_elements_0 + 1] = self.memory.backgroundColor
         self.buffer = generate(obj)
+        print(self.buffer)
     end
     function Renderer.prototype.update(self)
         self:finalizeBuffer()

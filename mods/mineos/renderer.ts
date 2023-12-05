@@ -14,12 +14,14 @@ namespace mineos {
     buffer = ""
     memory: {[id: string] : gui.Element} = {}
     shouldDraw = true
+    frameBufferSize: Vec2 = create(0,0)
 
     constructor() {
-      this.memory["bacgkroundColor"] = new BGColor({
-        bgColor: colors.colorScalar(1),
+      print("pushing the thing")
+      this.memory["backgroundColor"] = new BGColor({
+        bgColor: colors.colorScalar(100),
         fullScreen: "both",
-        fullScreenbgColor: colors.colorScalar(1)
+        fullScreenbgColor: colors.colorScalar(0)
       })
     }
 
@@ -34,20 +36,26 @@ namespace mineos {
 
     finalizeBuffer(): void {
       let obj = new FormSpec({
-        size: create(12,12),
+        size: create(100,60),
+        padding: create(-0.01, -0.01),
         elements: []
       })
       obj.elements.push(this.memory["backgroundColor"])
+      // print(dump(this.memory.backgroundColor))
       this.buffer = generate(obj)
+      print(this.buffer)
     }
 
     update(): void {
+      // print(this.buffer)
       this.finalizeBuffer()
     }
 
     draw(): void {
       this.shouldDraw = !this.shouldDraw
-      if (!this.shouldDraw) return
+      if (!this.shouldDraw) {
+        return
+      }
       this.update()
       minetest.show_formspec("singleplayer", "mineos", this.buffer)
     }

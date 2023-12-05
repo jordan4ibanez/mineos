@@ -42,6 +42,10 @@ namespace mineos {
       this.quitReceived = true
     }
 
+    updateFrameBuffer(size: Vec2) {
+      this.renderer.frameBufferSize = size
+    }
+
     doRender(delta: number): void {
       this.renderer.draw()
       // print("rendering")

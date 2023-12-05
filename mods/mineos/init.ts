@@ -17,6 +17,7 @@ namespace mineos {
   const system = new System();
   system.triggerBoot();
   minetest.register_globalstep((delta: number) => {
+    system.updateFrameBuffer(osFrameBufferPoll());
     system.main(delta)
   })  
 }
