@@ -21,6 +21,7 @@ namespace mineos {
         throw new Error("Cannot create more than one instance of mineos.");
       }
       currentSystem = this
+      this.triggerBoot();
     }
 
     triggerBoot(): void {
@@ -34,7 +35,6 @@ namespace mineos {
     }
 
     doRun(delta: number): void {
-      this.updateFrameBuffer(osFrameBufferPoll())
       print("system running.")
     }
 
@@ -62,6 +62,7 @@ namespace mineos {
       //todo: This will do a shutdown process eventually
       if (this.quitReceived) return
 
+      this.updateFrameBuffer(osFrameBufferPoll())
       if (this.booting) {
         this.doBoot(delta);
       } else {

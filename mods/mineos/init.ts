@@ -17,7 +17,6 @@ namespace mineos {
 
   // Hard drive spins up.
   const system = new System();
-  system.triggerBoot();
 
   // Now begins mineos.
   minetest.register_globalstep((delta: number) => {
