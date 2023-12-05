@@ -35,7 +35,11 @@ namespace mineos {
 
     doBoot(delta: number): void {
       this.bootProcess += delta
-      // print("current boot: " + this.bootProcess)
+    }
+
+    changeProgram(newProgramName: string): void {
+      // Can be null, which would basically freeze the program in memory.
+      this.currentProgram = this.programs[newProgramName]
     }
 
     doRun(delta: number): void {
