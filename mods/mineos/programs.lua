@@ -70,7 +70,7 @@ do
         self.timer = 0
         self.stateTimer = 0
         self.state = 0
-        self.increments = 0.2
+        self.increments = 0.1
         self.memoryCounter = 0
     end
     function BiosProcedure.prototype.main(self, delta)
@@ -79,22 +79,11 @@ do
         end
         self.timer = self.timer + delta
         self.stateTimer = self.stateTimer + delta
-        if self.state == 7 then
-            self.stateTimer = -1
-            local memCheck = self.renderer:getElement("memCheckProgress")
-            print(dump(memCheck))
-            self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10))
-            memCheck.label = tostring(self.memoryCounter) .. " KB"
-            if self.memoryCounter >= 4096 then
-                memCheck.label = tostring(4096) .. " KB"
-                self.stateTimer = 10
-            end
-        end
         if self.stateTimer > self.increments then
             repeat
-                local ____switch10 = self.state
-                local ____cond10 = ____switch10 == 5
-                if ____cond10 then
+                local ____switch8 = self.state
+                local ____cond8 = ____switch8 == 5
+                if ____cond8 then
                     do
                         self.audioController:playSound("computerBeep", 1)
                         self.renderer:addElement(
@@ -124,15 +113,53 @@ do
                         break
                     end
                 end
-                ____cond10 = ____cond10 or ____switch10 == 6
-                if ____cond10 then
+                ____cond8 = ____cond8 or ____switch8 == 6
+                if ____cond8 then
+                    do
+                        self.renderer:addElement(
+                            "cpuDetection",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(0.5, 5),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "Detecting cpu..."
+                                    )
+                                }
+                            )
+                        )
+                        break
+                    end
+                end
+                ____cond8 = ____cond8 or ____switch8 == 8
+                if ____cond8 then
+                    do
+                        self.renderer:addElement(
+                            "cpuDetectionPass",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(3.5, 5),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "MineRyzen 1300W detected."
+                                    )
+                                }
+                            )
+                        )
+                        break
+                    end
+                end
+                ____cond8 = ____cond8 or ____switch8 == 9
+                if ____cond8 then
                     do
                         self.renderer:addElement(
                             "memCheck",
                             __TS__New(
                                 gui.Label,
                                 {
-                                    position = vector.create2d(0.5, 5),
+                                    position = vector.create2d(0.5, 7),
                                     label = mineos.colorize(
                                         colors.colorScalar(100),
                                         "Total Memory:"
@@ -145,10 +172,83 @@ do
                             __TS__New(
                                 gui.Label,
                                 {
-                                    position = vector.create2d(3.2, 5),
+                                    position = vector.create2d(3.2, 7),
                                     label = mineos.colorize(
                                         colors.colorScalar(100),
                                         "0 KB"
+                                    )
+                                }
+                            )
+                        )
+                        self.stateTimer = 10
+                        break
+                    end
+                end
+                ____cond8 = ____cond8 or ____switch8 == 10
+                if ____cond8 then
+                    do
+                        self.stateTimer = 10
+                        local memCheck = self.renderer:getElement("memCheckProgress")
+                        self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10))
+                        memCheck.label = tostring(self.memoryCounter) .. " KB"
+                        if self.memoryCounter >= 4096 then
+                            memCheck.label = tostring(4096) .. " KB"
+                            self.stateTimer = 0
+                            self.state = self.state + 1
+                        end
+                        return
+                    end
+                end
+                ____cond8 = ____cond8 or ____switch8 == 11
+                if ____cond8 then
+                    do
+                        self.renderer:addElement(
+                            "blockCheck",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(0.5, 9),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "Checking nodes..."
+                                    )
+                                }
+                            )
+                        )
+                        break
+                    end
+                end
+                ____cond8 = ____cond8 or ____switch8 == 13
+                if ____cond8 then
+                    do
+                        self.renderer:addElement(
+                            "blockCheckPassed",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(3.9, 9),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "passed."
+                                    )
+                                }
+                            )
+                        )
+                        break
+                    end
+                end
+                ____cond8 = ____cond8 or ____switch8 == 15
+                if ____cond8 then
+                    do
+                        self.renderer:addElement(
+                            "allPassed",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(0.5, 11),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "All system checks passed"
                                     )
                                 }
                             )

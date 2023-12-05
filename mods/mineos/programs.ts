@@ -29,7 +29,7 @@ namespace mineos {
     timer = 0
     stateTimer = 0
     state = 0
-    increments = 0.2
+    increments = 0.1
     memoryCounter = 0
     main(delta: number): void {
       if (this.timer == 0) {
@@ -37,18 +37,8 @@ namespace mineos {
       }
       this.timer += delta
       this.stateTimer += delta
+      
 
-      if (this.state == 7) {
-        this.stateTimer = -1;
-        let memCheck = this.renderer.getElement("memCheckProgress") as gui.Label
-        print(dump(memCheck))
-        this.memoryCounter += 10 + (math.floor(math.random() * 10))
-        memCheck.label = tostring(this.memoryCounter) + " KB"
-        if (this.memoryCounter >= 4096) {
-          memCheck.label = tostring(4096) + " KB"
-          this.stateTimer = 10
-        }
-      }
 
       if (this.stateTimer > this.increments) {
         switch (this.state) {
@@ -65,14 +55,65 @@ namespace mineos {
             }))
             break;
           }
+
           case 6: {
-            this.renderer.addElement("memCheck", new gui.Label({
+            this.renderer.addElement("cpuDetection", new gui.Label({
               position: vector.create2d(0.5,5),
+              label: colorize(colors.colorScalar(100), "Detecting cpu...")
+            }))
+            break;
+          }
+          case 8: {
+            this.renderer.addElement("cpuDetectionPass", new gui.Label({
+              position: vector.create2d(3.5,5),
+              label: colorize(colors.colorScalar(100), "MineRyzen 1300W detected.")
+            }))
+            break;
+          }
+
+          case 9: {
+            this.renderer.addElement("memCheck", new gui.Label({
+              position: vector.create2d(0.5,7),
               label: colorize(colors.colorScalar(100), "Total Memory:")
             }))
             this.renderer.addElement("memCheckProgress", new gui.Label({
-              position: vector.create2d(3.2,5),
+              position: vector.create2d(3.2,7),
               label: colorize(colors.colorScalar(100), "0 KB")
+            }))
+            this.stateTimer = 10;
+            break;
+          }
+          case 10: {
+            this.stateTimer = 10;
+            let memCheck = this.renderer.getElement("memCheckProgress") as gui.Label
+            this.memoryCounter += 10 + (math.floor(math.random() * 10))
+            memCheck.label = tostring(this.memoryCounter) + " KB"
+
+            if (this.memoryCounter >= 4096) {
+              memCheck.label = tostring(4096) + " KB"
+              this.stateTimer = 0
+              this.state++;
+            }
+            return
+          }
+          case 11: {
+            this.renderer.addElement("blockCheck", new gui.Label({
+              position: vector.create2d(0.5,9),
+              label: colorize(colors.colorScalar(100), "Checking nodes...")
+            }))
+            break;
+          }
+          case 13: {
+            this.renderer.addElement("blockCheckPassed", new gui.Label({
+              position: vector.create2d(3.9,9),
+              label: colorize(colors.colorScalar(100), "passed.")
+            }))
+            break;
+          }
+          case 15: {
+            this.renderer.addElement("allPassed", new gui.Label({
+              position: vector.create2d(0.5,11),
+              label: colorize(colors.colorScalar(100), "All system checks passed.")
             }))
             break;
           }
