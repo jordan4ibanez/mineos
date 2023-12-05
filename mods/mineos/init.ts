@@ -7,10 +7,10 @@ namespace mineos {
     "gui_components",
     "renderer",
     "audio",
+    "programs",
     "system",
     /*hacks depends on renderer*/
     "hacks",
-    "programs"
   ])
 
   // Computer turns on. Beep boop.

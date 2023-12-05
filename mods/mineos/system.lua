@@ -148,6 +148,8 @@ do
         self.running = false
         self.quitReceived = false
         self.renderer = __TS__New(mineos.Renderer)
+        self.programs = {}
+        self.currentProgram = nil
         if currentSystem ~= nil then
             error(
                 __TS__New(Error, "Cannot create more than one instance of mineos."),

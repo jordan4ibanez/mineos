@@ -34,7 +34,6 @@ namespace mineos {
       return this.memory[name] || null
     }
 
-
     finalizeBuffer(): void {
       let obj = new FormSpec({
         size: this.frameBufferScale,

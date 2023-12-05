@@ -16,11 +16,15 @@ namespace mineos {
     quitReceived = false
     renderer = new Renderer();
 
+    programs: {[id: string] : Program} = {}
+    currentProgram: Program | null = null
+
     constructor() {
       if (currentSystem != null) {
         throw new Error("Cannot create more than one instance of mineos.");
       }
       currentSystem = this
+
       this.triggerBoot();
     }
 

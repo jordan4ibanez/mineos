@@ -16,9 +16,9 @@ do
         "gui_components",
         "renderer",
         "audio",
+        "programs",
         "system",
-        "hacks",
-        "programs"
+        "hacks"
     })
     local system = __TS__New(mineos.System)
     minetest.register_globalstep(function(delta)
