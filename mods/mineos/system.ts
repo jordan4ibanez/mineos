@@ -10,11 +10,14 @@ namespace mineos {
 
   export class System {
 
+    renderer = new Renderer(this);
+    audioController = new AudioController(this)
+
     booting = false
     bootProcess = 0
     running = false
     quitReceived = false
-    renderer = new Renderer(this);
+
 
     programs: {[id: string] : typeof Program} = {}
     currentProgram: Program | null = null
