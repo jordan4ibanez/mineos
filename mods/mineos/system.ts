@@ -39,8 +39,8 @@ namespace mineos {
     }
 
     doBoot(delta: number): void {
-      if (this.currentProgramName != "bootProcedure") {
-        this.changeProgram("bootProcedure")
+      if (this.currentProgramName != "biosProcedure") {
+        this.changeProgram("biosProcedure")
       }
       this.currentProgram?.main(delta)
     }

@@ -169,8 +169,8 @@ do
         print("loading mineos.")
     end
     function System.prototype.doBoot(self, delta)
-        if self.currentProgramName ~= "bootProcedure" then
-            self:changeProgram("bootProcedure")
+        if self.currentProgramName ~= "biosProcedure" then
+            self:changeProgram("biosProcedure")
         end
         local ____opt_0 = self.currentProgram
         if ____opt_0 ~= nil then

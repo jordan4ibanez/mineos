@@ -33,6 +33,8 @@ do
         self.frameBufferSize = create(0, 0)
         self.frameBufferScale = create(0, 0)
         self.system = system
+    end
+    function Renderer.prototype.internalUpdateClearColor(self)
         self.memory.backgroundColor = __TS__New(
             BGColor,
             {
@@ -46,6 +48,7 @@ do
         self.clearColor.x = r
         self.clearColor.y = g
         self.clearColor.z = b
+        self:internalUpdateClearColor()
     end
     function Renderer.prototype.getBuffer(self)
         return self.buffer

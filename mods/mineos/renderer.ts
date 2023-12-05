@@ -22,18 +22,21 @@ namespace mineos {
     constructor(system: System) {
       this.system = system
       // print("pushing the thing")
+    }
+
+    internalUpdateClearColor(): void {
       this.memory["backgroundColor"] = new BGColor({
         bgColor: colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z),
         fullScreen: "both",
         fullScreenbgColor: colors.colorScalar(50)
       })
-
     }
 
     setClearColor(r: number, g: number, b: number): void {
       this.clearColor.x = r
       this.clearColor.y = g
-      this.clearColor.z = b
+      this.clearColor.z = b;
+      this.internalUpdateClearColor()
     }
 
     getBuffer(): string {

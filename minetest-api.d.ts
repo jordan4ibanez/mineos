@@ -314,7 +314,7 @@ export interface minetest {
   get_translator(textDomain: string): Translator
   translate(textDomain: string, ...string: string[]): string
 
-  sound_play(spec: SimpleSoundSpec, parameters: SoundParameterTable, ephemeral?: boolean): number
+  sound_play(spec: SimpleSoundSpec, parameters?: SoundParameterTable, ephemeral?: boolean): number
   sound_stop(handle: number): void
   sound_fade(handle: number, step: number, gain: number): void
 

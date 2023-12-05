@@ -48,24 +48,47 @@ do
     local Program = mineos.Program
     Program.name = "Program"
     function Program.prototype.____constructor(self, system, renderer)
+        self.iMem = 0
         self.system = system
         self.renderer = renderer
     end
     function Program.prototype.main(self, delta)
     end
     local ____programFoundation_0 = programFoundation
+    local BiosProcedure = __TS__Class()
+    BiosProcedure.name = "BiosProcedure"
+    __TS__ClassExtends(BiosProcedure, mineos.Program)
+    function BiosProcedure.prototype.____constructor(self, ...)
+        BiosProcedure.____super.prototype.____constructor(self, ...)
+        self.timer = 0
+    end
+    function BiosProcedure.prototype.main(self, delta)
+        if self.timer == 0 then
+            print("bios started")
+        end
+        print("bios is running" .. tostring(self.timer))
+    end
+    ____programFoundation_0.biosProcedure = BiosProcedure
+    local ____programFoundation_1 = programFoundation
     local BootProcedure = __TS__Class()
     BootProcedure.name = "BootProcedure"
     __TS__ClassExtends(BootProcedure, mineos.Program)
     function BootProcedure.prototype.____constructor(self, ...)
         BootProcedure.____super.prototype.____constructor(self, ...)
-        self.memoryTest = 0
+        self.timer = 0
+        self.color = 0
     end
     function BootProcedure.prototype.main(self, delta)
-        self.memoryTest = self.memoryTest + delta
-        print("booting! " .. tostring(self.memoryTest))
+        self.timer = self.timer + delta
+        if self.color < 45 then
+            self.color = self.color + delta
+            if self.color >= 45 then
+                self.color = 45
+            end
+            self.renderer:setClearColor(self.color, self.color, self.color)
+        end
     end
-    ____programFoundation_0.bootProcedure = BootProcedure
+    ____programFoundation_1.bootProcedure = BootProcedure
     minetest.register_on_mods_loaded(function()
         for ____, ____value in ipairs(__TS__ObjectEntries(programFoundation)) do
             local name = ____value[1]
