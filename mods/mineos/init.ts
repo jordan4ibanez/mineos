@@ -13,9 +13,13 @@ namespace mineos {
     "programs"
   ])
 
-  // Begin mineos.
+  // Computer turns on. Beep boop.
+
+  // Hard drive spins up.
   const system = new System();
   system.triggerBoot();
+
+  // Now begins mineos.
   minetest.register_globalstep((delta: number) => {
     system.updateFrameBuffer(osFrameBufferPoll());
     system.main(delta)
