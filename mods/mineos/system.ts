@@ -50,16 +50,30 @@ namespace mineos {
     triggerBoot(): void {
       this.booting = true
       this.running = true
+      //! Note: this can be used to fade the hard drive sound when you shut off the computer.
       this.audioController.playSound("caseButton", 1);
       this.audioController.playSound("hardDrive", 0.5, 0.2)
       print("power button pushed.")
-      print("loading mineos.")
+      print("starting computer.")
 
     }
 
     doBoot(delta: number): void {
-      if (this.currentProgramName != "biosProcedure") {
-        this.changeProgram("biosProcedure")
+      if (this.bootProcess == 0) {
+        if (this.currentProgramName != "biosProcedure") {
+          this.changeProgram("biosProcedure")
+        }
+        if (this.currentProgram?.iMem == 1) {
+          this.changeProgram("bootProcedure")
+          this.bootProcess++
+        }
+      } else if (this.bootProcess == 1){
+        if (this.currentProgramName != "bootProcedure") {
+          this.changeProgram("bootProcedure")
+        }
+        if (this.currentProgram?.iMem == 1) {
+          this.changeProgram("runProcedure")
+        }
       }
       this.currentProgram?.main(delta)
     }

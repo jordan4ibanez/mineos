@@ -70,8 +70,9 @@ do
         self.timer = 0
         self.stateTimer = 0
         self.state = 0
-        self.increments = 0.1
+        self.increments = 0.5
         self.memoryCounter = 0
+        self.impatience = 1
     end
     function BiosProcedure.prototype.main(self, delta)
         if self.timer == 0 then
@@ -189,7 +190,7 @@ do
                     do
                         self.stateTimer = 10
                         local memCheck = self.renderer:getElement("memCheckProgress")
-                        self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10))
+                        self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10)) * self.impatience
                         memCheck.label = tostring(self.memoryCounter) .. " KB"
                         if self.memoryCounter >= 4096 then
                             memCheck.label = tostring(4096) .. " KB"
@@ -248,7 +249,7 @@ do
                                     position = vector.create2d(0.5, 11),
                                     label = mineos.colorize(
                                         colors.colorScalar(100),
-                                        "All system checks passed"
+                                        "All system checks passed."
                                     )
                                 }
                             )
@@ -256,8 +257,15 @@ do
                         break
                     end
                 end
+                ____cond8 = ____cond8 or ____switch8 == 16
+                if ____cond8 then
+                    do
+                        self.iMem = 1
+                        self.renderer:clearMemory()
+                    end
+                    break
+                end
             until true
-            print(self.state)
             self.state = self.state + 1
             self.stateTimer = self.stateTimer - self.increments
         end
@@ -270,16 +278,77 @@ do
     function BootProcedure.prototype.____constructor(self, ...)
         BootProcedure.____super.prototype.____constructor(self, ...)
         self.timer = 0
-        self.color = 0
+        self.colorAmount = 0
+        self.color = vector.create(0, 0, 0)
+        self.impatience = 8
+        self.hit = false
+        self.colorFadeMultiplier = 0.75
+        self.dots = 0
+        self.dotsAccum = 0
     end
     function BootProcedure.prototype.main(self, delta)
+        if self.timer == 0 then
+        end
         self.timer = self.timer + delta
-        if self.color < 45 then
-            self.color = self.color + delta
-            if self.color >= 45 then
-                self.color = 45
+        if self.timer > self.impatience then
+            self.iMem = 1
+            self.renderer:clearMemory()
+        end
+        if self.colorAmount < 1 then
+            self.colorAmount = self.colorAmount + delta * self.colorFadeMultiplier
+            if self.colorAmount >= 1 then
+                self.colorAmount = 1
             end
-            self.renderer:setClearColor(self.color, self.color, self.color)
+            self.renderer:setClearColor(91.7 / 4 * self.colorAmount, 90.5 / 4 * self.colorAmount, 88 / 4 * self.colorAmount)
+        else
+            if not self.hit then
+                self.hit = true
+                print("added logo")
+                local centerX = self.renderer.frameBufferScale.x / 2
+                self.renderer:addElement(
+                    "mineosLogo",
+                    __TS__New(
+                        gui.Image,
+                        {
+                            position = vector.create2d(centerX - 4, 0.9),
+                            size = vector.create2d(8, 8),
+                            texture = "minetest.png"
+                        }
+                    )
+                )
+                self.renderer:addElement(
+                    "mineosLoading",
+                    __TS__New(
+                        gui.Label,
+                        {
+                            position = vector.create2d(centerX - 1.7, 10),
+                            label = mineos.colorize(
+                                colors.colorScalar(100),
+                                "loading mineos"
+                            )
+                        }
+                    )
+                )
+            else
+                local loadingThing = self.renderer:getElement("mineosLoading")
+                self.dotsAccum = self.dotsAccum + delta
+                if self.dotsAccum >= 0.25 then
+                    self.dots = self.dots + 1
+                    if self.dots > 3 then
+                        self.dots = 0
+                    end
+                    self.dotsAccum = self.dotsAccum - 0.25
+                end
+                local textAccum = "loading mineos"
+                do
+                    local i = 0
+                    while i < self.dots do
+                        textAccum = textAccum .. "."
+                        i = i + 1
+                    end
+                end
+                loadingThing.label = textAccum
+            end
         end
     end
     ____programFoundation_1.bootProcedure = BootProcedure

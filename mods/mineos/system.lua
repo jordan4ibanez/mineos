@@ -179,15 +179,30 @@ do
         self.audioController:playSound("caseButton", 1)
         self.audioController:playSound("hardDrive", 0.5, 0.2)
         print("power button pushed.")
-        print("loading mineos.")
+        print("starting computer.")
     end
     function System.prototype.doBoot(self, delta)
-        if self.currentProgramName ~= "biosProcedure" then
-            self:changeProgram("biosProcedure")
+        if self.bootProcess == 0 then
+            if self.currentProgramName ~= "biosProcedure" then
+                self:changeProgram("biosProcedure")
+            end
+            local ____opt_0 = self.currentProgram
+            if (____opt_0 and ____opt_0.iMem) == 1 then
+                self:changeProgram("bootProcedure")
+                self.bootProcess = self.bootProcess + 1
+            end
+        elseif self.bootProcess == 1 then
+            if self.currentProgramName ~= "bootProcedure" then
+                self:changeProgram("bootProcedure")
+            end
+            local ____opt_2 = self.currentProgram
+            if (____opt_2 and ____opt_2.iMem) == 1 then
+                self:changeProgram("runProcedure")
+            end
         end
-        local ____opt_0 = self.currentProgram
-        if ____opt_0 ~= nil then
-            ____opt_0:main(delta)
+        local ____opt_4 = self.currentProgram
+        if ____opt_4 ~= nil then
+            ____opt_4:main(delta)
         end
     end
     function System.prototype.changeProgram(self, newProgramName)
