@@ -8,8 +8,14 @@ namespace mineos {
     constructor(system: System) {
       this.system = system
     }
-    playSound(name: string) {
-      minetest.sound_play({name: name})
+
+    playSound(name: string, volume: number, fade?: number): number {
+      return minetest.sound_play(
+        {name: name},
+        {to_player: "singleplayer",
+        gain: volume,
+        fade: fade
+        })
     }
   }
 }

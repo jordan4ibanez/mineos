@@ -14,9 +14,11 @@ namespace mineos {
     iMem = 0
     system: System
     renderer: Renderer
-    constructor(system: System, renderer: Renderer) {
+    audioController: AudioController
+    constructor(system: System, renderer: Renderer, audioController: AudioController) {
       this.system = system
       this.renderer = renderer
+      this.audioController = audioController
     }
     main(delta: number): void {
       
@@ -25,11 +27,27 @@ namespace mineos {
 
   programFoundation.biosProcedure = class BiosProcedure extends Program {
     timer = 0
+    stateTimer = 0
+    state = 0
     main(delta: number): void {
       if (this.timer == 0) {
         print("bios started")
       }
       this.timer += delta
+      this.stateTimer += delta
+
+      print("started");
+
+      if (this.stateTimer > 2) {
+        if (this.state == 1) {
+          this.audioController.playSound("computerBeep", 1.0)
+        }
+
+        this.state++;
+        this.stateTimer -= 2
+      }
+
+
 
       print("bios is running" + this.timer)
     }

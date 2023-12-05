@@ -143,11 +143,12 @@ do
     local System = mineos.System
     System.name = "System"
     function System.prototype.____constructor(self)
+        self.renderer = __TS__New(mineos.Renderer, self)
+        self.audioController = __TS__New(mineos.AudioController, self)
         self.booting = false
         self.bootProcess = 0
         self.running = false
         self.quitReceived = false
-        self.renderer = __TS__New(mineos.Renderer, self)
         self.programs = {}
         self.currentProgram = nil
         self.currentProgramName = ""
@@ -159,13 +160,25 @@ do
             )
         end
         currentSystem = self
-        self:triggerBoot()
+    end
+    function System.prototype.getRenderer(self)
+        return self.renderer
+    end
+    function System.prototype.getAudioController(self)
+        return self.audioController
+    end
+    function System.prototype.isKeyDown(self, keyName)
+        return mineos.osKeyboardPoll(keyName)
     end
     function System.prototype.registerProgram(self, name, program)
         self.programs[name] = program
     end
     function System.prototype.triggerBoot(self)
         self.booting = true
+        self.running = true
+        self.audioController:playSound("caseButton", 1)
+        self.audioController:playSound("hardDrive", 0.5, 0.2)
+        print("power button pushed.")
         print("loading mineos.")
     end
     function System.prototype.doBoot(self, delta)
@@ -179,7 +192,7 @@ do
     end
     function System.prototype.changeProgram(self, newProgramName)
         self.currentProgramName = newProgramName
-        self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer)
+        self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer, self.audioController)
     end
     function System.prototype.doRun(self, delta)
         print("system running.")
@@ -199,6 +212,9 @@ do
         return self.renderer.buffer
     end
     function System.prototype.main(self, delta)
+        if not self.running then
+            return
+        end
         if self.quitReceived then
             return
         end

@@ -29,7 +29,18 @@ namespace mineos {
         throw new Error("Cannot create more than one instance of mineos.");
       }
       currentSystem = this
-      this.triggerBoot();
+    }
+
+    getRenderer(): Renderer {
+      return this.renderer
+    }
+
+    getAudioController(): AudioController {
+      return this.audioController
+    }
+
+    isKeyDown(keyName: string) {
+      return osKeyboardPoll(keyName)
     }
 
     registerProgram(name: string, program: typeof Program): void {
@@ -38,7 +49,12 @@ namespace mineos {
 
     triggerBoot(): void {
       this.booting = true
+      this.running = true
+      this.audioController.playSound("caseButton", 1);
+      this.audioController.playSound("hardDrive", 0.5, 0.2)
+      print("power button pushed.")
       print("loading mineos.")
+
     }
 
     doBoot(delta: number): void {
@@ -50,7 +66,7 @@ namespace mineos {
 
     changeProgram(newProgramName: string): void {
       this.currentProgramName = newProgramName
-      this.currentProgram = new this.programs[newProgramName](this, this.renderer)
+      this.currentProgram = new this.programs[newProgramName](this, this.renderer, this.audioController)
     }
 
     doRun(delta: number): void {
@@ -78,6 +94,8 @@ namespace mineos {
 
 
     main(delta: number): void {
+
+      if (!this.running) return
       
       //todo: This will do a shutdown process eventually
       if (this.quitReceived) return

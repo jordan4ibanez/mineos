@@ -47,10 +47,11 @@ do
     mineos.Program = __TS__Class()
     local Program = mineos.Program
     Program.name = "Program"
-    function Program.prototype.____constructor(self, system, renderer)
+    function Program.prototype.____constructor(self, system, renderer, audioController)
         self.iMem = 0
         self.system = system
         self.renderer = renderer
+        self.audioController = audioController
     end
     function Program.prototype.main(self, delta)
     end
@@ -61,10 +62,22 @@ do
     function BiosProcedure.prototype.____constructor(self, ...)
         BiosProcedure.____super.prototype.____constructor(self, ...)
         self.timer = 0
+        self.stateTimer = 0
+        self.state = 0
     end
     function BiosProcedure.prototype.main(self, delta)
         if self.timer == 0 then
             print("bios started")
+        end
+        self.timer = self.timer + delta
+        self.stateTimer = self.stateTimer + delta
+        print("started")
+        if self.stateTimer > 2 then
+            if self.state == 1 then
+                self.audioController:playSound("computerBeep", 1)
+            end
+            self.state = self.state + 1
+            self.stateTimer = self.stateTimer - 2
         end
         print("bios is running" .. tostring(self.timer))
     end

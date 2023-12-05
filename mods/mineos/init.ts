@@ -14,12 +14,12 @@ namespace mineos {
   ])
 
   // Computer turns on. Beep boop.
-
+  
   // Hard drive spins up.
   const system = new System();
 
   // Now begins mineos.
   minetest.register_globalstep((delta: number) => {
     system.main(delta)
-  })  
+  })
 }

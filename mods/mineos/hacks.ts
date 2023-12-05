@@ -87,5 +87,11 @@ namespace mineos {
     return false
   }
 
+  // Automatically start mineos when the player loads in.
+  minetest.register_on_joinplayer(() => {
+    getSystem().triggerBoot()
+  })
+
+
   print("hacks loaded.")
 }
