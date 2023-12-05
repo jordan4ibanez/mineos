@@ -29,6 +29,8 @@ namespace mineos {
     timer = 0
     stateTimer = 0
     state = 0
+    increments = 0.2
+    memoryCounter = 0
     main(delta: number): void {
       if (this.timer == 0) {
         print("bios started")
@@ -36,20 +38,53 @@ namespace mineos {
       this.timer += delta
       this.stateTimer += delta
 
-      print("started");
-
-      if (this.stateTimer > 2) {
-        if (this.state == 1) {
-          this.audioController.playSound("computerBeep", 1.0)
+      if (this.state == 7) {
+        this.stateTimer = -1;
+        let memCheck = this.renderer.getElement("memCheckProgress") as gui.Label
+        print(dump(memCheck))
+        this.memoryCounter += 10 + (math.floor(math.random() * 10))
+        memCheck.label = tostring(this.memoryCounter) + " KB"
+        if (this.memoryCounter >= 4096) {
+          memCheck.label = tostring(4096) + " KB"
+          this.stateTimer = 10
         }
+      }
 
+      if (this.stateTimer > this.increments) {
+        switch (this.state) {
+          case 5: {
+            this.audioController.playSound("computerBeep", 1.0)
+            this.renderer.addElement("bioLogo", new gui.Image({
+              position: vector.create2d(0.5,0.9),
+              size: vector.create2d(2,2),
+              texture: "minetest.png"
+            }))
+            this.renderer.addElement("biosText", new gui.Label({
+              position: vector.create2d(3,2),
+              label: colorize(colors.color(100, 0, 0), "Minetest Megablocks")
+            }))
+            break;
+          }
+          case 6: {
+            this.renderer.addElement("memCheck", new gui.Label({
+              position: vector.create2d(0.5,5),
+              label: colorize(colors.colorScalar(100), "Total Memory:")
+            }))
+            this.renderer.addElement("memCheckProgress", new gui.Label({
+              position: vector.create2d(3.2,5),
+              label: colorize(colors.colorScalar(100), "0 KB")
+            }))
+            break;
+          }
+        }
+        print(this.state)
         this.state++;
-        this.stateTimer -= 2
+        this.stateTimer -= this.increments
       }
 
 
 
-      print("bios is running" + this.timer)
+      // print("bios is running" + this.timer)
     }
   }
 

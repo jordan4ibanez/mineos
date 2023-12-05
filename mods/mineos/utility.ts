@@ -35,4 +35,6 @@ namespace mineos {
     }
     return input
   }
+
+  export const colorize = minetest.colorize;
 }

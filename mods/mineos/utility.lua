@@ -26,4 +26,5 @@ do
         end
         return input
     end
+    mineos.colorize = minetest.colorize
 end

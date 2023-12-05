@@ -31,6 +31,12 @@ local function __TS__ClassExtends(target, base)
     end
 end
 
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
+
 local function __TS__ObjectEntries(obj)
     local result = {}
     local len = 0
@@ -64,6 +70,8 @@ do
         self.timer = 0
         self.stateTimer = 0
         self.state = 0
+        self.increments = 0.2
+        self.memoryCounter = 0
     end
     function BiosProcedure.prototype.main(self, delta)
         if self.timer == 0 then
@@ -71,15 +79,88 @@ do
         end
         self.timer = self.timer + delta
         self.stateTimer = self.stateTimer + delta
-        print("started")
-        if self.stateTimer > 2 then
-            if self.state == 1 then
-                self.audioController:playSound("computerBeep", 1)
+        if self.state == 7 then
+            self.stateTimer = -1
+            local memCheck = self.renderer:getElement("memCheckProgress")
+            print(dump(memCheck))
+            self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10))
+            memCheck.label = tostring(self.memoryCounter) .. " KB"
+            if self.memoryCounter >= 4096 then
+                memCheck.label = tostring(4096) .. " KB"
+                self.stateTimer = 10
             end
-            self.state = self.state + 1
-            self.stateTimer = self.stateTimer - 2
         end
-        print("bios is running" .. tostring(self.timer))
+        if self.stateTimer > self.increments then
+            repeat
+                local ____switch10 = self.state
+                local ____cond10 = ____switch10 == 5
+                if ____cond10 then
+                    do
+                        self.audioController:playSound("computerBeep", 1)
+                        self.renderer:addElement(
+                            "bioLogo",
+                            __TS__New(
+                                gui.Image,
+                                {
+                                    position = vector.create2d(0.5, 0.9),
+                                    size = vector.create2d(2, 2),
+                                    texture = "minetest.png"
+                                }
+                            )
+                        )
+                        self.renderer:addElement(
+                            "biosText",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(3, 2),
+                                    label = mineos.colorize(
+                                        colors.color(100, 0, 0),
+                                        "Minetest Megablocks"
+                                    )
+                                }
+                            )
+                        )
+                        break
+                    end
+                end
+                ____cond10 = ____cond10 or ____switch10 == 6
+                if ____cond10 then
+                    do
+                        self.renderer:addElement(
+                            "memCheck",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(0.5, 5),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "Total Memory:"
+                                    )
+                                }
+                            )
+                        )
+                        self.renderer:addElement(
+                            "memCheckProgress",
+                            __TS__New(
+                                gui.Label,
+                                {
+                                    position = vector.create2d(3.2, 5),
+                                    label = mineos.colorize(
+                                        colors.colorScalar(100),
+                                        "0 KB"
+                                    )
+                                }
+                            )
+                        )
+                        break
+                    end
+                end
+            until true
+            print(self.state)
+            self.state = self.state + 1
+            self.stateTimer = self.stateTimer - self.increments
+        end
     end
     ____programFoundation_0.biosProcedure = BiosProcedure
     local ____programFoundation_1 = programFoundation

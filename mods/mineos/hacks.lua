@@ -30,7 +30,7 @@ do
                 fog_sun_tint = "black",
                 fog_tint_type = SkyParametersFogTintType.default
             },
-            fog = {fog_distance = 999999999, fog_start = 9999999999999}
+            fog = {fog_distance = 0, fog_start = 0}
         })
         player:set_moon({visible = false})
         player:set_sun({visible = false, sunrise_visible = false})

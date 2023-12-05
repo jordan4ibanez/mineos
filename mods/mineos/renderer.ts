@@ -24,6 +24,13 @@ namespace mineos {
       // print("pushing the thing")
     }
 
+    clearMemory(): void {
+      for (const [name, _] of Object.entries(this.memory)) {
+        if (name == "backgroundColor") continue
+        delete this.memory[name]
+      }
+    }
+
     internalUpdateClearColor(): void {
       this.memory["backgroundColor"] = new BGColor({
         bgColor: colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z),
@@ -43,6 +50,14 @@ namespace mineos {
       return this.buffer
     }
 
+    addElement(name: string, element: gui.Element) {
+      this.memory[name] = element
+    }
+
+    getElement(name: string): gui.Element {
+      return this.memory[name]
+    }
+
     grabRef(name: string): gui.Element | null {
       return this.memory[name] || null
     }
@@ -54,6 +69,10 @@ namespace mineos {
         elements: []
       })
       obj.elements.push(this.memory.backgroundColor)
+      for (const [name, elem] of Object.entries(this.memory)) {
+        if (name == "backgroundColor") continue
+        obj.elements.push(elem)
+      }
       this.buffer = generate(obj)
     }
 

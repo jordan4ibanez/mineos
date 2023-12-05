@@ -34,8 +34,8 @@ namespace mineos {
         fog_tint_type: SkyParametersFogTintType.default
       },
       fog: {
-        fog_distance: 999999999,
-        fog_start: 9999999999999
+        fog_distance: 0,
+        fog_start: 0
       }
     })
 
