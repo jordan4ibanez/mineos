@@ -21,7 +21,7 @@ namespace mineos {
       this.memory["backgroundColor"] = new BGColor({
         bgColor: colors.colorScalar(100),
         fullScreen: "both",
-        fullScreenbgColor: colors.colorScalar(0)
+        fullScreenbgColor: colors.colorScalar(50)
       })
     }
 

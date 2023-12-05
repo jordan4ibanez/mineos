@@ -38,5 +38,11 @@ do
             mineos.getSystem():sendQuitSignal()
         end)
     end)
+    function mineos.osFrameBufferPoll()
+        local size = minetest.get_player_window_information("singleplayer").max_formspec_size
+        size.x = size.x * 1.1
+        size.y = size.y * 1.1
+        return size
+    end
     print("hacks loaded.")
 end

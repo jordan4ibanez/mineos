@@ -170,6 +170,9 @@ do
         print("quit signal received.")
         self.quitReceived = true
     end
+    function System.prototype.updateFrameBuffer(self, size)
+        self.renderer.frameBufferSize = size
+    end
     function System.prototype.doRender(self, delta)
         self.renderer:draw()
     end

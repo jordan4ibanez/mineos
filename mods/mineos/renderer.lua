@@ -29,13 +29,14 @@ do
         self.buffer = ""
         self.memory = {}
         self.shouldDraw = true
+        self.frameBufferSize = create(0, 0)
         print("pushing the thing")
         self.memory.backgroundColor = __TS__New(
             BGColor,
             {
                 bgColor = colors.colorScalar(100),
                 fullScreen = "both",
-                fullScreenbgColor = colors.colorScalar(0)
+                fullScreenbgColor = colors.colorScalar(50)
             }
         )
     end
@@ -50,6 +51,7 @@ do
             FormSpec,
             {
                 size = create(100, 60),
+                padding = create(-0.01, -0.01),
                 elements = {}
             }
         )

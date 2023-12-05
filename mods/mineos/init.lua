@@ -23,6 +23,7 @@ do
     local system = __TS__New(mineos.System)
     system:triggerBoot()
     minetest.register_globalstep(function(delta)
+        system:updateFrameBuffer(mineos.osFrameBufferPoll())
         system:main(delta)
     end)
 end

@@ -54,7 +54,7 @@ namespace mineos {
     })
   })
 
-  export function osFrameBufferPoll() {
+  export function osFrameBufferPoll(): Vec2 {
     let size = minetest.get_player_window_information("singleplayer").max_formspec_size
     size.x *= 1.1
     size.y *= 1.1
