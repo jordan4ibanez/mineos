@@ -43,8 +43,9 @@ namespace mineos {
       this.quitReceived = true
     }
 
-    updateFrameBuffer(size: Vec2) {
-      this.renderer.frameBufferSize = size
+    updateFrameBuffer(input: LuaMultiReturn<[Vec2, Vec2]>) {
+      this.renderer.frameBufferSize = input[0]
+      this.renderer.frameBufferScale = input[1]
     }
 
     doRender(delta: number): void {

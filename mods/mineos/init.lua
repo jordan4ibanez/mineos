@@ -21,7 +21,6 @@ do
         "programs"
     })
     local system = __TS__New(mineos.System)
-    system:triggerBoot()
     minetest.register_globalstep(function(delta)
         system:main(delta)
     end)

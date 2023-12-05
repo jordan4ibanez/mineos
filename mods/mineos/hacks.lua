@@ -41,12 +41,13 @@ do
     function mineos.osFrameBufferPoll()
         local monitorInformation = minetest.get_player_window_information("singleplayer")
         if monitorInformation == nil then
-            return vector.create2d(1, 1)
+            return vector.create2d(1, 1), vector.create2d(1, 1)
         end
-        local size = monitorInformation.max_formspec_size
-        size.x = size.x * 1.1
-        size.y = size.y * 1.1
-        return size
+        local scaling = monitorInformation.max_formspec_size
+        scaling.x = scaling.x * 1.1
+        scaling.y = scaling.y * 1.1
+        local size = monitorInformation.size
+        return size, scaling
     end
     print("hacks loaded.")
 end

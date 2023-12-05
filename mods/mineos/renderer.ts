@@ -15,9 +15,10 @@ namespace mineos {
     memory: {[id: string] : gui.Element} = {}
     shouldDraw = true
     frameBufferSize: Vec2 = create(0,0)
+    frameBufferScale: Vec2 = create(0,0)
 
     constructor() {
-      print("pushing the thing")
+      // print("pushing the thing")
       this.memory["backgroundColor"] = new BGColor({
         bgColor: colors.colorScalar(100),
         fullScreen: "both",
@@ -36,14 +37,12 @@ namespace mineos {
 
     finalizeBuffer(): void {
       let obj = new FormSpec({
-        size: create(100,60),
+        size: this.frameBufferScale,
         padding: create(-0.01, -0.01),
         elements: []
       })
-      obj.elements.push(this.memory["backgroundColor"])
-      // print(dump(this.memory.backgroundColor))
+      obj.elements.push(this.memory.backgroundColor)
       this.buffer = generate(obj)
-      print(this.buffer)
     }
 
     update(): void {

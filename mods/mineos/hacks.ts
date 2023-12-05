@@ -54,15 +54,17 @@ namespace mineos {
     })
   })
 
-  export function osFrameBufferPoll(): Vec2 {
+  export function osFrameBufferPoll(): LuaMultiReturn<[Vec2, Vec2]> {
     let monitorInformation = minetest.get_player_window_information("singleplayer")
     if (monitorInformation == null) {
-      return vector.create2d(1,1)
+      return $multi(vector.create2d(1,1), vector.create2d(1,1))
     }
-    let size = monitorInformation.max_formspec_size
-    size.x *= 1.1
-    size.y *= 1.1
-    return size
+    
+    let scaling = monitorInformation.max_formspec_size
+    scaling.x *= 1.1
+    scaling.y *= 1.1
+    let size = monitorInformation.size
+    return $multi(size, scaling)
   }
 
   print("hacks loaded.")

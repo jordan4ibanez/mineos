@@ -30,7 +30,7 @@ do
         self.memory = {}
         self.shouldDraw = true
         self.frameBufferSize = create(0, 0)
-        print("pushing the thing")
+        self.frameBufferScale = create(0, 0)
         self.memory.backgroundColor = __TS__New(
             BGColor,
             {
@@ -50,7 +50,7 @@ do
         local obj = __TS__New(
             FormSpec,
             {
-                size = create(100, 60),
+                size = self.frameBufferScale,
                 padding = create(-0.01, -0.01),
                 elements = {}
             }
@@ -58,7 +58,6 @@ do
         local ____obj_elements_0 = obj.elements
         ____obj_elements_0[#____obj_elements_0 + 1] = self.memory.backgroundColor
         self.buffer = generate(obj)
-        print(self.buffer)
     end
     function Renderer.prototype.update(self)
         self:finalizeBuffer()

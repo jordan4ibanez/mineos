@@ -155,6 +155,7 @@ do
             )
         end
         currentSystem = self
+        self:triggerBoot()
     end
     function System.prototype.triggerBoot(self)
         self.booting = true
@@ -170,8 +171,9 @@ do
         print("quit signal received.")
         self.quitReceived = true
     end
-    function System.prototype.updateFrameBuffer(self, size)
-        self.renderer.frameBufferSize = size
+    function System.prototype.updateFrameBuffer(self, input)
+        self.renderer.frameBufferSize = input[1]
+        self.renderer.frameBufferScale = input[2]
     end
     function System.prototype.doRender(self, delta)
         self.renderer:draw()
@@ -183,7 +185,7 @@ do
         if self.quitReceived then
             return
         end
-        self:updateFrameBuffer(mineos.osFrameBufferPoll())
+        self:updateFrameBuffer({mineos.osFrameBufferPoll()})
         if self.booting then
             self:doBoot(delta)
         else
