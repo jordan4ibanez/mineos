@@ -5,20 +5,18 @@ local function __TS__Class(self)
     c.prototype.constructor = c
     return c
 end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
-    local Renderer = __TS__Class()
+    mineos.Renderer = __TS__Class()
+    local Renderer = mineos.Renderer
     Renderer.name = "Renderer"
     function Renderer.prototype.____constructor(self)
+        self.buffer = ""
         print("hello I am a renderer")
     end
-    __TS__New(Renderer)
+    function Renderer.prototype.getBuffer(self)
+        return self.buffer
+    end
     print("renderer loaded.")
 end

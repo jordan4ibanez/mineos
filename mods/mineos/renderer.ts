@@ -1,12 +1,18 @@
 namespace mineos {
-  class Renderer {
+
+  export class Renderer {
+  
+    buffer = ""
+    // memory: Array<
+
     constructor() {
       print("hello I am a renderer")
     }
-  }
 
-  // Now move it into namespace.
-  export const renderer = new Renderer();
+    getBuffer(): string {
+      return this.buffer
+    }
+  }
 
   print("renderer loaded.")
 }
