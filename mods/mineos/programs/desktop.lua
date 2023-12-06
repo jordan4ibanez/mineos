@@ -30,23 +30,68 @@ local function __TS__ClassExtends(target, base)
         target.prototype.__tostring = base.prototype.__tostring
     end
 end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
+    local create = vector.create
+    local create2d = vector.create2d
+    local color = colors.color
+    local colorRGB = colors.colorRGB
+    local colorScalar = colors.colorScalar
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
     __TS__ClassExtends(RunProcedure, mineos.Program)
     function RunProcedure.prototype.____constructor(self, ...)
         RunProcedure.____super.prototype.____constructor(self, ...)
-        self.loadedDesktop = false
+        self.desktopLoaded = false
     end
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
-        mineos.System.out:println("hi there", "I'm java")
+        self.renderer:addElement(
+            "background",
+            __TS__New(
+                gui.Box,
+                {
+                    position = create2d(0, 0),
+                    size = create2d(4000, 15.6),
+                    color = colorRGB(1, 130, 129)
+                }
+            )
+        )
+        self.renderer:addElement(
+            "menuBar",
+            __TS__New(
+                gui.Box,
+                {
+                    position = create2d(0, self.renderer.frameBufferScale.y * 15.6),
+                    size = create2d(4000, 1),
+                    color = colorScalar(70)
+                }
+            )
+        )
+        self.renderer:addElement(
+            "startButton",
+            __TS__New(
+                gui.Button,
+                {
+                    position = create2d(0, 15.6),
+                    size = create2d(2, 0.8),
+                    name = "startButton",
+                    label = "Start"
+                }
+            )
+        )
+        self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end
     function RunProcedure.prototype.main(self, delta)
-        if not self.loadedDesktop then
+        if not self.desktopLoaded then
             self:loadDesktop()
         end
     end
