@@ -193,11 +193,15 @@ namespace mineos {
 
   System.registerProgram(BootProcedure)
 
+
   class RunProcedure extends Program {
+
     loadedDesktop = false
 
     loadDesktop(): void {
+      print("loading desktop environment")
 
+      print("desktop environment loaded")
     }
 
     main(delta: number): void {
@@ -205,7 +209,6 @@ namespace mineos {
         this.loadDesktop()
       }
 
-      print("main loop blah blah blah")
     }
   }
 

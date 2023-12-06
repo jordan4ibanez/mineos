@@ -146,7 +146,7 @@ do
     function System.prototype.____constructor(self)
         self.renderer = __TS__New(mineos.Renderer, self)
         self.audioController = __TS__New(mineos.AudioController, self)
-        self.skipToDesktopHackjob = false
+        self.skipToDesktopHackjob = true
         self.booting = true
         self.bootProcess = 0
         self.running = false

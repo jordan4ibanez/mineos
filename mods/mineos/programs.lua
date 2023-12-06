@@ -343,8 +343,18 @@ do
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
     __TS__ClassExtends(RunProcedure, mineos.Program)
+    function RunProcedure.prototype.____constructor(self, ...)
+        RunProcedure.____super.prototype.____constructor(self, ...)
+        self.loadedDesktop = false
+    end
+    function RunProcedure.prototype.loadDesktop(self)
+        print("loading desktop environment")
+        print("desktop environment loaded")
+    end
     function RunProcedure.prototype.main(self, delta)
-        print("main loop blah blah blah")
+        if not self.loadedDesktop then
+            self:loadDesktop()
+        end
     end
     mineos.System:registerProgram(RunProcedure)
     print("programs loaded!")
