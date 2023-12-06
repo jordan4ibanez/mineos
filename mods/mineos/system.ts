@@ -15,7 +15,7 @@ namespace mineos {
     renderer = new Renderer(this);
     audioController = new AudioController(this)
 
-    skipToDesktopHackjob = false
+    skipToDesktopHackjob = true
 
     booting = true
     bootProcess = 0
