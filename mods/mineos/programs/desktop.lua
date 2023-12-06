@@ -55,6 +55,7 @@ do
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
     local function sendStartMenuSignal(_)
+        print("hi")
         local system = mineos.getSystem()
         local currProg = system.currentProgram
         currProg.startMenuFlag = true
@@ -67,7 +68,7 @@ do
         self.desktopLoaded = false
         self.startMenuFlag = false
         self.startMenuOpened = false
-        self.menuComponents = {_bitsBattle = "Bit's Battle", _fezSphere = "Fez Sphere", _gong = "Gong 96", _sledQuickly = "Sled Liberty"}
+        self.menuComponents = {bitsBattle = "Bit's Battle", fezSphere = "Fez Sphere", gong = "Gong 96", sledQuickly = "Sled Liberty"}
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -108,6 +109,15 @@ do
                             label = progNameNice
                         }
                     )
+                )
+                self.system:registerCallback(
+                    name,
+                    function()
+                        local system = mineos.getSystem()
+                        system:clearCallbacks()
+                        system.renderer:clearMemory()
+                        system:changeProgram(name)
+                    end
                 )
                 i = i + 1
             end

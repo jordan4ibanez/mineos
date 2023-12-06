@@ -8,6 +8,7 @@ namespace mineos {
 
   // Callback to actually start the menu.
   function sendStartMenuSignal(_: any): void {
+    print("hi")
     const system = getSystem()
     const currProg = system.currentProgram as RunProcedure
     currProg.startMenuFlag = true
@@ -21,13 +22,13 @@ namespace mineos {
 
     menuComponents: {[id: string] : string} = {
       // Chip's Challenge
-      "_bitsBattle": "Bit's Battle",
+      "bitsBattle": "Bit's Battle",
       // Jezzball
-      "_fezSphere": "Fez Sphere",
+      "fezSphere": "Fez Sphere",
       // Pong
-      "_gong": "Gong 96",
+      "gong": "Gong 96",
       // Ski Free
-      "_sledQuickly": "Sled Liberty"
+      "sledQuickly": "Sled Liberty"
     }
 
     toggleStartMenu(): void {
@@ -73,6 +74,12 @@ namespace mineos {
             name: name,
             label: progNameNice
           }))
+          this.system.registerCallback(name, () => {
+            const system = getSystem()
+            system.clearCallbacks()
+            system.renderer.clearMemory()
+            system.changeProgram(name)
+          });
 
           i++
         }
