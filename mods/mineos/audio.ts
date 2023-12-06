@@ -17,5 +17,14 @@ namespace mineos {
         fade: fade
         })
     }
+    playSoundRepeat(name: string, volume: number, fade?: number): number {
+      return minetest.sound_play(
+        {name: name},
+        {to_player: "singleplayer",
+        gain: volume,
+        fade: fade,
+        loop: true
+        })
+    }
   }
 }

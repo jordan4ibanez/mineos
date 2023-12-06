@@ -17,4 +17,7 @@ do
     function AudioController.prototype.playSound(self, name, volume, fade)
         return minetest.sound_play({name = name}, {to_player = "singleplayer", gain = volume, fade = fade})
     end
+    function AudioController.prototype.playSoundRepeat(self, name, volume, fade)
+        return minetest.sound_play({name = name}, {to_player = "singleplayer", gain = volume, fade = fade, loop = true})
+    end
 end

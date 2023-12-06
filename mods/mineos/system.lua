@@ -262,7 +262,7 @@ do
         self.booting = true
         self.running = true
         self.audioController:playSound("caseButton", 1)
-        self.audioController:playSound("hardDrive", 0.5, 0.2)
+        self.audioController:playSoundRepeat("hardDrive", 0.5, 0.2)
         mineos.System.out:println("power button pushed.")
         mineos.System.out:println("starting computer.")
     end

@@ -102,7 +102,7 @@ namespace mineos {
       this.running = true
       //! Note: this can be used to fade the hard drive sound when you shut off the computer.
       this.audioController.playSound("caseButton", 1);
-      this.audioController.playSound("hardDrive", 0.5, 0.2)
+      this.audioController.playSoundRepeat("hardDrive", 0.5, 0.2)
       System.out.println("power button pushed.")
       System.out.println("starting computer.")
     }
