@@ -38,15 +38,31 @@ namespace mineos {
           this.renderer.removeComponent(component.buttonLabel)
         }
 
+        // We have to shift the entire wallpaper back to the left
+        const background = this.renderer.getElement("background") as gui.Box
+        background.position.x = 0
+        // And remove this hack job
         this.renderer.removeComponent("startMenuBackground")
+        this.renderer.removeComponent("backgroundDuctTape")
 
       } else {
 
         this.renderer.addElement("startMenuBackground", new gui.Box({
-          position: create2d(0,0),
-          size: create2d(1,1),
-          color: colorScalar(70)
+          position: create2d(0.25,5.5),
+          size: create2d(6,10),
+          color: colorScalar(65)
         }))
+
+        // We have to shift the entire wallpaper to the right so it doesn't blend 
+        const background = this.renderer.getElement("background") as gui.Box
+        background.position.x = 6.25
+        // Then we gotta patch the space
+        this.renderer.addElement("backgroundDuctTape", new gui.Box({
+          position: create2d(0,0),
+          size: create2d(6.25,5.5),
+          color: colorRGB(1,130,129)
+        }))
+
 
       }
 

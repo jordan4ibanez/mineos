@@ -70,19 +70,32 @@ do
             for ____, component in ipairs(self.menuComponents) do
                 self.renderer:removeComponent(component.buttonLabel)
             end
+            local background = self.renderer:getElement("background")
+            background.position.x = 0
             self.renderer:removeComponent("startMenuBackground")
+            self.renderer:removeComponent("backgroundDuctTape")
         else
-            print("OPEN SESAME!")
-            print(self.renderer)
-            print(self.system)
             self.renderer:addElement(
                 "startMenuBackground",
                 __TS__New(
                     gui.Box,
                     {
+                        position = create2d(0.25, 5.5),
+                        size = create2d(6, 10),
+                        color = colorScalar(65)
+                    }
+                )
+            )
+            local background = self.renderer:getElement("background")
+            background.position.x = 6.25
+            self.renderer:addElement(
+                "backgroundDuctTape",
+                __TS__New(
+                    gui.Box,
+                    {
                         position = create2d(0, 0),
-                        size = create2d(1, 1),
-                        color = colorScalar(70)
+                        size = create2d(6.25, 5.5),
+                        color = colorRGB(1, 130, 129)
                     }
                 )
             )
