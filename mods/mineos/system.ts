@@ -97,8 +97,6 @@ namespace mineos {
         }
         if (this.currentProgram?.iMem == 1) {
           this.finishBoot()
-          print("in main")
-          return
         }
       }
       this.currentProgram?.main(delta)

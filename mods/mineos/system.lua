@@ -219,8 +219,6 @@ do
             local ____opt_2 = self.currentProgram
             if (____opt_2 and ____opt_2.iMem) == 1 then
                 self:finishBoot()
-                print("in main")
-                return
             end
         end
         local ____opt_4 = self.currentProgram
