@@ -1,5 +1,7 @@
 namespace mineos {
+
   let currentSystem: System | null = null;
+  let registrationQueue: [string, typeof Program][] = []
 
   export function getSystem(): System {
     if (currentSystem == null) {
@@ -13,7 +15,9 @@ namespace mineos {
     renderer = new Renderer(this);
     audioController = new AudioController(this)
 
-    booting = false
+    skipToDesktopHackjob = false
+
+    booting = !this.skipToDesktopHackjob
     bootProcess = 0
     running = false
     quitReceived = false
@@ -29,6 +33,7 @@ namespace mineos {
         throw new Error("Cannot create more than one instance of mineos.");
       }
       currentSystem = this
+      this.receivePrograms()
     }
 
     getRenderer(): Renderer {
@@ -43,8 +48,20 @@ namespace mineos {
       return osKeyboardPoll(keyName)
     }
 
-    registerProgram(name: string, program: typeof Program): void {
-      this.programs[name] = program            
+    receivePrograms() {
+      while (registrationQueue.length > 0) {
+        const [name, prog] = registrationQueue.pop()!!
+        this.programs[name] = prog
+      }
+    }
+
+    static registerProgram(program: typeof Program): void {
+      const progName = program.prototype.constructor.name;
+      if (currentSystem == null) {
+        registrationQueue.push([progName, program])
+      } else {
+        currentSystem.programs[progName] = program
+      }
     }
 
     triggerBoot(): void {

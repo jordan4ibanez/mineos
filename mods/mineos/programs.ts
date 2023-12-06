@@ -1,7 +1,5 @@
 namespace mineos {
 
-  let programFoundation: {[id: string] : typeof Program} = {}
-
   // Oh my god it's java in minetest. What have I doneeeeeeeeeee
   // Mocha - Created by Prophet
 
@@ -25,7 +23,8 @@ namespace mineos {
     }
   }
 
-  programFoundation.biosProcedure = class BiosProcedure extends Program {
+
+  class BiosProcedure extends Program {
     timer = 0
     stateTimer = 0
     state = 0
@@ -129,7 +128,9 @@ namespace mineos {
     }
   }
 
-  programFoundation.bootProcedure = class BootProcedure extends Program {
+  mineos.System.registerProgram(BiosProcedure)
+
+  class BootProcedure extends Program {
     timer = 0
     colorAmount = 0
     color = vector.create(0,0,0)
@@ -189,13 +190,7 @@ namespace mineos {
     }
   }
 
-  
-  minetest.register_on_mods_loaded(() => {
-    for (const [name, clazz] of Object.entries(programFoundation)) {
-      getSystem().registerProgram(name, clazz)
-    }
-  })
-  export function grabFoundationalPrograms(): {[id: string] : typeof Program} {
-    return programFoundation    
-  }
+  mineos.System.registerProgram(BootProcedure)
+
+  print("programs loaded!");
 }

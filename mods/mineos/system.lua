@@ -130,6 +130,7 @@ end
 mineos = mineos or ({})
 do
     local currentSystem = nil
+    local registrationQueue = {}
     function mineos.getSystem()
         if currentSystem == nil then
             error(
@@ -145,7 +146,8 @@ do
     function System.prototype.____constructor(self)
         self.renderer = __TS__New(mineos.Renderer, self)
         self.audioController = __TS__New(mineos.AudioController, self)
-        self.booting = false
+        self.skipToDesktopHackjob = false
+        self.booting = not self.skipToDesktopHackjob
         self.bootProcess = 0
         self.running = false
         self.quitReceived = false
@@ -160,6 +162,7 @@ do
             )
         end
         currentSystem = self
+        self:receivePrograms()
     end
     function System.prototype.getRenderer(self)
         return self.renderer
@@ -170,8 +173,19 @@ do
     function System.prototype.isKeyDown(self, keyName)
         return mineos.osKeyboardPoll(keyName)
     end
-    function System.prototype.registerProgram(self, name, program)
-        self.programs[name] = program
+    function System.prototype.receivePrograms(self)
+        while #registrationQueue > 0 do
+            local name, prog = unpack(table.remove(registrationQueue))
+            self.programs[name] = prog
+        end
+    end
+    function System.registerProgram(self, program)
+        local progName = program.prototype.constructor.name
+        if currentSystem == nil then
+            registrationQueue[#registrationQueue + 1] = {progName, program}
+        else
+            currentSystem.programs[progName] = program
+        end
     end
     function System.prototype.triggerBoot(self)
         self.booting = true

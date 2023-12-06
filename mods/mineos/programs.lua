@@ -36,20 +36,9 @@ local function __TS__New(target, ...)
     instance:____constructor(...)
     return instance
 end
-
-local function __TS__ObjectEntries(obj)
-    local result = {}
-    local len = 0
-    for key in pairs(obj) do
-        len = len + 1
-        result[len] = {key, obj[key]}
-    end
-    return result
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
-    local programFoundation = {}
     mineos.Program = __TS__Class()
     local Program = mineos.Program
     Program.name = "Program"
@@ -61,7 +50,6 @@ do
     end
     function Program.prototype.main(self, delta)
     end
-    local ____programFoundation_0 = programFoundation
     local BiosProcedure = __TS__Class()
     BiosProcedure.name = "BiosProcedure"
     __TS__ClassExtends(BiosProcedure, mineos.Program)
@@ -270,8 +258,7 @@ do
             self.stateTimer = self.stateTimer - self.increments
         end
     end
-    ____programFoundation_0.biosProcedure = BiosProcedure
-    local ____programFoundation_1 = programFoundation
+    mineos.System:registerProgram(BiosProcedure)
     local BootProcedure = __TS__Class()
     BootProcedure.name = "BootProcedure"
     __TS__ClassExtends(BootProcedure, mineos.Program)
@@ -351,15 +338,6 @@ do
             end
         end
     end
-    ____programFoundation_1.bootProcedure = BootProcedure
-    minetest.register_on_mods_loaded(function()
-        for ____, ____value in ipairs(__TS__ObjectEntries(programFoundation)) do
-            local name = ____value[1]
-            local clazz = ____value[2]
-            mineos.getSystem():registerProgram(name, clazz)
-        end
-    end)
-    function mineos.grabFoundationalPrograms()
-        return programFoundation
-    end
+    mineos.System:registerProgram(BootProcedure)
+    print("programs loaded!")
 end

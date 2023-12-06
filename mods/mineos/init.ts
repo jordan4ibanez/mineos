@@ -7,8 +7,8 @@ namespace mineos {
     "gui_components",
     "renderer",
     "audio",
-    "programs",
     "system",
+    "programs",
     /*hacks depends on renderer*/
     "hacks",
   ])
