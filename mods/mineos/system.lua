@@ -140,6 +140,13 @@ do
         end
         return currentSystem
     end
+    local Printer = __TS__Class()
+    Printer.name = "Printer"
+    function Printer.prototype.____constructor(self)
+    end
+    function Printer.println(self, ...)
+        print(...)
+    end
     mineos.System = __TS__Class()
     local System = mineos.System
     System.name = "System"
@@ -189,7 +196,7 @@ do
     end
     function System.prototype.triggerBoot(self)
         if self.skipToDesktopHackjob then
-            print("HACK: SKIPPED BOOT PROCEDURE!")
+            mineos.System.out:println("HACK: SKIPPED BOOT PROCEDURE!")
             self.booting = false
             self.running = true
             self:changeProgram("RunProcedure")
@@ -199,8 +206,8 @@ do
         self.running = true
         self.audioController:playSound("caseButton", 1)
         self.audioController:playSound("hardDrive", 0.5, 0.2)
-        print("power button pushed.")
-        print("starting computer.")
+        mineos.System.out:println("power button pushed.")
+        mineos.System.out:println("starting computer.")
     end
     function System.prototype.doBoot(self, delta)
         if self.bootProcess == 0 then
@@ -236,15 +243,15 @@ do
         self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer, self.audioController)
     end
     function System.prototype.doRun(self, delta)
-        print("system running.")
+        mineos.System.out:println("system running.")
         if self.currentProgram == nil then
-            print("ERROR: NO CURRENT PROGRAM.")
+            mineos.System.out:println("ERROR: NO CURRENT PROGRAM.")
             return
         end
         self.currentProgram:main(delta)
     end
     function System.prototype.sendQuitSignal(self)
-        print("quit signal received.")
+        mineos.System.out:println("quit signal received.")
         self.quitReceived = true
     end
     function System.prototype.updateFrameBuffer(self, input)
@@ -272,4 +279,5 @@ do
         end
         self:doRender(delta)
     end
+    System.out = Printer
 end

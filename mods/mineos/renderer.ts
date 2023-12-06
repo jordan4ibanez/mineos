@@ -21,7 +21,6 @@ namespace mineos {
 
     constructor(system: System) {
       this.system = system
-      // print("pushing the thing")
     }
 
     clearMemory(): void {
@@ -77,7 +76,7 @@ namespace mineos {
     }
 
     update(): void {
-      // print(this.buffer)
+      // System.out.println(this.buffer)
       this.finalizeBuffer()
     }
 

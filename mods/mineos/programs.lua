@@ -64,7 +64,7 @@ do
     end
     function BiosProcedure.prototype.main(self, delta)
         if self.timer == 0 then
-            print("bios started")
+            mineos.System.out:println("bios started")
         end
         self.timer = self.timer + delta
         self.stateTimer = self.stateTimer + delta
@@ -291,7 +291,7 @@ do
         else
             if not self.hit then
                 self.hit = true
-                print("added logo")
+                mineos.System.out:println("added logo")
                 local centerX = self.renderer.frameBufferScale.x / 2
                 self.renderer:addElement(
                     "mineosLogo",
@@ -348,8 +348,9 @@ do
         self.loadedDesktop = false
     end
     function RunProcedure.prototype.loadDesktop(self)
-        print("loading desktop environment")
-        print("desktop environment loaded")
+        mineos.System.out:println("loading desktop environment")
+        mineos.System.out:println("hi there", "I'm java")
+        mineos.System.out:println("desktop environment loaded")
     end
     function RunProcedure.prototype.main(self, delta)
         if not self.loadedDesktop then
@@ -357,5 +358,5 @@ do
         end
     end
     mineos.System:registerProgram(RunProcedure)
-    print("programs loaded!")
+    mineos.System.out:println("programs loaded!")
 end

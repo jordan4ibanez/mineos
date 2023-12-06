@@ -107,5 +107,5 @@ do
     minetest.register_on_joinplayer(function()
         mineos.getSystem():triggerBoot()
     end)
-    print("hacks loaded.")
+    mineos.System.out:println("hacks loaded.")
 end

@@ -93,5 +93,5 @@ namespace mineos {
   })
 
 
-  print("hacks loaded.")
+  System.out.println("hacks loaded.")
 }

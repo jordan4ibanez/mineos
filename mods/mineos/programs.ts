@@ -33,7 +33,7 @@ namespace mineos {
     impatience = 1 // 10+ to do ultra fast memcheck normal 1: 
     main(delta: number): void {
       if (this.timer == 0) {
-        print("bios started")
+        System.out.println("bios started")
       }
       this.timer += delta
       this.stateTimer += delta
@@ -160,7 +160,7 @@ namespace mineos {
       } else {
         if (!this.hit) {
           this.hit = true
-          print("added logo")
+          System.out.println("added logo")
           const centerX = (this.renderer.frameBufferScale.x / 2)
           this.renderer.addElement("mineosLogo", new gui.Image({
             position: vector.create2d(centerX - 4,0.9),
@@ -199,9 +199,10 @@ namespace mineos {
     loadedDesktop = false
 
     loadDesktop(): void {
-      print("loading desktop environment")
+      System.out.println("loading desktop environment")
+      System.out.println("hi there", "I'm java")
 
-      print("desktop environment loaded")
+      System.out.println("desktop environment loaded")
     }
 
     main(delta: number): void {
@@ -214,5 +215,5 @@ namespace mineos {
 
   System.registerProgram(RunProcedure)
 
-  print("programs loaded!");
+  System.out.println("programs loaded!");
 }

@@ -10,10 +10,18 @@ namespace mineos {
     return currentSystem
   }
 
+  class Printer {
+    static println(...anything: any): void {
+      print(...anything)
+    }
+  }
+
   export class System {
 
     renderer = new Renderer(this);
     audioController = new AudioController(this)
+    // Literally a JVM feature LMAO
+    static out = Printer
 
     skipToDesktopHackjob = true
 
@@ -66,7 +74,7 @@ namespace mineos {
 
     triggerBoot(): void {
       if (this.skipToDesktopHackjob) {
-        print("HACK: SKIPPED BOOT PROCEDURE!")
+        System.out.println("HACK: SKIPPED BOOT PROCEDURE!")
         this.booting = false
         this.running = true
         this.changeProgram("RunProcedure")
@@ -77,8 +85,8 @@ namespace mineos {
       //! Note: this can be used to fade the hard drive sound when you shut off the computer.
       this.audioController.playSound("caseButton", 1);
       this.audioController.playSound("hardDrive", 0.5, 0.2)
-      print("power button pushed.")
-      print("starting computer.")
+      System.out.println("power button pushed.")
+      System.out.println("starting computer.")
 
     }
 
@@ -114,16 +122,16 @@ namespace mineos {
     }
 
     doRun(delta: number): void {
-      print("system running.")
+      System.out.println("system running.")
       if (this.currentProgram == null) {
-        print("ERROR: NO CURRENT PROGRAM.")
+        System.out.println("ERROR: NO CURRENT PROGRAM.")
         return
       }
       this.currentProgram.main(delta)
     }
 
     sendQuitSignal(): void {
-      print("quit signal received.")
+      System.out.println("quit signal received.")
       this.quitReceived = true
     }
 
@@ -134,7 +142,7 @@ namespace mineos {
 
     doRender(delta: number): void {
       this.renderer.draw()
-      // print("rendering")
+      // System.out.println("rendering")
     }
 
     getFrameBuffer(): string {
