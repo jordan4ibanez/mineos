@@ -5,9 +5,55 @@ namespace mineos {
   const colorRGB = colors.colorRGB;
   const colorScalar = colors.colorScalar;
 
+  class MenuComponent {
+    buttonLabel: string
+    buttonName: string
+    constructor(label: string, name: string) {
+      this.buttonLabel = label
+      this.buttonName = name
+    }
+  }
+
+  // Callback to actually start the menu.
+  function sendStartMenuSignal(_: any): void {
+    const system = getSystem()
+    const currProg = system.currentProgram as RunProcedure
+    currProg.startMenuFlag = true
+  }
+
   class RunProcedure extends Program {
 
     desktopLoaded = false
+    startMenuFlag = false
+    startMenuOpened = false
+
+    menuComponents: MenuComponent[] = [
+      // Chip's Challenge
+      new MenuComponent("bitsObjection", "Bit's Objection")
+    ]
+
+    toggleStartMenu(): void {
+      if (this.startMenuOpened) {
+        for (const component of this.menuComponents) {
+          this.renderer.removeComponent(component.buttonLabel)
+        }
+
+        this.renderer.removeComponent("startMenuBackground")
+
+      } else {
+
+        this.renderer.addElement("startMenuBackground", new gui.Box({
+          position: create2d(0,0),
+          size: create2d(1,1),
+          color: colorScalar(70)
+        }))
+
+      }
+
+      this.startMenuOpened = !this.startMenuOpened
+      this.startMenuFlag = false
+      print("start clicked!")
+    }
 
     loadDesktop(): void {
       System.out.println("loading desktop environment")
@@ -35,18 +81,16 @@ namespace mineos {
         label: "Start"
       }))
 
-      this.system.registerCallback("startButton", (input: any) => {
-        print("start clicked!")
-        print(input)
-      });
-
+      this.system.registerCallback("startButton", sendStartMenuSignal);
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
     }
 
     main(delta: number): void {
+      
       if (!this.desktopLoaded) this.loadDesktop()
+      if (this.startMenuFlag) this.toggleStartMenu()
 
     }
   }

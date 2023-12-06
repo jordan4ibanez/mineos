@@ -140,6 +140,7 @@ namespace mineos {
     }
 
     changeProgram(newProgramName: string): void {
+      print("this is a program")
       this.currentProgramName = newProgramName
       this.currentProgram = new this.programs[newProgramName](this, this.renderer, this.audioController)
     }

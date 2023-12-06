@@ -44,12 +44,52 @@ do
     local color = colors.color
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
+    local MenuComponent = __TS__Class()
+    MenuComponent.name = "MenuComponent"
+    function MenuComponent.prototype.____constructor(self, label, name)
+        self.buttonLabel = label
+        self.buttonName = name
+    end
+    local function sendStartMenuSignal(_)
+        local system = mineos.getSystem()
+        local currProg = system.currentProgram
+        currProg.startMenuFlag = true
+    end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
     __TS__ClassExtends(RunProcedure, mineos.Program)
     function RunProcedure.prototype.____constructor(self, ...)
         RunProcedure.____super.prototype.____constructor(self, ...)
         self.desktopLoaded = false
+        self.startMenuFlag = false
+        self.startMenuOpened = false
+        self.menuComponents = {__TS__New(MenuComponent, "bitsObjection", "Bit's Objection")}
+    end
+    function RunProcedure.prototype.toggleStartMenu(self)
+        if self.startMenuOpened then
+            for ____, component in ipairs(self.menuComponents) do
+                self.renderer:removeComponent(component.buttonLabel)
+            end
+            self.renderer:removeComponent("startMenuBackground")
+        else
+            print("OPEN SESAME!")
+            print(self.renderer)
+            print(self.system)
+            self.renderer:addElement(
+                "startMenuBackground",
+                __TS__New(
+                    gui.Box,
+                    {
+                        position = create2d(0, 0),
+                        size = create2d(1, 1),
+                        color = colorScalar(70)
+                    }
+                )
+            )
+        end
+        self.startMenuOpened = not self.startMenuOpened
+        self.startMenuFlag = false
+        print("start clicked!")
     end
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
@@ -89,19 +129,16 @@ do
                 }
             )
         )
-        self.system:registerCallback(
-            "startButton",
-            function(input)
-                print("start clicked!")
-                print(input)
-            end
-        )
+        self.system:registerCallback("startButton", sendStartMenuSignal)
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end
     function RunProcedure.prototype.main(self, delta)
         if not self.desktopLoaded then
             self:loadDesktop()
+        end
+        if self.startMenuFlag then
+            self:toggleStartMenu()
         end
     end
     mineos.System:registerProgram(RunProcedure)

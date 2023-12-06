@@ -30,6 +30,10 @@ namespace mineos {
       }
     }
 
+    removeComponent(name: string) {
+      delete this.memory[name]
+    }
+
     internalUpdateClearColor(): void {
       this.memory["backgroundColor"] = new BGColor({
         bgColor: colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z),

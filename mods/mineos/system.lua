@@ -303,6 +303,7 @@ do
         self:changeProgram("RunProcedure")
     end
     function System.prototype.changeProgram(self, newProgramName)
+        print("this is a program")
         self.currentProgramName = newProgramName
         self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer, self.audioController)
     end

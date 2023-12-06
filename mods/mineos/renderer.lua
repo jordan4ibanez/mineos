@@ -200,6 +200,9 @@ do
             ::__continue5::
         end
     end
+    function Renderer.prototype.removeComponent(self, name)
+        __TS__Delete(self.memory, name)
+    end
     function Renderer.prototype.internalUpdateClearColor(self)
         self.memory.backgroundColor = __TS__New(
             BGColor,
@@ -244,12 +247,12 @@ do
             local elem = ____value[2]
             do
                 if name == "backgroundColor" then
-                    goto __continue15
+                    goto __continue16
                 end
                 local ____obj_elements_1 = obj.elements
                 ____obj_elements_1[#____obj_elements_1 + 1] = elem
             end
-            ::__continue15::
+            ::__continue16::
         end
         self.buffer = generate(obj)
     end
