@@ -53,6 +53,7 @@ do
     end
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
+        self.system:clearCallbacks()
         self.renderer:setClearColor(0, 0, 0)
         self.renderer:addElement(
             "background",
@@ -70,7 +71,7 @@ do
             __TS__New(
                 gui.Box,
                 {
-                    position = create2d(0, self.renderer.frameBufferScale.y * 15.5),
+                    position = create2d(2, self.renderer.frameBufferScale.y * 15.5),
                     size = create2d(4000, 1),
                     color = colorScalar(70)
                 }
@@ -87,6 +88,13 @@ do
                     label = "Start"
                 }
             )
+        )
+        self.system:registerCallback(
+            "startButton",
+            function(input)
+                print("start clicked!")
+                print(input)
+            end
         )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")

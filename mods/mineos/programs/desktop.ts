@@ -12,6 +12,8 @@ namespace mineos {
     loadDesktop(): void {
       System.out.println("loading desktop environment")
 
+      this.system.clearCallbacks()
+
       this.renderer.setClearColor(0,0,0)
 
       this.renderer.addElement("background", new gui.Box({
@@ -21,7 +23,7 @@ namespace mineos {
       }))
       
       this.renderer.addElement("menuBar", new gui.Box({
-        position: create2d(0,this.renderer.frameBufferScale.y * 15.5),
+        position: create2d(2,this.renderer.frameBufferScale.y * 15.5),
         size: create2d(4000,1),
         color: colorScalar(70)
       }))
@@ -32,6 +34,11 @@ namespace mineos {
         name: "startButton",
         label: "Start"
       }))
+
+      this.system.registerCallback("startButton", (input: any) => {
+        print("start clicked!")
+        print(input)
+      });
 
 
       this.desktopLoaded = true
