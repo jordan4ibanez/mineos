@@ -77,7 +77,7 @@ export interface minetest {
   register_on_cheat(fun: (player: ObjectRef, cheat: CheatDefinition) => void): void
   register_on_chat_message(fun: (name: string, message: string) => void): void
   register_on_chatcommand(fun: (name: string, command: string, params: string) => boolean): void
-  register_on_player_receive_fields(fun: (player: ObjectRef, formName: string, fields: {string : any}) => void): void
+  register_on_player_receive_fields(fun: (player: ObjectRef, formName: string, fields: {[id: string] : any}) => void): void
   register_on_craft(fun: (itemStack: ItemStackObject, player: ObjectRef, oldCraftGrid: any[], craftInv: string) => void): void
   register_craft_predict(fun: (itemStack: ItemStackObject, player: ObjectRef, oldCraftGrid: any[], craftInv: string) => void): void
   register_allow_player_inventory_action(fun: (player: ObjectRef, action: string, inventory: string, inventoryInfo: ActionDefinition) => void): void

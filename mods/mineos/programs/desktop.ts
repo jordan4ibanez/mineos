@@ -12,21 +12,23 @@ namespace mineos {
     loadDesktop(): void {
       System.out.println("loading desktop environment")
 
+      this.renderer.setClearColor(0,0,0)
+
       this.renderer.addElement("background", new gui.Box({
         position: create2d(0,0),
-        size: create2d(4000, 15.6),
+        size: create2d(4000, 15.5),
         color: colorRGB(1,130,129)
       }))
       
       this.renderer.addElement("menuBar", new gui.Box({
-        position: create2d(0,this.renderer.frameBufferScale.y * 15.6),
+        position: create2d(0,this.renderer.frameBufferScale.y * 15.5),
         size: create2d(4000,1),
         color: colorScalar(70)
       }))
 
       this.renderer.addElement("startButton", new gui.Button({
-        position: create2d(0,15.6),
-        size: create2d(2,0.8),
+        position: create2d(0,15.5),
+        size: create2d(2,1),
         name: "startButton",
         label: "Start"
       }))

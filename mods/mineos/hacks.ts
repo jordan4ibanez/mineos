@@ -48,9 +48,9 @@ namespace mineos {
       sunrise_visible: false
     })
 
-    //TODO FIXME:remove this when the GUI is implemented
-    minetest.register_on_player_receive_fields(() => {
-      getSystem().sendQuitSignal()
+    // "OS sends the program things" or some nonsense
+    minetest.register_on_player_receive_fields((_: ObjectRef, formName: string, fields: {[id: string] : any}) => {
+      getSystem().triggerCallbacks(formName, fields)
     })
   })
 

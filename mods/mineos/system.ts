@@ -32,6 +32,9 @@ namespace mineos {
 
 
     programs: {[id: string] : typeof Program} = {}
+
+    callbacks: {[id: string]: (fields: {[id: string] : any}) => void} = {}
+
     currentProgram: Program | null = null
     currentProgramName = ""
     mousePos = vector.create2d(0,0)
@@ -54,6 +57,16 @@ namespace mineos {
 
     isKeyDown(keyName: string) {
       return osKeyboardPoll(keyName)
+    }
+
+    registerCallback(name: string, callback: (fields: {[id: string] : any}) => void): void {
+      this.callbacks[name] = callback
+    }
+
+    triggerCallbacks(name: string, fields: {[id: string] : any}): void {
+      const pulledCallback = this.callbacks[name]
+      if (pulledCallback == null) return
+      pulledCallback(fields);
     }
 
     receivePrograms() {
