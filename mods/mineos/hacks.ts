@@ -49,8 +49,8 @@ namespace mineos {
     })
 
     // "OS sends the program things" or some nonsense
-    minetest.register_on_player_receive_fields((_: ObjectRef, formName: string, fields: {[id: string] : any}) => {
-      getSystem().triggerCallbacks(formName, fields)
+    minetest.register_on_player_receive_fields((_: ObjectRef, __: string, fields: {[id: string] : any}) => {
+      getSystem().triggerCallbacks(fields)
     })
   })
 
