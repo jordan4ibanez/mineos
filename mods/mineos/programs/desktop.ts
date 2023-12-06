@@ -5,14 +5,6 @@ namespace mineos {
   const colorRGB = colors.colorRGB;
   const colorScalar = colors.colorScalar;
 
-  class MenuComponent {
-    buttonLabel: string
-    buttonName: string
-    constructor(label: string, name: string) {
-      this.buttonLabel = label
-      this.buttonName = name
-    }
-  }
 
   // Callback to actually start the menu.
   function sendStartMenuSignal(_: any): void {
@@ -27,31 +19,40 @@ namespace mineos {
     startMenuFlag = false
     startMenuOpened = false
 
-    menuComponents: MenuComponent[] = [
+    menuComponents: {[id: string] : string} = {
       // Chip's Challenge
-      new MenuComponent("bitsObjection", "Bit's Objection")
-    ]
+      "_bitsBattle": "Bit's Battle",
+      // Jezzball
+      "_fezSphere": "Fez Sphere",
+      // Pong
+      "_gong": "Gong 96",
+      // Ski Free
+      "_sledQuickly": "Sled Liberty"
+    }
 
     toggleStartMenu(): void {
       if (this.startMenuOpened) {
-        for (const component of this.menuComponents) {
-          this.renderer.removeComponent(component.buttonLabel)
+
+        // Now rip off the duct tape
+        for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
+          this.renderer.removeComponent(name)
         }
 
         // We have to shift the entire wallpaper back to the left
         const background = this.renderer.getElement("background") as gui.Box
         background.position.x = 0
         // And remove this hack job
-        this.renderer.removeComponent("startMenuBackground")
+        // this.renderer.removeComponent("startMenuBackground")
         this.renderer.removeComponent("backgroundDuctTape")
 
       } else {
 
-        this.renderer.addElement("startMenuBackground", new gui.Box({
-          position: create2d(0.25,5.5),
-          size: create2d(6,10),
-          color: colorScalar(65)
-        }))
+        // Causes things to randomly overlap
+        // this.renderer.addElement("startMenuBackground", new gui.Box({
+        //   position: create2d(0.25,5.5),
+        //   size: create2d(6,10),
+        //   color: colorScalar(65)
+        // }))
 
         // We have to shift the entire wallpaper to the right so it doesn't blend 
         const background = this.renderer.getElement("background") as gui.Box
@@ -62,6 +63,19 @@ namespace mineos {
           size: create2d(6.25,5.5),
           color: colorRGB(1,130,129)
         }))
+
+        // Now duct tape on the buttons that randomly won't be clickable
+        let i = 0
+        for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
+          this.renderer.addElement(name, new gui.Button({
+            position: create2d(0,6 + (i * 2.5)),
+            size: create2d(6.25,1),
+            name: name,
+            label: progNameNice
+          }))
+
+          i++
+        }
 
 
       }

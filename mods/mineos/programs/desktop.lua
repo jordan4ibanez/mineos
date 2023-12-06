@@ -31,6 +31,16 @@ local function __TS__ClassExtends(target, base)
     end
 end
 
+local function __TS__ObjectEntries(obj)
+    local result = {}
+    local len = 0
+    for key in pairs(obj) do
+        len = len + 1
+        result[len] = {key, obj[key]}
+    end
+    return result
+end
+
 local function __TS__New(target, ...)
     local instance = setmetatable({}, target.prototype)
     instance:____constructor(...)
@@ -44,12 +54,6 @@ do
     local color = colors.color
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
-    local MenuComponent = __TS__Class()
-    MenuComponent.name = "MenuComponent"
-    function MenuComponent.prototype.____constructor(self, label, name)
-        self.buttonLabel = label
-        self.buttonName = name
-    end
     local function sendStartMenuSignal(_)
         local system = mineos.getSystem()
         local currProg = system.currentProgram
@@ -63,29 +67,19 @@ do
         self.desktopLoaded = false
         self.startMenuFlag = false
         self.startMenuOpened = false
-        self.menuComponents = {__TS__New(MenuComponent, "bitsObjection", "Bit's Objection")}
+        self.menuComponents = {_bitsBattle = "Bit's Battle", _fezSphere = "Fez Sphere", _gong = "Gong 96", _sledQuickly = "Sled Liberty"}
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
-            for ____, component in ipairs(self.menuComponents) do
-                self.renderer:removeComponent(component.buttonLabel)
+            for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
+                local name = ____value[1]
+                local progNameNice = ____value[2]
+                self.renderer:removeComponent(name)
             end
             local background = self.renderer:getElement("background")
             background.position.x = 0
-            self.renderer:removeComponent("startMenuBackground")
             self.renderer:removeComponent("backgroundDuctTape")
         else
-            self.renderer:addElement(
-                "startMenuBackground",
-                __TS__New(
-                    gui.Box,
-                    {
-                        position = create2d(0.25, 5.5),
-                        size = create2d(6, 10),
-                        color = colorScalar(65)
-                    }
-                )
-            )
             local background = self.renderer:getElement("background")
             background.position.x = 6.25
             self.renderer:addElement(
@@ -99,6 +93,24 @@ do
                     }
                 )
             )
+            local i = 0
+            for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
+                local name = ____value[1]
+                local progNameNice = ____value[2]
+                self.renderer:addElement(
+                    name,
+                    __TS__New(
+                        gui.Button,
+                        {
+                            position = create2d(0, 6 + i * 2.5),
+                            size = create2d(6.25, 1),
+                            name = name,
+                            label = progNameNice
+                        }
+                    )
+                )
+                i = i + 1
+            end
         end
         self.startMenuOpened = not self.startMenuOpened
         self.startMenuFlag = false
