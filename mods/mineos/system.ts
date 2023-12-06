@@ -77,19 +77,19 @@ namespace mineos {
 
     doBoot(delta: number): void {
       if (this.bootProcess == 0) {
-        if (this.currentProgramName != "biosProcedure") {
-          this.changeProgram("biosProcedure")
+        if (this.currentProgramName != "BiosProcedure") {
+          this.changeProgram("BiosProcedure")
         }
         if (this.currentProgram?.iMem == 1) {
-          this.changeProgram("bootProcedure")
+          this.changeProgram("BootProcedure")
           this.bootProcess++
         }
       } else if (this.bootProcess == 1){
-        if (this.currentProgramName != "bootProcedure") {
-          this.changeProgram("bootProcedure")
+        if (this.currentProgramName != "BootProcedure") {
+          this.changeProgram("BootProcedure")
         }
         if (this.currentProgram?.iMem == 1) {
-          this.changeProgram("runProcedure")
+          this.changeProgram("RunProcedure")
         }
       }
       this.currentProgram?.main(delta)

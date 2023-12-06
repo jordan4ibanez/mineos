@@ -197,21 +197,21 @@ do
     end
     function System.prototype.doBoot(self, delta)
         if self.bootProcess == 0 then
-            if self.currentProgramName ~= "biosProcedure" then
-                self:changeProgram("biosProcedure")
+            if self.currentProgramName ~= "BiosProcedure" then
+                self:changeProgram("BiosProcedure")
             end
             local ____opt_0 = self.currentProgram
             if (____opt_0 and ____opt_0.iMem) == 1 then
-                self:changeProgram("bootProcedure")
+                self:changeProgram("BootProcedure")
                 self.bootProcess = self.bootProcess + 1
             end
         elseif self.bootProcess == 1 then
-            if self.currentProgramName ~= "bootProcedure" then
-                self:changeProgram("bootProcedure")
+            if self.currentProgramName ~= "BootProcedure" then
+                self:changeProgram("BootProcedure")
             end
             local ____opt_2 = self.currentProgram
             if (____opt_2 and ____opt_2.iMem) == 1 then
-                self:changeProgram("runProcedure")
+                self:changeProgram("RunProcedure")
             end
         end
         local ____opt_4 = self.currentProgram
