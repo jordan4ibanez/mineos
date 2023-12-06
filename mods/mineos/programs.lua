@@ -280,6 +280,7 @@ do
         if self.timer > self.impatience then
             self.iMem = 1
             self.renderer:clearMemory()
+            return
         end
         if self.colorAmount < 1 then
             self.colorAmount = self.colorAmount + delta * self.colorFadeMultiplier
@@ -339,5 +340,12 @@ do
         end
     end
     mineos.System:registerProgram(BootProcedure)
+    local RunProcedure = __TS__Class()
+    RunProcedure.name = "RunProcedure"
+    __TS__ClassExtends(RunProcedure, mineos.Program)
+    function RunProcedure.prototype.main(self, delta)
+        print("main loop blah blah blah")
+    end
+    mineos.System:registerProgram(RunProcedure)
     print("programs loaded!")
 end

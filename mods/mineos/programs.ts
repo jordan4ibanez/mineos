@@ -28,9 +28,9 @@ namespace mineos {
     timer = 0
     stateTimer = 0
     state = 0
-    increments = 0.5 // 0.1 for ultra fast boot
+    increments = 0.5 // 0.1 for ultra fast boot normal: 0.5
     memoryCounter = 0
-    impatience = 1 // 10+ to do ultra fast memcheck
+    impatience = 1 // 10+ to do ultra fast memcheck normal 1: 
     main(delta: number): void {
       if (this.timer == 0) {
         print("bios started")
@@ -128,13 +128,13 @@ namespace mineos {
     }
   }
 
-  mineos.System.registerProgram(BiosProcedure)
+  System.registerProgram(BiosProcedure)
 
   class BootProcedure extends Program {
     timer = 0
     colorAmount = 0
     color = vector.create(0,0,0)
-    impatience = 8  // 3 for ultra fast boot
+    impatience = 8  // 3 for ultra fast boot normal: 8
     hit = false
     colorFadeMultiplier = 0.75
     dots = 0
@@ -147,6 +147,7 @@ namespace mineos {
       if (this.timer > this.impatience) {
         this.iMem = 1
         this.renderer.clearMemory()
+        return
       }
 
       if (this.colorAmount < 1) {
@@ -190,7 +191,16 @@ namespace mineos {
     }
   }
 
-  mineos.System.registerProgram(BootProcedure)
+  System.registerProgram(BootProcedure)
+
+  class RunProcedure extends Program {
+    main(delta: number): void {
+
+      print("main loop blah blah blah")
+    }
+  }
+
+  System.registerProgram(RunProcedure)
 
   print("programs loaded!");
 }

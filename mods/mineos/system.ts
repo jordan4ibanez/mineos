@@ -17,7 +17,7 @@ namespace mineos {
 
     skipToDesktopHackjob = false
 
-    booting = !this.skipToDesktopHackjob
+    booting = true
     bootProcess = 0
     running = false
     quitReceived = false
@@ -65,6 +65,13 @@ namespace mineos {
     }
 
     triggerBoot(): void {
+      if (this.skipToDesktopHackjob) {
+        print("HACK: SKIPPED BOOT PROCEDURE!")
+        this.booting = false
+        this.running = true
+        this.changeProgram("RunProcedure")
+        return
+      }
       this.booting = true
       this.running = true
       //! Note: this can be used to fade the hard drive sound when you shut off the computer.
@@ -89,10 +96,18 @@ namespace mineos {
           this.changeProgram("BootProcedure")
         }
         if (this.currentProgram?.iMem == 1) {
-          this.changeProgram("RunProcedure")
+          this.finishBoot()
+          print("in main")
+          return
         }
       }
       this.currentProgram?.main(delta)
+    }
+
+    finishBoot() {
+      this.bootProcess = 2
+      this.booting = false
+      this.changeProgram("RunProcedure")
     }
 
     changeProgram(newProgramName: string): void {
@@ -102,6 +117,11 @@ namespace mineos {
 
     doRun(delta: number): void {
       print("system running.")
+      if (this.currentProgram == null) {
+        print("ERROR: NO CURRENT PROGRAM.")
+        return
+      }
+      this.currentProgram.main(delta)
     }
 
     sendQuitSignal(): void {

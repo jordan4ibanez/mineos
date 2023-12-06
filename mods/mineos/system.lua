@@ -147,7 +147,7 @@ do
         self.renderer = __TS__New(mineos.Renderer, self)
         self.audioController = __TS__New(mineos.AudioController, self)
         self.skipToDesktopHackjob = false
-        self.booting = not self.skipToDesktopHackjob
+        self.booting = true
         self.bootProcess = 0
         self.running = false
         self.quitReceived = false
@@ -188,6 +188,13 @@ do
         end
     end
     function System.prototype.triggerBoot(self)
+        if self.skipToDesktopHackjob then
+            print("HACK: SKIPPED BOOT PROCEDURE!")
+            self.booting = false
+            self.running = true
+            self:changeProgram("RunProcedure")
+            return
+        end
         self.booting = true
         self.running = true
         self.audioController:playSound("caseButton", 1)
@@ -211,7 +218,9 @@ do
             end
             local ____opt_2 = self.currentProgram
             if (____opt_2 and ____opt_2.iMem) == 1 then
-                self:changeProgram("RunProcedure")
+                self:finishBoot()
+                print("in main")
+                return
             end
         end
         local ____opt_4 = self.currentProgram
@@ -219,12 +228,22 @@ do
             ____opt_4:main(delta)
         end
     end
+    function System.prototype.finishBoot(self)
+        self.bootProcess = 2
+        self.booting = false
+        self:changeProgram("RunProcedure")
+    end
     function System.prototype.changeProgram(self, newProgramName)
         self.currentProgramName = newProgramName
         self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer, self.audioController)
     end
     function System.prototype.doRun(self, delta)
         print("system running.")
+        if self.currentProgram == nil then
+            print("ERROR: NO CURRENT PROGRAM.")
+            return
+        end
+        self.currentProgram:main(delta)
     end
     function System.prototype.sendQuitSignal(self)
         print("quit signal received.")
