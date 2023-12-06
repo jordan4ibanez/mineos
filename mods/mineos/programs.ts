@@ -194,7 +194,16 @@ namespace mineos {
   System.registerProgram(BootProcedure)
 
   class RunProcedure extends Program {
+    loadedDesktop = false
+
+    loadDesktop(): void {
+
+    }
+
     main(delta: number): void {
+      if (!this.loadedDesktop) {
+        this.loadDesktop()
+      }
 
       print("main loop blah blah blah")
     }
