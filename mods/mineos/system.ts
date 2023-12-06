@@ -14,6 +14,9 @@ namespace mineos {
     static println(...anything: any): void {
       print(...anything)
     }
+    static dump(...anything: any): void {
+      print(dump(anything))
+    }
   }
 
   export class System {
@@ -33,7 +36,7 @@ namespace mineos {
 
     programs: {[id: string] : typeof Program} = {}
 
-    callbacks: {[id: string]: (fields: {[id: string] : any}) => void} = {}
+    callbacks: {[id: string]: (fields: any) => void} = {}
 
     currentProgram: Program | null = null
     currentProgramName = ""
@@ -59,14 +62,16 @@ namespace mineos {
       return osKeyboardPoll(keyName)
     }
 
-    registerCallback(name: string, callback: (fields: {[id: string] : any}) => void): void {
+    registerCallback(name: string, callback: (fields: any) => void): void {
       this.callbacks[name] = callback
     }
 
-    triggerCallbacks(name: string, fields: {[id: string] : any}): void {
-      const pulledCallback = this.callbacks[name]
-      if (pulledCallback == null) return
-      pulledCallback(fields);
+    triggerCallbacks(fields: {[id: string] : any}): void {
+      for (const [name, thing] of Object.entries(fields)) {
+        const pulledCallback = this.callbacks[name]
+        if (pulledCallback == null) return
+        pulledCallback(thing);
+      }
     }
 
     receivePrograms() {
@@ -100,7 +105,12 @@ namespace mineos {
       this.audioController.playSound("hardDrive", 0.5, 0.2)
       System.out.println("power button pushed.")
       System.out.println("starting computer.")
+    }
 
+    clearCallbacks() {
+      for (const [name,_] of Object.entries(this.callbacks)) {
+        delete this.callbacks[name]
+      }
     }
 
     doBoot(delta: number): void {
@@ -135,7 +145,7 @@ namespace mineos {
     }
 
     doRun(delta: number): void {
-      System.out.println("system running.")
+      // System.out.println("system running.")
       if (this.currentProgram == null) {
         System.out.println("ERROR: NO CURRENT PROGRAM.")
         return

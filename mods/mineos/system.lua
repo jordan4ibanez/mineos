@@ -126,6 +126,44 @@ do
     TypeError = createErrorClass(nil, "TypeError")
     URIError = createErrorClass(nil, "URIError")
 end
+
+local function __TS__ObjectEntries(obj)
+    local result = {}
+    local len = 0
+    for key in pairs(obj) do
+        len = len + 1
+        result[len] = {key, obj[key]}
+    end
+    return result
+end
+
+local function __TS__ObjectGetOwnPropertyDescriptors(object)
+    local metatable = getmetatable(object)
+    if not metatable then
+        return {}
+    end
+    return rawget(metatable, "_descriptors") or ({})
+end
+
+local function __TS__Delete(target, key)
+    local descriptors = __TS__ObjectGetOwnPropertyDescriptors(target)
+    local descriptor = descriptors[key]
+    if descriptor then
+        if not descriptor.configurable then
+            error(
+                __TS__New(
+                    TypeError,
+                    ((("Cannot delete property " .. tostring(key)) .. " of ") .. tostring(target)) .. "."
+                ),
+                0
+            )
+        end
+        descriptors[key] = nil
+        return true
+    end
+    target[key] = nil
+    return true
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -147,6 +185,10 @@ do
     function Printer.println(self, ...)
         print(...)
     end
+    function Printer.dump(self, ...)
+        local anything = {...}
+        print(dump(anything))
+    end
     mineos.System = __TS__Class()
     local System = mineos.System
     System.name = "System"
@@ -159,6 +201,7 @@ do
         self.running = false
         self.quitReceived = false
         self.programs = {}
+        self.callbacks = {}
         self.currentProgram = nil
         self.currentProgramName = ""
         self.mousePos = vector.create2d(0, 0)
@@ -179,6 +222,20 @@ do
     end
     function System.prototype.isKeyDown(self, keyName)
         return mineos.osKeyboardPoll(keyName)
+    end
+    function System.prototype.registerCallback(self, name, callback)
+        self.callbacks[name] = callback
+    end
+    function System.prototype.triggerCallbacks(self, fields)
+        for ____, ____value in ipairs(__TS__ObjectEntries(fields)) do
+            local name = ____value[1]
+            local thing = ____value[2]
+            local pulledCallback = self.callbacks[name]
+            if pulledCallback == nil then
+                return
+            end
+            pulledCallback(thing)
+        end
     end
     function System.prototype.receivePrograms(self)
         while #registrationQueue > 0 do
@@ -208,6 +265,13 @@ do
         self.audioController:playSound("hardDrive", 0.5, 0.2)
         mineos.System.out:println("power button pushed.")
         mineos.System.out:println("starting computer.")
+    end
+    function System.prototype.clearCallbacks(self)
+        for ____, ____value in ipairs(__TS__ObjectEntries(self.callbacks)) do
+            local name = ____value[1]
+            local _ = ____value[2]
+            __TS__Delete(self.callbacks, name)
+        end
     end
     function System.prototype.doBoot(self, delta)
         if self.bootProcess == 0 then
@@ -243,7 +307,6 @@ do
         self.currentProgram = __TS__New(self.programs[newProgramName], self, self.renderer, self.audioController)
     end
     function System.prototype.doRun(self, delta)
-        mineos.System.out:println("system running.")
         if self.currentProgram == nil then
             mineos.System.out:println("ERROR: NO CURRENT PROGRAM.")
             return
