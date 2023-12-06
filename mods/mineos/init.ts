@@ -8,7 +8,7 @@ namespace mineos {
     "renderer",
     "audio",
     "system",
-    "programs",
+    "programs/programs",
     /*hacks depends on renderer*/
     "hacks",
   ])

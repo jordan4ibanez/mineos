@@ -17,7 +17,7 @@ do
         "renderer",
         "audio",
         "system",
-        "programs",
+        "programs/programs",
         "hacks"
     })
     local system = __TS__New(mineos.System)
