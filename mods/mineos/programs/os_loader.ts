@@ -16,7 +16,6 @@ namespace mineos {
 
       if (this.timer > this.impatience) {
         this.iMem = 1
-        this.renderer.clearMemory()
         return
       }
 

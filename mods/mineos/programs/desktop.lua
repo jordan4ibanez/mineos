@@ -59,6 +59,7 @@ do
         local system = mineos.getSystem()
         local currProg = system.currentProgram
         currProg.startMenuFlag = true
+        system.audioController:playSound("mouseClick", 1)
     end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
@@ -72,6 +73,7 @@ do
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
+            self.renderer:setClearColor(0, 0, 0)
             for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
                 local name = ____value[1]
                 local progNameNice = ____value[2]
@@ -81,6 +83,7 @@ do
             background.position.x = 0
             self.renderer:removeComponent("backgroundDuctTape")
         else
+            self.renderer:setClearColor(48, 48, 48)
             local background = self.renderer:getElement("background")
             background.position.x = 6.25
             self.renderer:addElement(
@@ -90,7 +93,7 @@ do
                     {
                         position = create2d(0, 0),
                         size = create2d(6.25, 5.5),
-                        color = colorRGB(1, 130, 129)
+                        color = colorRGB(1, 130, 129, 255)
                     }
                 )
             )
@@ -116,6 +119,7 @@ do
                         local system = mineos.getSystem()
                         system:clearCallbacks()
                         system.renderer:clearMemory()
+                        system.audioController:playSound("mouseClick", 1)
                         system:changeProgram(name)
                     end
                 )
@@ -128,7 +132,9 @@ do
     end
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
+        self.audioController:playSound("osStartup", 0.9)
         self.system:clearCallbacks()
+        self.renderer:clearMemory()
         self.renderer:setClearColor(0, 0, 0)
         self.renderer:addElement(
             "background",
@@ -137,18 +143,19 @@ do
                 {
                     position = create2d(0, 0),
                     size = create2d(4000, 15.5),
-                    color = colorRGB(1, 130, 129)
+                    color = colorRGB(1, 130, 129, 255)
                 }
             )
         )
+        print("adding menu bar")
         self.renderer:addElement(
             "menuBar",
             __TS__New(
                 gui.Box,
                 {
-                    position = create2d(2, self.renderer.frameBufferScale.y * 15.5),
+                    position = create2d(2, 15.5),
                     size = create2d(4000, 1),
-                    color = colorScalar(70)
+                    color = colorScalar(50, 100)
                 }
             )
         )

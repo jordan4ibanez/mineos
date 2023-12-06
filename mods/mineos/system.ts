@@ -26,7 +26,7 @@ namespace mineos {
     // Literally a JVM feature LMAO
     static out = Printer
 
-    skipToDesktopHackjob = true
+    skipToDesktopHackjob = false
 
     booting = true
     bootProcess = 0

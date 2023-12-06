@@ -59,7 +59,6 @@ do
         self.timer = self.timer + delta
         if self.timer > self.impatience then
             self.iMem = 1
-            self.renderer:clearMemory()
             return
         end
         if self.colorAmount < 1 then

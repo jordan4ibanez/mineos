@@ -12,6 +12,7 @@ namespace mineos {
     const system = getSystem()
     const currProg = system.currentProgram as RunProcedure
     currProg.startMenuFlag = true
+    system.audioController.playSound("mouseClick", 1)
   }
 
   class RunProcedure extends Program {
@@ -34,6 +35,8 @@ namespace mineos {
     toggleStartMenu(): void {
       if (this.startMenuOpened) {
 
+        this.renderer.setClearColor(0,0,0)
+
         // Now rip off the duct tape
         for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
           this.renderer.removeComponent(name)
@@ -47,6 +50,8 @@ namespace mineos {
         this.renderer.removeComponent("backgroundDuctTape")
 
       } else {
+
+        this.renderer.setClearColor(48,48,48)
 
         // Causes things to randomly overlap
         // this.renderer.addElement("startMenuBackground", new gui.Box({
@@ -62,7 +67,7 @@ namespace mineos {
         this.renderer.addElement("backgroundDuctTape", new gui.Box({
           position: create2d(0,0),
           size: create2d(6.25,5.5),
-          color: colorRGB(1,130,129)
+          color: colorRGB(1,130,129,255)
         }))
 
         // Now duct tape on the buttons that randomly won't be clickable
@@ -78,6 +83,7 @@ namespace mineos {
             const system = getSystem()
             system.clearCallbacks()
             system.renderer.clearMemory()
+            system.audioController.playSound("mouseClick", 1)
             system.changeProgram(name)
           });
 
@@ -95,20 +101,24 @@ namespace mineos {
     loadDesktop(): void {
       System.out.println("loading desktop environment")
 
+      this.audioController.playSound("osStartup", 0.9)
+
       this.system.clearCallbacks()
+      this.renderer.clearMemory()
 
       this.renderer.setClearColor(0,0,0)
 
       this.renderer.addElement("background", new gui.Box({
         position: create2d(0,0),
         size: create2d(4000, 15.5),
-        color: colorRGB(1,130,129)
+        color: colorRGB(1,130,129,255)
       }))
       
+      print("adding menu bar")
       this.renderer.addElement("menuBar", new gui.Box({
-        position: create2d(2,this.renderer.frameBufferScale.y * 15.5),
+        position: create2d(2,15.5),
         size: create2d(4000,1),
-        color: colorScalar(70)
+        color: colorScalar(50,100)
       }))
 
       this.renderer.addElement("startButton", new gui.Button({
