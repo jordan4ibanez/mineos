@@ -409,7 +409,6 @@ do
         if not self.loaded then
             self:load()
         end
-        self.audioController:update(delta)
     end
     mineos.System:registerProgram(BitsBattle)
 end
