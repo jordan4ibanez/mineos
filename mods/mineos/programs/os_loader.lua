@@ -30,12 +30,6 @@ local function __TS__ClassExtends(target, base)
         target.prototype.__tostring = base.prototype.__tostring
     end
 end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -72,49 +66,7 @@ do
                 self.hit = true
                 mineos.System.out:println("added logo")
                 local centerX = self.renderer.frameBufferScale.x / 2
-                self.renderer:addElement(
-                    "mineosLogo",
-                    __TS__New(
-                        gui.Image,
-                        {
-                            position = vector.create2d(centerX - 4, 0.9),
-                            size = vector.create2d(8, 8),
-                            texture = "minetest.png"
-                        }
-                    )
-                )
-                self.renderer:addElement(
-                    "mineosLoading",
-                    __TS__New(
-                        gui.Label,
-                        {
-                            position = vector.create2d(centerX - 1.7, 10),
-                            label = mineos.colorize(
-                                colors.colorScalar(100),
-                                "loading mineos"
-                            )
-                        }
-                    )
-                )
             else
-                local loadingThing = self.renderer.getElement("mineosLoading")
-                self.dotsAccum = self.dotsAccum + delta
-                if self.dotsAccum >= 0.25 then
-                    self.dots = self.dots + 1
-                    if self.dots > 3 then
-                        self.dots = 0
-                    end
-                    self.dotsAccum = self.dotsAccum - 0.25
-                end
-                local textAccum = "loading mineos"
-                do
-                    local i = 0
-                    while i < self.dots do
-                        textAccum = textAccum .. "."
-                        i = i + 1
-                    end
-                end
-                loadingThing.label = textAccum
             end
         end
     end

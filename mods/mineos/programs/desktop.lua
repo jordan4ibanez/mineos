@@ -40,12 +40,6 @@ local function __TS__ObjectEntries(obj)
     end
     return result
 end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -79,51 +73,13 @@ do
                 local progNameNice = ____value[2]
                 self.renderer:removeComponent(name)
             end
-            local background = self.renderer.getElement("background")
-            background.position.x = 0
             self.renderer:removeComponent("backgroundDuctTape")
         else
             self.renderer:setClearColor(48, 48, 48)
-            local background = self.renderer.getElement("background")
-            background.position.x = 6.25
-            self.renderer:addElement(
-                "backgroundDuctTape",
-                __TS__New(
-                    gui.Box,
-                    {
-                        position = create2d(0, 0),
-                        size = create2d(6.25, 5.5),
-                        color = colorRGB(1, 130, 129, 255)
-                    }
-                )
-            )
             local i = 0
             for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
                 local name = ____value[1]
                 local progNameNice = ____value[2]
-                self.renderer:addElement(
-                    name,
-                    __TS__New(
-                        gui.Button,
-                        {
-                            position = create2d(0, 6 + i * 2.5),
-                            size = create2d(6.25, 1),
-                            name = name,
-                            label = progNameNice
-                        }
-                    )
-                )
-                self.system:registerCallback(
-                    name,
-                    function()
-                        local system = mineos.getSystem()
-                        system:clearCallbacks()
-                        system.renderer:clearMemory()
-                        system.audioController:playSound("mouseClick", 1)
-                        print("launching: " .. name)
-                        system:changeProgram(name)
-                    end
-                )
                 i = i + 1
             end
         end
@@ -137,41 +93,6 @@ do
         self.system:clearCallbacks()
         self.renderer:clearMemory()
         self.renderer:setClearColor(0, 0, 0)
-        self.renderer:addElement(
-            "background",
-            __TS__New(
-                gui.Box,
-                {
-                    position = create2d(0, 0),
-                    size = create2d(4000, 15.5),
-                    color = colorRGB(1, 130, 129, 255)
-                }
-            )
-        )
-        print("adding menu bar")
-        self.renderer:addElement(
-            "menuBar",
-            __TS__New(
-                gui.Box,
-                {
-                    position = create2d(2, 15.5),
-                    size = create2d(4000, 1),
-                    color = colorScalar(50, 100)
-                }
-            )
-        )
-        self.renderer:addElement(
-            "startButton",
-            __TS__New(
-                gui.Button,
-                {
-                    position = create2d(0, 15.5),
-                    size = create2d(2, 1),
-                    name = "startButton",
-                    label = "Start"
-                }
-            )
-        )
         self.system:registerCallback("startButton", sendStartMenuSignal)
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")

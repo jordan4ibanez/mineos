@@ -323,7 +323,6 @@ do
         self.renderer.frameBufferScale = input[2]
     end
     function System.prototype.doRender(self, delta)
-        self.renderer.draw()
     end
     function System.prototype.getFrameBuffer(self)
         return self.renderer.buffer

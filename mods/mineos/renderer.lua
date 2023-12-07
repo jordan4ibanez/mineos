@@ -9,13 +9,6 @@ end
 mineos = mineos or ({})
 do
     local create = vector.create2d
-    local generate = gui.generate
-    local FormSpec = gui.FormSpec
-    local BackGround = gui.Background
-    local BGColor = gui.BGColor
-    local List = gui.List
-    local ListColors = gui.ListColors
-    local ListRing = gui.ListRing
     mineos.Renderer = __TS__Class()
     local Renderer = mineos.Renderer
     Renderer.name = "Renderer"
@@ -38,11 +31,6 @@ do
         self.clearColor.y = g
         self.clearColor.z = b
         self:internalUpdateClearColor()
-    end
-    function Renderer.prototype.getBuffer(self)
-        return self.buffer
-    end
-    function Renderer.prototype.addElement(self, name, element)
     end
     print("renderer loaded.")
 end

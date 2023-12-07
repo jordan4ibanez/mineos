@@ -354,54 +354,6 @@ do
             2
         }
         mineos.AudioController:registerSong(bitsTheme)
-        self.renderer:addElement(
-            "left",
-            __TS__New(
-                gui.Button,
-                {
-                    position = create(25, 10),
-                    size = create(1, 1),
-                    name = "left",
-                    label = "left"
-                }
-            )
-        )
-        self.renderer:addElement(
-            "down",
-            __TS__New(
-                gui.Button,
-                {
-                    position = create(26, 10),
-                    size = create(1, 1),
-                    name = "down",
-                    label = "down"
-                }
-            )
-        )
-        self.renderer:addElement(
-            "right",
-            __TS__New(
-                gui.Button,
-                {
-                    position = create(27, 10),
-                    size = create(1, 1),
-                    name = "right",
-                    label = "right"
-                }
-            )
-        )
-        self.renderer:addElement(
-            "up",
-            __TS__New(
-                gui.Button,
-                {
-                    position = create(26, 9),
-                    size = create(1, 1),
-                    name = "up",
-                    label = "up"
-                }
-            )
-        )
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end

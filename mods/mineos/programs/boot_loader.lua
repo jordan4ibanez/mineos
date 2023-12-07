@@ -30,12 +30,6 @@ local function __TS__ClassExtends(target, base)
         target.prototype.__tostring = base.prototype.__tostring
     end
 end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -64,100 +58,24 @@ do
                 if ____cond6 then
                     do
                         self.audioController:playSound("computerBeep", 1)
-                        self.renderer:addElement(
-                            "bioLogo",
-                            __TS__New(
-                                gui.Image,
-                                {
-                                    position = vector.create2d(0.5, 0.9),
-                                    size = vector.create2d(2, 2),
-                                    texture = "minetest.png"
-                                }
-                            )
-                        )
-                        self.renderer:addElement(
-                            "biosText",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(3, 2),
-                                    label = mineos.colorize(
-                                        colors.color(100, 0, 0),
-                                        "Minetest Megablocks"
-                                    )
-                                }
-                            )
-                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 6
                 if ____cond6 then
                     do
-                        self.renderer:addElement(
-                            "cpuDetection",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(0.5, 5),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "Detecting cpu..."
-                                    )
-                                }
-                            )
-                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 8
                 if ____cond6 then
                     do
-                        self.renderer:addElement(
-                            "cpuDetectionPass",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(3.5, 5),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "MineRyzen 1300W detected."
-                                    )
-                                }
-                            )
-                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 9
                 if ____cond6 then
                     do
-                        self.renderer:addElement(
-                            "memCheck",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(0.5, 7),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "Total Memory:"
-                                    )
-                                }
-                            )
-                        )
-                        self.renderer:addElement(
-                            "memCheckProgress",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(3.2, 7),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "0 KB"
-                                    )
-                                }
-                            )
-                        )
                         self.stateTimer = 10
                         break
                     end
@@ -166,11 +84,8 @@ do
                 if ____cond6 then
                     do
                         self.stateTimer = 10
-                        local memCheck = self.renderer.getElement("memCheckProgress")
                         self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10)) * self.impatience
-                        memCheck.label = tostring(self.memoryCounter) .. " KB"
                         if self.memoryCounter >= 4096 then
-                            memCheck.label = tostring(4096) .. " KB"
                             self.stateTimer = 0
                             self.state = self.state + 1
                         end
@@ -180,57 +95,18 @@ do
                 ____cond6 = ____cond6 or ____switch6 == 11
                 if ____cond6 then
                     do
-                        self.renderer:addElement(
-                            "blockCheck",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(0.5, 9),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "Checking nodes..."
-                                    )
-                                }
-                            )
-                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 13
                 if ____cond6 then
                     do
-                        self.renderer:addElement(
-                            "blockCheckPassed",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(3.9, 9),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "passed."
-                                    )
-                                }
-                            )
-                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 15
                 if ____cond6 then
                     do
-                        self.renderer:addElement(
-                            "allPassed",
-                            __TS__New(
-                                gui.Label,
-                                {
-                                    position = vector.create2d(0.5, 11),
-                                    label = mineos.colorize(
-                                        colors.colorScalar(100),
-                                        "All system checks passed."
-                                    )
-                                }
-                            )
-                        )
                         break
                     end
                 end
