@@ -26,7 +26,7 @@ namespace mineos {
     // Literally a JVM feature LMAO
     static out = Printer
 
-    skipToDesktopHackjob = false
+    skipToDesktopHackjob = true
 
     booting = true
     bootProcess = 0
@@ -95,7 +95,10 @@ namespace mineos {
         System.out.println("HACK: SKIPPED BOOT PROCEDURE!")
         this.booting = false
         this.running = true
-        this.changeProgram("RunProcedure")
+        // this.changeProgram("RunProcedure")
+        //! Testing games
+        this.changeProgram("BitsBattle")
+
         return
       }
       this.booting = true

@@ -23,13 +23,13 @@ namespace mineos {
 
     menuComponents: {[id: string] : string} = {
       // Chip's Challenge
-      "bitsBattle": "Bit's Battle",
+      "BitsBattle": "Bit's Battle",
       // Jezzball
-      "fezSphere": "Fez Sphere",
+      // "FezSphere": "Fez Sphere",
       // Pong
-      "gong": "Gong 96",
+      // "Gong": "Gong 96",
       // Ski Free
-      "sledQuickly": "Sled Liberty"
+      // "SledQuickly": "Sled Liberty"
     }
 
     toggleStartMenu(): void {
@@ -84,6 +84,7 @@ namespace mineos {
             system.clearCallbacks()
             system.renderer.clearMemory()
             system.audioController.playSound("mouseClick", 1)
+            print("launching: " + name)
             system.changeProgram(name)
           });
 

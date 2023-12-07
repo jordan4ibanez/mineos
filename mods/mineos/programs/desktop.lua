@@ -69,7 +69,7 @@ do
         self.desktopLoaded = false
         self.startMenuFlag = false
         self.startMenuOpened = false
-        self.menuComponents = {bitsBattle = "Bit's Battle", fezSphere = "Fez Sphere", gong = "Gong 96", sledQuickly = "Sled Liberty"}
+        self.menuComponents = {BitsBattle = "Bit's Battle"}
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -120,6 +120,7 @@ do
                         system:clearCallbacks()
                         system.renderer:clearMemory()
                         system.audioController:playSound("mouseClick", 1)
+                        print("launching: " .. name)
                         system:changeProgram(name)
                     end
                 )

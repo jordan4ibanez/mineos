@@ -19,6 +19,6 @@ do
     end
     function Program.prototype.main(self, delta)
     end
-    mineos.loadFiles({"programs/boot_loader", "programs/os_loader", "programs/desktop"})
+    mineos.loadFiles({"programs/boot_loader", "programs/os_loader", "programs/desktop", "programs/bitsBattle"})
     mineos.System.out:println("programs loaded!")
 end
