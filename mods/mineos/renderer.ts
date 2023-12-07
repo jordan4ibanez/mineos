@@ -49,13 +49,13 @@ namespace mineos {
       this.internalUpdateClearColor()
     }
 
-    getBuffer(): string {
-      return this.buffer
-    }
+    // getBuffer(): string {
+    //   return this.buffer
+    // }
 
-    addElement(name: string, element: gui.Element) {
+    // addElement(name: string, element: gui.Element) {
       // this.memory[name] = element
-    }
+    // }
 
     // getElement(name: string): gui.Element {
       // return this.memory[name]
