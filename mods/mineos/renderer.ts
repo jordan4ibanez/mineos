@@ -1,14 +1,6 @@
 namespace mineos {
   const create = vector.create2d
 
-  const generate = gui.generate
-  const FormSpec = gui.FormSpec
-  const BackGround = gui.Background
-  const BGColor = gui.BGColor
-  const List = gui.List
-  const ListColors = gui.ListColors
-  const ListRing = gui.ListRing
-
   export class Renderer {
   
     buffer = ""
