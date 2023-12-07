@@ -103,7 +103,7 @@ namespace mineos {
         this.accumulator -= goalTimer
         // Play notes
         for (const [instrument, data] of Object.entries(this.currentSong.data)) {
-          print("playing " + instrument + " note " + this.currentNote)
+          // print("playing " + instrument + " note " + this.currentNote)
           this.playNote(instrument, data[this.currentNote])
         }
 
