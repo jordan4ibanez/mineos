@@ -168,7 +168,7 @@ namespace mineos {
     }
 
     doRender(delta: number): void {
-      this.renderer.draw()
+      // this.renderer.draw()
       // System.out.println("rendering")
     }
 

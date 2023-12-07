@@ -97,7 +97,7 @@ do
                     )
                 )
             else
-                local loadingThing = self.renderer:getElement("mineosLoading")
+                local loadingThing = self.renderer.getElement("mineosLoading")
                 self.dotsAccum = self.dotsAccum + delta
                 if self.dotsAccum >= 0.25 then
                     self.dots = self.dots + 1

@@ -79,12 +79,12 @@ do
                 local progNameNice = ____value[2]
                 self.renderer:removeComponent(name)
             end
-            local background = self.renderer:getElement("background")
+            local background = self.renderer.getElement("background")
             background.position.x = 0
             self.renderer:removeComponent("backgroundDuctTape")
         else
             self.renderer:setClearColor(48, 48, 48)
-            local background = self.renderer:getElement("background")
+            local background = self.renderer.getElement("background")
             background.position.x = 6.25
             self.renderer:addElement(
                 "backgroundDuctTape",

@@ -166,7 +166,7 @@ do
                 if ____cond6 then
                     do
                         self.stateTimer = 10
-                        local memCheck = self.renderer:getElement("memCheckProgress")
+                        local memCheck = self.renderer.getElement("memCheckProgress")
                         self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10)) * self.impatience
                         memCheck.label = tostring(self.memoryCounter) .. " KB"
                         if self.memoryCounter >= 4096 then
