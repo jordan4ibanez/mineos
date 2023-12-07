@@ -242,7 +242,6 @@ do
             for ____, ____value in ipairs(__TS__ObjectEntries(self.currentSong.data)) do
                 local instrument = ____value[1]
                 local data = ____value[2]
-                print((("playing " .. instrument) .. " note ") .. tostring(self.currentNote))
                 self:playNote(instrument, data[self.currentNote + 1])
             end
             self.currentNote = self.currentNote + 1

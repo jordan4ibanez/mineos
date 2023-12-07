@@ -39,12 +39,23 @@ end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
+    local create = vector.create2d
     local BitsBattle = __TS__Class()
     BitsBattle.name = "BitsBattle"
     __TS__ClassExtends(BitsBattle, mineos.Program)
     function BitsBattle.prototype.____constructor(self, ...)
         BitsBattle.____super.prototype.____constructor(self, ...)
         self.loaded = false
+        self.map = {{
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        }}
     end
     function BitsBattle.prototype.load(self)
         mineos.System.out:println("Loading Bits' Battle!")
@@ -343,7 +354,54 @@ do
             2
         }
         mineos.AudioController:registerSong(bitsTheme)
-        self.audioController:playSong("bitsTheme")
+        self.renderer:addElement(
+            "left",
+            __TS__New(
+                gui.Button,
+                {
+                    position = create(25, 10),
+                    size = create(1, 1),
+                    name = "left",
+                    label = "left"
+                }
+            )
+        )
+        self.renderer:addElement(
+            "down",
+            __TS__New(
+                gui.Button,
+                {
+                    position = create(26, 10),
+                    size = create(1, 1),
+                    name = "down",
+                    label = "down"
+                }
+            )
+        )
+        self.renderer:addElement(
+            "right",
+            __TS__New(
+                gui.Button,
+                {
+                    position = create(27, 10),
+                    size = create(1, 1),
+                    name = "right",
+                    label = "right"
+                }
+            )
+        )
+        self.renderer:addElement(
+            "up",
+            __TS__New(
+                gui.Button,
+                {
+                    position = create(26, 9),
+                    size = create(1, 1),
+                    name = "up",
+                    label = "up"
+                }
+            )
+        )
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end
