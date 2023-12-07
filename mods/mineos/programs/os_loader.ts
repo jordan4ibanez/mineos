@@ -31,30 +31,30 @@ namespace mineos {
           this.hit = true
           System.out.println("added logo")
           const centerX = (this.renderer.frameBufferScale.x / 2)
-          this.renderer.addElement("mineosLogo", new gui.Image({
-            position: vector.create2d(centerX - 4,0.9),
-            size: vector.create2d(8,8),
-            texture: "minetest.png"
-          }))
-          this.renderer.addElement("mineosLoading", new gui.Label({
-            position: vector.create2d(centerX - 1.7,10),
-            label: colorize(colors.colorScalar(100), "loading mineos")
-          }))
+          // this.renderer.addElement("mineosLogo", new gui.Image({
+          //   position: vector.create2d(centerX - 4,0.9),
+          //   size: vector.create2d(8,8),
+          //   texture: "minetest.png"
+          // }))
+          // this.renderer.addElement("mineosLoading", new gui.Label({
+          //   position: vector.create2d(centerX - 1.7,10),
+          //   label: colorize(colors.colorScalar(100), "loading mineos")
+          // }))
         } else {
-          let loadingThing = this.renderer.getElement("mineosLoading") as gui.Label
-          this.dotsAccum += delta
-          if (this.dotsAccum >= 0.25) {
-            this.dots ++
-            if (this.dots > 3) {
-              this.dots = 0
-            }
-            this.dotsAccum -= 0.25
-          }
-          let textAccum = "loading mineos"
-          for (let i = 0; i < this.dots; i++) {
-            textAccum += "."
-          }
-          loadingThing.label = textAccum
+          // let loadingThing = this.renderer.getElement("mineosLoading") as gui.Label
+          // this.dotsAccum += delta
+          // if (this.dotsAccum >= 0.25) {
+          //   this.dots ++
+          //   if (this.dots > 3) {
+          //     this.dots = 0
+          //   }
+          //   this.dotsAccum -= 0.25
+          // }
+          // let textAccum = "loading mineos"
+          // for (let i = 0; i < this.dots; i++) {
+          //   textAccum += "."
+          // }
+          // loadingThing.label = textAccum
         }
       }
     }

@@ -43,8 +43,8 @@ namespace mineos {
         }
 
         // We have to shift the entire wallpaper back to the left
-        const background = this.renderer.getElement("background") as gui.Box
-        background.position.x = 0
+        // const background = this.renderer.getElement("background") as gui.Box
+        // background.position.x = 0
         // And remove this hack job
         // this.renderer.removeComponent("startMenuBackground")
         this.renderer.removeComponent("backgroundDuctTape")
@@ -61,32 +61,32 @@ namespace mineos {
         // }))
 
         // We have to shift the entire wallpaper to the right so it doesn't blend 
-        const background = this.renderer.getElement("background") as gui.Box
-        background.position.x = 6.25
+        // const background = this.renderer.getElement("background") as gui.Box
+        // background.position.x = 6.25
         // Then we gotta patch the space
-        this.renderer.addElement("backgroundDuctTape", new gui.Box({
-          position: create2d(0,0),
-          size: create2d(6.25,5.5),
-          color: colorRGB(1,130,129,255)
-        }))
+        // this.renderer.addElement("backgroundDuctTape", new gui.Box({
+        //   position: create2d(0,0),
+        //   size: create2d(6.25,5.5),
+        //   color: colorRGB(1,130,129,255)
+        // }))
 
         // Now duct tape on the buttons that randomly won't be clickable
         let i = 0
         for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
-          this.renderer.addElement(name, new gui.Button({
-            position: create2d(0,6 + (i * 2.5)),
-            size: create2d(6.25,1),
-            name: name,
-            label: progNameNice
-          }))
-          this.system.registerCallback(name, () => {
-            const system = getSystem()
-            system.clearCallbacks()
-            system.renderer.clearMemory()
-            system.audioController.playSound("mouseClick", 1)
-            print("launching: " + name)
-            system.changeProgram(name)
-          });
+          // this.renderer.addElement(name, new gui.Button({
+          //   position: create2d(0,6 + (i * 2.5)),
+          //   size: create2d(6.25,1),
+          //   name: name,
+          //   label: progNameNice
+          // }))
+          // this.system.registerCallback(name, () => {
+          //   const system = getSystem()
+          //   system.clearCallbacks()
+          //   system.renderer.clearMemory()
+          //   system.audioController.playSound("mouseClick", 1)
+          //   print("launching: " + name)
+          //   system.changeProgram(name)
+          // });
 
           i++
         }
@@ -109,25 +109,25 @@ namespace mineos {
 
       this.renderer.setClearColor(0,0,0)
 
-      this.renderer.addElement("background", new gui.Box({
-        position: create2d(0,0),
-        size: create2d(4000, 15.5),
-        color: colorRGB(1,130,129,255)
-      }))
+      // this.renderer.addElement("background", new gui.Box({
+      //   position: create2d(0,0),
+      //   size: create2d(4000, 15.5),
+      //   color: colorRGB(1,130,129,255)
+      // }))
       
-      print("adding menu bar")
-      this.renderer.addElement("menuBar", new gui.Box({
-        position: create2d(2,15.5),
-        size: create2d(4000,1),
-        color: colorScalar(50,100)
-      }))
+      // print("adding menu bar")
+      // this.renderer.addElement("menuBar", new gui.Box({
+      //   position: create2d(2,15.5),
+      //   size: create2d(4000,1),
+      //   color: colorScalar(50,100)
+      // }))
 
-      this.renderer.addElement("startButton", new gui.Button({
-        position: create2d(0,15.5),
-        size: create2d(2,1),
-        name: "startButton",
-        label: "Start"
-      }))
+      // this.renderer.addElement("startButton", new gui.Button({
+      //   position: create2d(0,15.5),
+      //   size: create2d(2,1),
+      //   name: "startButton",
+      //   label: "Start"
+      // }))
 
       this.system.registerCallback("startButton", sendStartMenuSignal);
 

@@ -50,33 +50,33 @@ namespace mineos {
 
       // this.audioController.playSong("bitsTheme")
 
-      this.renderer.addElement("left", new gui.Button({
-        position: create(25,10),
-        size: create(1,1),
-        name: "left",
-        label: "left"
-      }))
+      // this.renderer.addElement("left", new gui.Button({
+      //   position: create(25,10),
+      //   size: create(1,1),
+      //   name: "left",
+      //   label: "left"
+      // }))
 
-      this.renderer.addElement("down", new gui.Button({
-        position: create(26,10),
-        size: create(1,1),
-        name: "down",
-        label: "down"
-      }))
+      // this.renderer.addElement("down", new gui.Button({
+      //   position: create(26,10),
+      //   size: create(1,1),
+      //   name: "down",
+      //   label: "down"
+      // }))
 
-      this.renderer.addElement("right", new gui.Button({
-        position: create(27,10),
-        size: create(1,1),
-        name: "right",
-        label: "right"
-      }))
+      // this.renderer.addElement("right", new gui.Button({
+      //   position: create(27,10),
+      //   size: create(1,1),
+      //   name: "right",
+      //   label: "right"
+      // }))
 
-      this.renderer.addElement("up", new gui.Button({
-        position: create(26,9),
-        size: create(1,1),
-        name: "up",
-        label: "up"
-      }))
+      // this.renderer.addElement("up", new gui.Button({
+      //   position: create(26,9),
+      //   size: create(1,1),
+      //   name: "up",
+      //   label: "up"
+      // }))
 
 
 
