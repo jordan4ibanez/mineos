@@ -60,6 +60,11 @@ namespace mineos {
       this.driver = driver
     }
 
+    getDriver(): Driver {
+      if (this.driver == null) throw new Error("Attempted to get driver before available.")
+      return this.driver
+    }
+
     getAudioController(): AudioController {
       return this.audioController
     }

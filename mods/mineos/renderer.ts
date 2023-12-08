@@ -45,9 +45,10 @@ namespace mineos {
     //   return this.buffer
     // }
 
-    // addElement(name: string, element: gui.Element) {
+    addElement(name: string) {
+      this.system.driver
       // this.memory[name] = element
-    // }
+    }
 
     // getElement(name: string): gui.Element {
       // return this.memory[name]
