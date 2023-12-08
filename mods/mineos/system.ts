@@ -23,6 +23,8 @@ namespace mineos {
 
     renderer = new Renderer(this);
     audioController = new AudioController(this)
+    driver: Driver | null = null
+
     // Literally a JVM feature LMAO
     static out = Printer
 
@@ -52,6 +54,10 @@ namespace mineos {
 
     getRenderer(): Renderer {
       return this.renderer
+    }
+
+    setDriver(driver: Driver) {
+      this.driver = driver
     }
 
     getAudioController(): AudioController {

@@ -10,7 +10,6 @@ namespace mineos {
     frameBufferSize: Vec2 = create(0,0)
     frameBufferScale: number = 1
     system: System
-    driver: Driver | null = null
 
     constructor(system: System) {
       this.system = system
