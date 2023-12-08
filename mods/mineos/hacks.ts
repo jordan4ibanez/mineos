@@ -1,4 +1,8 @@
 namespace mineos {
+
+  // Oh yeah we're taking it that far
+  export type Driver = ObjectRef;
+
   minetest.register_on_joinplayer((player: ObjectRef) => {
     player.set_physics_override({
       gravity: 0
@@ -52,17 +56,17 @@ namespace mineos {
     minetest.register_on_player_receive_fields((_: ObjectRef, __: string, fields: {[id: string] : any}) => {
       getSystem().triggerCallbacks(fields)
     })
+
+
   })
 
-  export function osFrameBufferPoll(): LuaMultiReturn<[Vec2, Vec2]> {
+  export function osFrameBufferPoll(): LuaMultiReturn<[Vec2, number]> {
     let monitorInformation = minetest.get_player_window_information("singleplayer")
     if (monitorInformation == null) {
-      return $multi(vector.create2d(1,1), vector.create2d(1,1))
+      return $multi(vector.create2d(1,1), 1)
     }
-    
-    let scaling = monitorInformation.max_formspec_size
-    scaling.x *= 1.1
-    scaling.y *= 1.1
+
+    let scaling = monitorInformation.real_hud_scaling
     let size = monitorInformation.size
     return $multi(size, scaling)
   }

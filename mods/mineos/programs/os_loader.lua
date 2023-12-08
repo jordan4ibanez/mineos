@@ -65,7 +65,6 @@ do
             if not self.hit then
                 self.hit = true
                 mineos.System.out:println("added logo")
-                local centerX = self.renderer.frameBufferScale.x / 2
             else
             end
         end

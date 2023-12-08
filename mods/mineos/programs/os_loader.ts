@@ -30,7 +30,7 @@ namespace mineos {
         if (!this.hit) {
           this.hit = true
           System.out.println("added logo")
-          const centerX = (this.renderer.frameBufferScale.x / 2)
+          // const centerX = (this.renderer.frameBufferScale.x / 2)
           // this.renderer.addElement("mineosLogo", new gui.Image({
           //   position: vector.create2d(centerX - 4,0.9),
           //   size: vector.create2d(8,8),

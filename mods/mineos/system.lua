@@ -324,9 +324,6 @@ do
     end
     function System.prototype.doRender(self, delta)
     end
-    function System.prototype.getFrameBuffer(self)
-        return self.renderer.buffer
-    end
     function System.prototype.main(self, delta)
         if not self.running then
             return

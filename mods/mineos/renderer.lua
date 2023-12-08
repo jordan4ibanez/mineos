@@ -16,7 +16,7 @@ do
         self.clearColor = vector.create(0, 0, 0)
         self.shouldDraw = true
         self.frameBufferSize = create(0, 0)
-        self.frameBufferScale = create(0, 0)
+        self.frameBufferScale = 1
         self.system = system
     end
     function Renderer.prototype.clearMemory(self)
