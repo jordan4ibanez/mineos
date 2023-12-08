@@ -95,9 +95,10 @@ namespace mineos {
         System.out.println("HACK: SKIPPED BOOT PROCEDURE!")
         this.booting = false
         this.running = true
-        // this.changeProgram("RunProcedure")
+        //! Testing desktop
+        this.changeProgram("RunProcedure")
         //! Testing games
-        this.changeProgram("BitsBattle")
+        // this.changeProgram("BitsBattle")
 
         return
       }
@@ -170,10 +171,6 @@ namespace mineos {
     doRender(delta: number): void {
       // this.renderer.draw()
       // System.out.println("rendering")
-    }
-
-    getFrameBuffer(): string {
-      return this.renderer.buffer
     }
 
 

@@ -256,7 +256,7 @@ do
             mineos.System.out:println("HACK: SKIPPED BOOT PROCEDURE!")
             self.booting = false
             self.running = true
-            self:changeProgram("BitsBattle")
+            self:changeProgram("RunProcedure")
             return
         end
         self.booting = true

@@ -13,7 +13,6 @@ do
     local Renderer = mineos.Renderer
     Renderer.name = "Renderer"
     function Renderer.prototype.____constructor(self, system)
-        self.buffer = ""
         self.clearColor = vector.create(0, 0, 0)
         self.shouldDraw = true
         self.frameBufferSize = create(0, 0)

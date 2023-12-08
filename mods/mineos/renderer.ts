@@ -3,7 +3,7 @@ namespace mineos {
 
   export class Renderer {
   
-    buffer = ""
+    
     clearColor: Vec3 = vector.create(0,0,0)
     // memory: {[id: string] : gui.Element} = {}
     shouldDraw = true
