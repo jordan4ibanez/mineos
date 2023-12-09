@@ -161,7 +161,15 @@ namespace mineos {
   }
 
 
+  class StartMenu extends Program {
+
+
+  }
+
+
   class RunProcedure extends Program {
+
+    // So this is a bunch of programs inside of one program that work together. Like a normal DE.
 
     desktopLoaded = false
     startMenuFlag = false
@@ -172,6 +180,8 @@ namespace mineos {
     components: DesktopComponent[] = []
     focused = true
     icons: DesktopIcons
+
+    
 
     // currentFocus: Focus;
 
