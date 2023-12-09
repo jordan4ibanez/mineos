@@ -30,15 +30,11 @@ namespace mineos {
   class DesktopComponent {
     collisionBox: AABB
     onClick(desktop: DesktopEnvironment) {}
-    onNotClick(desktop: DesktopEnvironment) {}
     onHold(desktop: DesktopEnvironment) {}
-    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onHold: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onNotClick?: (this: DesktopComponent, desktop: DesktopEnvironment) => void) {
+    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onHold: (this: DesktopComponent, desktop: DesktopEnvironment) => void) {
       this.collisionBox = cbox
       this.onClick = onClick
       this.onHold = onHold
-      if (onNotClick) {
-        this.onNotClick = onNotClick
-      }
     }
   }
 
@@ -358,7 +354,6 @@ namespace mineos {
         ),
         () => {
           this.startMenu.trigger()
-          print("start!")
         },
         () => {}
       ))

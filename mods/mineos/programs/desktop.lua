@@ -67,12 +67,17 @@ do
     end
     local DesktopComponent = __TS__Class()
     DesktopComponent.name = "DesktopComponent"
-    function DesktopComponent.prototype.____constructor(self, cbox, onClick, onHold)
+    function DesktopComponent.prototype.____constructor(self, cbox, onClick, onHold, onNotClick)
         self.collisionBox = cbox
         self.onClick = onClick
         self.onHold = onHold
+        if onNotClick then
+            self.onNotClick = onNotClick
+        end
     end
     function DesktopComponent.prototype.onClick(self, desktop)
+    end
+    function DesktopComponent.prototype.onNotClick(self, desktop)
     end
     function DesktopComponent.prototype.onHold(self, desktop)
     end
@@ -377,9 +382,14 @@ do
             ),
             function()
                 self.startMenu:trigger()
-                print("start!")
             end,
             function()
+            end,
+            function(____, desktop)
+                print("You missed.")
+                if self.startMenu.shown then
+                    self.startMenu:trigger()
+                end
             end
         )
         self.desktopLoaded = true
@@ -420,6 +430,8 @@ do
             for ____, element in ipairs(self.components) do
                 if element.collisionBox:pointWithin(self.mousePosition) then
                     element:onClick(self)
+                else
+                    element:onNotClick(self)
                 end
             end
         end
