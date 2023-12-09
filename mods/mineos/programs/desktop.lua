@@ -214,6 +214,13 @@ do
             os.time()
         )
     end
+    function RunProcedure.prototype.updateTime(self)
+        self.renderer:setElementComponentValue(
+            "time",
+            "text",
+            self:getTimeString()
+        )
+    end
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
         self.audioController:playSound("osStartup", 0.9)
@@ -353,7 +360,7 @@ do
         self.renderer:update()
         self:update()
         self.icons:main(delta)
-        self:getTimeString()
+        self:updateTime()
     end
     mineos.System:registerProgram(RunProcedure)
 end

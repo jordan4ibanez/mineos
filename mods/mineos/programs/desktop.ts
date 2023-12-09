@@ -137,8 +137,6 @@ namespace mineos {
   }
 
 
-
-
   class RunProcedure extends Program {
 
     desktopLoaded = false
@@ -195,6 +193,10 @@ namespace mineos {
       
       // Get rest of timestamp and combine.
       return hour + os.date(":%M %p", os.time())
+    }
+
+    updateTime(): void {
+      this.renderer.setElementComponentValue("time", "text", this.getTimeString())
     }
 
     loadDesktop(): void {
@@ -349,7 +351,7 @@ namespace mineos {
       this.renderer.update()
       this.update()
       this.icons.main(delta)
-      this.getTimeString()
+      this.updateTime()
 
     }
   }
