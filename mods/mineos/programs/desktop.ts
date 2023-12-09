@@ -160,14 +160,24 @@ namespace mineos {
   }
 
   class StartMenuEntry {
+    static yOffset = (-32 * 10) - 10
     name: string
+    program: string
+    text: string
     collisionBox: AABB
     icon: string
 
-    constructor(name: string, cbox: AABB, icon: string) {
+    constructor(name: string, program: string, text: string, icon: string) {
       this.name = name
-      this.collisionBox = cbox
+      this.program = program
+      this.text = text
+      this.collisionBox = new AABB(
+        create(1,StartMenuEntry.yOffset), //offset
+        create(198,32),
+        create(0,1) // anchor
+      )
       this.icon = icon
+      StartMenuEntry.yOffset += 33
     }
   }
 
@@ -188,16 +198,65 @@ namespace mineos {
         offset: create(-210,-332),
         z_index: -3
       })
+
+      this.menuEntries.push(new StartMenuEntry("bitsBattle", "BitsBattle", "Bit's Battle", "minetest.png"))
+      this.menuEntries.push(new StartMenuEntry("fezSphere", "FezSphere", "Fez Sphere", "minetest.png"))
+      this.menuEntries.push(new StartMenuEntry("gong", "Gong", "Gong", "minetest.png"))
+      this.menuEntries.push(new StartMenuEntry("sledLiberty", "SledLiberty", "Sled Liberty", "minetest.png"))
+
+      for (const entry of this.menuEntries) {
+        const offset = entry.collisionBox.offset
+        print(dump(entry))
+        this.renderer.addElement(entry.name, {
+          name: entry.name,
+          hud_elem_type: HudElementType.image,
+          position: entry.collisionBox.anchor,
+          text: "start_menu_element.png",
+          scale: create(1,1),
+          alignment: create(1,1),
+          offset: create(
+            -200,
+            offset.y
+          ),
+          z_index: -2
+        })
+
+        this.renderer.addElement(entry.name + "text", {
+          name: "time",
+          hud_elem_type: HudElementType.text,
+          scale: create(1,1),
+          text: entry.text,
+          number: colors.colorHEX(0,0,0),
+          position: entry.collisionBox.anchor,
+          alignment: create(1,0),
+          offset: create(
+            -240,
+            offset.y + 16
+          ),
+          // style: 4,
+          z_index: -1
+        })
+      }
     }
 
     trigger(): void {
       this.shown = !this.shown
       if (this.shown) {
         this.renderer.setElementComponentValue("startMenu", "offset", create(0,-332))
+        for (const entry of this.menuEntries) {
+          const offset = entry.collisionBox.offset
+          this.renderer.setElementComponentValue(entry.name, "offset", create(1, offset.y))
+          this.renderer.setElementComponentValue(entry.name + "text", "offset", create(40, offset.y + 16))
+        }
+        
       } else {
         this.renderer.setElementComponentValue("startMenu", "offset", create(-210,-332))
+        for (const entry of this.menuEntries) {
+          const offset = entry.collisionBox.offset
+          this.renderer.setElementComponentValue(entry.name, "offset", create(-200, offset.y))
+          this.renderer.setElementComponentValue(entry.name + "text", "offset", create(-241, offset.y))
+        }
       }
-
     }
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment) {
@@ -225,20 +284,6 @@ namespace mineos {
     startMenu: StartMenu
 
 
-
-    // currentFocus: Focus;
-
-    menuComponents: {[id: string] : string} = {
-      // Chip's Challenge
-      "BitsBattle": "Bit's Battle",
-      // Jezzball
-      // "FezSphere": "Fez Sphere",
-      // Pong
-      // "Gong": "Gong 96",
-      // Ski Free
-      // "SledQuickly": "Sled Liberty"
-    }
-
     constructor(system: System, renderer: Renderer, audio: AudioController) {
       super(system, renderer, audio);
       this.icons = new DesktopIcons(system, renderer, audio, this)
@@ -249,21 +294,21 @@ namespace mineos {
       return this.mousePosition
     }
 
-    toggleStartMenu(): void {
-      if (this.startMenuOpened) {
-        for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
-          this.renderer.removeComponent(name)
-        }
-      } else {
-        let i = 0
-        for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
-          i++
-        }
-      }
-      this.startMenuOpened = !this.startMenuOpened
-      this.startMenuFlag = false
-      print("start clicked!")
-    }
+    // toggleStartMenu(): void {
+    //   if (this.startMenuOpened) {
+    //     for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
+    //       this.renderer.removeComponent(name)
+    //     }
+    //   } else {
+    //     let i = 0
+    //     for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
+    //       i++
+    //     }
+    //   }
+    //   this.startMenuOpened = !this.startMenuOpened
+    //   this.startMenuFlag = false
+    //   print("start clicked!")
+    // }
 
     getTimeString(): string {
       // Filter off leading 0.
@@ -414,17 +459,12 @@ namespace mineos {
           }
         }
       }
-
-      // if (startMenuAABB.pointWithin(this.mousePosition)) {
-
-      //   print("mouse is in " + math.random())
-      // }
     }
 
     main(delta: number): void {
       
       if (!this.desktopLoaded) this.loadDesktop()
-      if (this.startMenuFlag) this.toggleStartMenu()
+      // if (this.startMenuFlag) this.toggleStartMenu()
 
       this.renderer.update()
       this.update()

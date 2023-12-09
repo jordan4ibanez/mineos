@@ -67,17 +67,12 @@ do
     end
     local DesktopComponent = __TS__Class()
     DesktopComponent.name = "DesktopComponent"
-    function DesktopComponent.prototype.____constructor(self, cbox, onClick, onHold, onNotClick)
+    function DesktopComponent.prototype.____constructor(self, cbox, onClick, onHold)
         self.collisionBox = cbox
         self.onClick = onClick
         self.onHold = onHold
-        if onNotClick then
-            self.onNotClick = onNotClick
-        end
     end
     function DesktopComponent.prototype.onClick(self, desktop)
-    end
-    function DesktopComponent.prototype.onNotClick(self, desktop)
     end
     function DesktopComponent.prototype.onHold(self, desktop)
     end
@@ -186,17 +181,27 @@ do
     end
     local StartMenuEntry = __TS__Class()
     StartMenuEntry.name = "StartMenuEntry"
-    function StartMenuEntry.prototype.____constructor(self, name, cbox, icon)
+    function StartMenuEntry.prototype.____constructor(self, name, program, text, icon)
         self.name = name
-        self.collisionBox = cbox
+        self.program = program
+        self.text = text
+        self.collisionBox = __TS__New(
+            AABB,
+            create(1, StartMenuEntry.yOffset),
+            create(198, 32),
+            create(0, 1)
+        )
         self.icon = icon
+        StartMenuEntry.yOffset = StartMenuEntry.yOffset + 33
     end
+    StartMenuEntry.yOffset = -32 * 10 - 10
     local StartMenu = __TS__Class()
     StartMenu.name = "StartMenu"
     __TS__ClassExtends(StartMenu, mineos.Program)
     function StartMenu.prototype.____constructor(self, system, renderer, audio, desktop)
         StartMenu.____super.prototype.____constructor(self, system, renderer, audio)
         self.shown = false
+        self.menuEntries = {}
         self.desktop = desktop
         self:load()
     end
@@ -214,6 +219,69 @@ do
                 z_index = -3
             }
         )
+        local ____self_menuEntries_0 = self.menuEntries
+        ____self_menuEntries_0[#____self_menuEntries_0 + 1] = __TS__New(
+            StartMenuEntry,
+            "bitsBattle",
+            "BitsBattle",
+            "Bit's Battle",
+            "minetest.png"
+        )
+        local ____self_menuEntries_1 = self.menuEntries
+        ____self_menuEntries_1[#____self_menuEntries_1 + 1] = __TS__New(
+            StartMenuEntry,
+            "fezSphere",
+            "FezSphere",
+            "Fez Sphere",
+            "minetest.png"
+        )
+        local ____self_menuEntries_2 = self.menuEntries
+        ____self_menuEntries_2[#____self_menuEntries_2 + 1] = __TS__New(
+            StartMenuEntry,
+            "gong",
+            "Gong",
+            "Gong",
+            "minetest.png"
+        )
+        local ____self_menuEntries_3 = self.menuEntries
+        ____self_menuEntries_3[#____self_menuEntries_3 + 1] = __TS__New(
+            StartMenuEntry,
+            "sledLiberty",
+            "SledLiberty",
+            "Sled Liberty",
+            "minetest.png"
+        )
+        for ____, entry in ipairs(self.menuEntries) do
+            local offset = entry.collisionBox.offset
+            print(dump(entry))
+            self.renderer:addElement(
+                entry.name,
+                {
+                    name = entry.name,
+                    hud_elem_type = HudElementType.image,
+                    position = entry.collisionBox.anchor,
+                    text = "start_menu_element.png",
+                    scale = create(1, 1),
+                    alignment = create(1, 1),
+                    offset = create(-200, offset.y),
+                    z_index = -2
+                }
+            )
+            self.renderer:addElement(
+                entry.name .. "text",
+                {
+                    name = "time",
+                    hud_elem_type = HudElementType.text,
+                    scale = create(1, 1),
+                    text = entry.text,
+                    number = colors.colorHEX(0, 0, 0),
+                    position = entry.collisionBox.anchor,
+                    alignment = create(1, 0),
+                    offset = create(-240, offset.y + 16),
+                    z_index = -1
+                }
+            )
+        end
     end
     function StartMenu.prototype.trigger(self)
         self.shown = not self.shown
@@ -223,12 +291,38 @@ do
                 "offset",
                 create(0, -332)
             )
+            for ____, entry in ipairs(self.menuEntries) do
+                local offset = entry.collisionBox.offset
+                self.renderer:setElementComponentValue(
+                    entry.name,
+                    "offset",
+                    create(1, offset.y)
+                )
+                self.renderer:setElementComponentValue(
+                    entry.name .. "text",
+                    "offset",
+                    create(40, offset.y + 16)
+                )
+            end
         else
             self.renderer:setElementComponentValue(
                 "startMenu",
                 "offset",
                 create(-210, -332)
             )
+            for ____, entry in ipairs(self.menuEntries) do
+                local offset = entry.collisionBox.offset
+                self.renderer:setElementComponentValue(
+                    entry.name,
+                    "offset",
+                    create(-200, offset.y)
+                )
+                self.renderer:setElementComponentValue(
+                    entry.name .. "text",
+                    "offset",
+                    create(-241, offset.y)
+                )
+            end
         end
     end
     local DesktopEnvironment = __TS__Class()
@@ -243,7 +337,6 @@ do
         self.mousePosition = create(0, 0)
         self.components = {}
         self.focused = true
-        self.menuComponents = {BitsBattle = "Bit's Battle"}
         self.acceleration = 250
         self.icons = __TS__New(
             DesktopIcons,
@@ -262,25 +355,6 @@ do
     end
     function DesktopEnvironment.prototype.getMousePos(self)
         return self.mousePosition
-    end
-    function DesktopEnvironment.prototype.toggleStartMenu(self)
-        if self.startMenuOpened then
-            for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
-                local name = ____value[1]
-                local progNameNice = ____value[2]
-                self.renderer:removeComponent(name)
-            end
-        else
-            local i = 0
-            for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
-                local name = ____value[1]
-                local progNameNice = ____value[2]
-                i = i + 1
-            end
-        end
-        self.startMenuOpened = not self.startMenuOpened
-        self.startMenuFlag = false
-        print("start clicked!")
     end
     function DesktopEnvironment.prototype.getTimeString(self)
         local hour = tostring(tonumber(os.date(
@@ -371,8 +445,8 @@ do
                 z_index = 10000
             }
         )
-        local ____self_components_0 = self.components
-        ____self_components_0[#____self_components_0 + 1] = __TS__New(
+        local ____self_components_4 = self.components
+        ____self_components_4[#____self_components_4 + 1] = __TS__New(
             DesktopComponent,
             __TS__New(
                 AABB,
@@ -384,12 +458,6 @@ do
                 self.startMenu:trigger()
             end,
             function()
-            end,
-            function(____, desktop)
-                print("You missed.")
-                if self.startMenu.shown then
-                    self.startMenu:trigger()
-                end
             end
         )
         self.desktopLoaded = true
@@ -403,10 +471,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_1, ____x_2 = self.mousePosition, "x"
-        ____self_mousePosition_1[____x_2] = ____self_mousePosition_1[____x_2] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_3, ____y_4 = self.mousePosition, "y"
-        ____self_mousePosition_3[____y_4] = ____self_mousePosition_3[____y_4] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_5, ____x_6 = self.mousePosition, "x"
+        ____self_mousePosition_5[____x_6] = ____self_mousePosition_5[____x_6] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_7, ____y_8 = self.mousePosition, "y"
+        ____self_mousePosition_7[____y_8] = ____self_mousePosition_7[____y_8] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then
@@ -430,8 +498,6 @@ do
             for ____, element in ipairs(self.components) do
                 if element.collisionBox:pointWithin(self.mousePosition) then
                     element:onClick(self)
-                else
-                    element:onNotClick(self)
                 end
             end
         end
@@ -439,9 +505,6 @@ do
     function DesktopEnvironment.prototype.main(self, delta)
         if not self.desktopLoaded then
             self:loadDesktop()
-        end
-        if self.startMenuFlag then
-            self:toggleStartMenu()
         end
         self.renderer:update()
         self:update()
