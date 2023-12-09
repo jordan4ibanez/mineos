@@ -30,11 +30,15 @@ namespace mineos {
   class DesktopComponent {
     collisionBox: AABB
     onClick(desktop: DesktopEnvironment) {}
+    onNotClick(desktop: DesktopEnvironment) {}
     onHold(desktop: DesktopEnvironment) {}
-    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onHold: (this: DesktopComponent, desktop: DesktopEnvironment) => void) {
+    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onHold: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onNotClick?: (this: DesktopComponent, desktop: DesktopEnvironment) => void) {
       this.collisionBox = cbox
       this.onClick = onClick
       this.onHold = onHold
+      if (onNotClick) {
+        this.onNotClick = onNotClick
+      }
     }
   }
 
@@ -174,8 +178,7 @@ namespace mineos {
   class StartMenu extends Program {
 
     desktop: DesktopEnvironment
-
-    loaded = false
+    shown = false
 
     load(): void {
       this.renderer.addElement("startMenu", {
@@ -185,13 +188,18 @@ namespace mineos {
         text: "start_menu.png",
         scale: create(1,1),
         alignment: create(1,1),
-        offset: create(2,-332),
+        offset: create(-210,-332),
         z_index: -3
       })
-      
     }
 
     trigger(): void {
+      this.shown = !this.shown
+      if (this.shown) {
+        this.renderer.setElementComponentValue("startMenu", "offset", create(0,-332))
+      } else {
+        this.renderer.setElementComponentValue("startMenu", "offset", create(-210,-332))
+      }
 
     }
 
@@ -349,6 +357,7 @@ namespace mineos {
           create(0,1)
         ),
         () => {
+          this.startMenu.trigger()
           print("start!")
         },
         () => {}

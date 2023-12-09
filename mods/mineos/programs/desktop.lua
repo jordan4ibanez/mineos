@@ -191,7 +191,7 @@ do
     __TS__ClassExtends(StartMenu, mineos.Program)
     function StartMenu.prototype.____constructor(self, system, renderer, audio, desktop)
         StartMenu.____super.prototype.____constructor(self, system, renderer, audio)
-        self.loaded = false
+        self.shown = false
         self.desktop = desktop
         self:load()
     end
@@ -205,12 +205,26 @@ do
                 text = "start_menu.png",
                 scale = create(1, 1),
                 alignment = create(1, 1),
-                offset = create(2, -332),
+                offset = create(-210, -332),
                 z_index = -3
             }
         )
     end
     function StartMenu.prototype.trigger(self)
+        self.shown = not self.shown
+        if self.shown then
+            self.renderer:setElementComponentValue(
+                "startMenu",
+                "offset",
+                create(0, -332)
+            )
+        else
+            self.renderer:setElementComponentValue(
+                "startMenu",
+                "offset",
+                create(-210, -332)
+            )
+        end
     end
     local DesktopEnvironment = __TS__Class()
     DesktopEnvironment.name = "DesktopEnvironment"
@@ -362,6 +376,7 @@ do
                 create(0, 1)
             ),
             function()
+                self.startMenu:trigger()
                 print("start!")
             end,
             function()
