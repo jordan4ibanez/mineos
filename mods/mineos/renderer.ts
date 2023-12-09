@@ -80,6 +80,27 @@ namespace mineos {
       delete this.memory[name]
     }
 
+    //!! DANGER !!
+    
+    /**
+     * Skips accessing the internal memory.
+     * WILL CREATE MEMORY LEAK IF DONE WRONG!
+     */
+    rawDraw(): void {
+
+    }
+
+    /**
+     * Skips accessing the internal memory.
+     * WILL CREATE MEMORY LEAK IF DONE WRONG!
+     */
+    rawDeleta(): void {
+      
+    }
+
+
+    //!! END DANGER !!
+
     update() {
       // print("updating")
       // print(dump(this.frameBufferSize))
