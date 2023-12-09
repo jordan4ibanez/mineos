@@ -18,6 +18,10 @@ namespace mineos {
       this.renderer = renderer
       this.audioController = audioController
     }
+    // A bolt on so you can do things when it dies.
+    destructor() {
+
+    }
     main(delta: number): void {
       
     }

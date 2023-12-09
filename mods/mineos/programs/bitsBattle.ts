@@ -2,7 +2,7 @@ namespace mineos {
 
   const create = vector.create2d;
 
-  class BitsBattle extends Program {
+  class BitsBattle extends WindowProgram {
     loaded = false
 
     map: number[][] = [
@@ -94,5 +94,6 @@ namespace mineos {
     }
   }
 
-  System.registerProgram(BitsBattle)
+
+  DesktopEnvironment.registerProgram(BitsBattle)
 }

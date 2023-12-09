@@ -262,7 +262,6 @@ do
         )
         for ____, entry in ipairs(self.menuEntries) do
             local offset = entry.collisionBox.offset
-            print(dump(entry))
             self.renderer:addElement(
                 entry.name,
                 {
@@ -358,7 +357,21 @@ do
             ::__continue44::
         end
     end
-    local DesktopEnvironment = __TS__Class()
+    local programQueue = {}
+    --- Base layer for the decoration is 0 to 1, don't draw into this.
+    mineos.WindowProgram = __TS__Class()
+    local WindowProgram = mineos.WindowProgram
+    WindowProgram.name = "WindowProgram"
+    __TS__ClassExtends(WindowProgram, mineos.Program)
+    function WindowProgram.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
+        WindowProgram.____super.prototype.____constructor(self, system, renderer, audio)
+        self.desktop = desktop
+        self.windowSize = windowSize
+    end
+    function WindowProgram.prototype.move(self)
+    end
+    mineos.DesktopEnvironment = __TS__Class()
+    local DesktopEnvironment = mineos.DesktopEnvironment
     DesktopEnvironment.name = "DesktopEnvironment"
     __TS__ClassExtends(DesktopEnvironment, mineos.Program)
     function DesktopEnvironment.prototype.____constructor(self, system, renderer, audio)
@@ -370,6 +383,8 @@ do
         self.mousePosition = create(0, 0)
         self.components = {}
         self.focused = true
+        self.programBlueprints = {}
+        self.runningPrograms = {}
         self.acceleration = 250
         self.icons = __TS__New(
             DesktopIcons,
@@ -385,6 +400,15 @@ do
             audio,
             self
         )
+        for ____, ____value in ipairs(__TS__ObjectEntries(programQueue)) do
+            local name = ____value[1]
+            local progBlueprint = ____value[2]
+            print(("added program " .. name) .. " to desktop!")
+            self.programBlueprints[name] = progBlueprint
+        end
+    end
+    function DesktopEnvironment.registerProgram(self, progBlueprint)
+        programQueue[progBlueprint.name] = progBlueprint
     end
     function DesktopEnvironment.prototype.getMousePos(self)
         return self.mousePosition
@@ -521,7 +545,6 @@ do
         if self.oldFrameBufferSize.x ~= screenSize.x or self.oldFrameBufferSize.y ~= screenSize.y then
             print("updating fbuffer for desktop")
             self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)
-            print(dump(self.mousePosition))
             self.oldFrameBufferSize = screenSize
             self.icons:corral()
         end
@@ -545,5 +568,5 @@ do
         self.startMenu:main(delta)
         self:updateTime()
     end
-    mineos.System:registerProgram(DesktopEnvironment)
+    mineos.System:registerProgram(mineos.DesktopEnvironment)
 end

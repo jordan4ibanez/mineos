@@ -207,7 +207,7 @@ namespace mineos {
 
       for (const entry of this.menuEntries) {
         const offset = entry.collisionBox.offset
-        print(dump(entry))
+        // print(dump(entry))
         this.renderer.addElement(entry.name, {
           name: entry.name,
           hud_elem_type: HudElementType.image,
@@ -287,10 +287,13 @@ namespace mineos {
     }
   }
 
+
+  let programQueue: {[id: string] : typeof WindowProgram} = {}
+
   /**
    * Base layer for the decoration is 0 to 1, don't draw into this.
    */
-  class WindowProgram extends Program {
+  export class WindowProgram extends Program {
     desktop: DesktopEnvironment
     windowSize: Vec2
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
@@ -304,7 +307,7 @@ namespace mineos {
   }
 
 
-  class DesktopEnvironment extends Program {
+  export class DesktopEnvironment extends Program {
 
     // So this is a bunch of programs inside of one program that work together. Like a normal DE.
 
@@ -326,6 +329,19 @@ namespace mineos {
       super(system, renderer, audio);
       this.icons = new DesktopIcons(system, renderer, audio, this)
       this.startMenu = new StartMenu(system, renderer, audio, this)
+
+      for (const [name, progBlueprint] of Object.entries(programQueue)) {
+        // print("added program " + name + " to desktop!")
+        this.programBlueprints[name] = progBlueprint
+      }
+    }
+
+    static registerProgram(progBlueprint: typeof WindowProgram): void {
+      programQueue[progBlueprint.name] = progBlueprint
+    }
+
+    launchProgram(progName: string, windowSize: Vec2): void {
+      this.runningPrograms.push(new this.programBlueprints[progName](this.system, this.renderer, this.audioController, this, windowSize))
     }
 
     getMousePos(): Vec2 {
@@ -476,7 +492,7 @@ namespace mineos {
           screenSize.x / 2,
           screenSize.y / 2,
         )
-        print(dump(this.mousePosition))
+        // print(dump(this.mousePosition))
         this.oldFrameBufferSize = screenSize;
         this.icons.corral()
       }
@@ -499,6 +515,12 @@ namespace mineos {
       }
     }
 
+    runPrograms(delta: number): void {
+      for (const prog of this.runningPrograms) {
+        prog.main(delta)
+      }
+    }
+
     main(delta: number): void {
       
       if (!this.desktopLoaded) this.loadDesktop()
@@ -508,6 +530,7 @@ namespace mineos {
       this.update()
       this.icons.main(delta)
       this.startMenu.main(delta)
+      this.runPrograms(delta)
       this.updateTime()
 
     }

@@ -42,7 +42,7 @@ do
     local create = vector.create2d
     local BitsBattle = __TS__Class()
     BitsBattle.name = "BitsBattle"
-    __TS__ClassExtends(BitsBattle, mineos.Program)
+    __TS__ClassExtends(BitsBattle, mineos.WindowProgram)
     function BitsBattle.prototype.____constructor(self, ...)
         BitsBattle.____super.prototype.____constructor(self, ...)
         self.loaded = false
@@ -362,5 +362,5 @@ do
             self:load()
         end
     end
-    mineos.System:registerProgram(BitsBattle)
+    mineos.DesktopEnvironment:registerProgram(BitsBattle)
 end
