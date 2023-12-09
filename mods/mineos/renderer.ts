@@ -81,21 +81,23 @@ namespace mineos {
     }
 
     //!! DANGER !!
-    
+
     /**
      * Skips accessing the internal memory.
-     * WILL CREATE MEMORY LEAK IF DONE WRONG!
+     * ! WILL CREATE MEMORY LEAK IF DONE WRONG!
+     * ! WILL CRASH IF DONE WRONG!
      */
-    rawDraw(): void {
-
+    rawDraw(component: HudDefinition): number {
+      return this.system.driver!!.hud_add(component)
     }
 
     /**
      * Skips accessing the internal memory.
-     * WILL CREATE MEMORY LEAK IF DONE WRONG!
+     * ! WILL CREATE MEMORY LEAK IF DONE WRONG!
+     * ! WILL CRASH IF DONE WRONG!
      */
-    rawDeleta(): void {
-      
+    rawDeleta(id: number): void {
+      this.system.driver!!.hud_remove(id)
     }
 
 
