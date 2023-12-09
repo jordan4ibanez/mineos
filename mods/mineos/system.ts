@@ -115,7 +115,7 @@ namespace mineos {
         this.booting = false
         this.running = true
         //! Testing desktop
-        this.changeProgram("RunProcedure")
+        this.changeProgram("DesktopEnvironment")
         //! Testing games
         // this.changeProgram("BitsBattle")
 
@@ -159,7 +159,7 @@ namespace mineos {
     finishBoot() {
       this.bootProcess = 2
       this.booting = false
-      this.changeProgram("RunProcedure")
+      this.changeProgram("DesktopEnvironment")
     }
 
     changeProgram(newProgramName: string): void {

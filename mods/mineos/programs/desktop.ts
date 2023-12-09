@@ -29,9 +29,9 @@ namespace mineos {
 
   class DesktopComponent {
     collisionBox: AABB
-    onClick(desktop: RunProcedure) {}
-    onHold(desktop: RunProcedure) {}
-    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: RunProcedure) => void, onHold: (this: DesktopComponent, desktop: RunProcedure) => void) {
+    onClick(desktop: DesktopEnvironment) {}
+    onHold(desktop: DesktopEnvironment) {}
+    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: DesktopEnvironment) => void, onHold: (this: DesktopComponent, desktop: DesktopEnvironment) => void) {
       this.collisionBox = cbox
       this.onClick = onClick
       this.onHold = onHold
@@ -54,7 +54,7 @@ namespace mineos {
   // The actual desktop portion of the desktop.
   class DesktopIcons extends Program {
 
-    desktop: RunProcedure
+    desktop: DesktopEnvironment
     icons: {[id: string]: Icon} = {}
     currentIcon: Icon | null = null
     payload = false
@@ -62,7 +62,7 @@ namespace mineos {
     yOffset = 0
 
 
-    constructor(system: System, renderer: Renderer, audio: AudioController, runProc: RunProcedure) {
+    constructor(system: System, renderer: Renderer, audio: AudioController, runProc: DesktopEnvironment) {
       super(system, renderer, audio)
       this.desktop = runProc
       this.addIcon("trashIcon", "trash_icon.png");
@@ -167,7 +167,7 @@ namespace mineos {
   }
 
 
-  class RunProcedure extends Program {
+  class DesktopEnvironment extends Program {
 
     // So this is a bunch of programs inside of one program that work together. Like a normal DE.
 
@@ -181,7 +181,7 @@ namespace mineos {
     focused = true
     icons: DesktopIcons
 
-    
+
 
     // currentFocus: Focus;
 
@@ -391,5 +391,5 @@ namespace mineos {
     }
   }
 
-  System.registerProgram(RunProcedure)
+  System.registerProgram(DesktopEnvironment)
 }

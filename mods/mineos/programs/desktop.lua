@@ -126,11 +126,8 @@ do
         self.yOffset = self.yOffset + 40
     end
     function DesktopIcons.prototype.corral(self)
-        print("coralling")
         local windowSize = self.renderer.frameBufferSize
-        print("OI" .. dump(windowSize))
         if windowSize.x < 100 or windowSize.y < 100 then
-            print("$too small$")
             return
         end
         local limit = create(windowSize.x - 32, windowSize.y - 64)
@@ -140,7 +137,6 @@ do
             local offset = icon.collisionBox.offset
             if offset.x > limit.x then
                 offset.x = limit.x
-                print("set offsetx to " .. tostring(offset.x))
             end
             if offset.y > limit.y then
                 offset.y = limit.y
@@ -165,7 +161,6 @@ do
                     local name = ____value[1]
                     local icon = ____value[2]
                     if icon.collisionBox:pointWithin(mousePos) then
-                        print("clicking " .. name)
                         self.currentIcon = icon
                         break
                     end
@@ -184,11 +179,14 @@ do
             end
         end
     end
-    local RunProcedure = __TS__Class()
-    RunProcedure.name = "RunProcedure"
-    __TS__ClassExtends(RunProcedure, mineos.Program)
-    function RunProcedure.prototype.____constructor(self, system, renderer, audio)
-        RunProcedure.____super.prototype.____constructor(self, system, renderer, audio)
+    local StartMenu = __TS__Class()
+    StartMenu.name = "StartMenu"
+    __TS__ClassExtends(StartMenu, mineos.Program)
+    local DesktopEnvironment = __TS__Class()
+    DesktopEnvironment.name = "DesktopEnvironment"
+    __TS__ClassExtends(DesktopEnvironment, mineos.Program)
+    function DesktopEnvironment.prototype.____constructor(self, system, renderer, audio)
+        DesktopEnvironment.____super.prototype.____constructor(self, system, renderer, audio)
         self.desktopLoaded = false
         self.startMenuFlag = false
         self.startMenuOpened = false
@@ -206,10 +204,10 @@ do
             self
         )
     end
-    function RunProcedure.prototype.getMousePos(self)
+    function DesktopEnvironment.prototype.getMousePos(self)
         return self.mousePosition
     end
-    function RunProcedure.prototype.toggleStartMenu(self)
+    function DesktopEnvironment.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
             for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
                 local name = ____value[1]
@@ -228,7 +226,7 @@ do
         self.startMenuFlag = false
         print("start clicked!")
     end
-    function RunProcedure.prototype.getTimeString(self)
+    function DesktopEnvironment.prototype.getTimeString(self)
         local hour = tostring(tonumber(os.date(
             "%I",
             os.time()
@@ -238,14 +236,14 @@ do
             os.time()
         )
     end
-    function RunProcedure.prototype.updateTime(self)
+    function DesktopEnvironment.prototype.updateTime(self)
         self.renderer:setElementComponentValue(
             "time",
             "text",
             self:getTimeString()
         )
     end
-    function RunProcedure.prototype.loadDesktop(self)
+    function DesktopEnvironment.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
         self.audioController:playSound("osStartup", 0.9)
         self.renderer:clearMemory()
@@ -336,7 +334,7 @@ do
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end
-    function RunProcedure.prototype.update(self)
+    function DesktopEnvironment.prototype.update(self)
         self.renderer:setElementComponentValue(
             "taskbar",
             "scale",
@@ -375,7 +373,7 @@ do
             end
         end
     end
-    function RunProcedure.prototype.main(self, delta)
+    function DesktopEnvironment.prototype.main(self, delta)
         if not self.desktopLoaded then
             self:loadDesktop()
         end
@@ -387,5 +385,5 @@ do
         self.icons:main(delta)
         self:updateTime()
     end
-    mineos.System:registerProgram(RunProcedure)
+    mineos.System:registerProgram(DesktopEnvironment)
 end

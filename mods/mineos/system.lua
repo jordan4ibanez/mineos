@@ -221,7 +221,7 @@ do
             mineos.System.out:println("HACK: SKIPPED BOOT PROCEDURE!")
             self.booting = false
             self.running = true
-            self:changeProgram("RunProcedure")
+            self:changeProgram("DesktopEnvironment")
             return
         end
         self.booting = true
@@ -258,7 +258,7 @@ do
     function System.prototype.finishBoot(self)
         self.bootProcess = 2
         self.booting = false
-        self:changeProgram("RunProcedure")
+        self:changeProgram("DesktopEnvironment")
     end
     function System.prototype.changeProgram(self, newProgramName)
         print("this is a program")
