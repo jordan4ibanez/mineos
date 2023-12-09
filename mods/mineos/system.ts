@@ -48,6 +48,7 @@ namespace mineos {
     mousePos = vector.create2d(0,0)
     mouseWasClicked = false
     mouseClicked = false
+    mouseDown = false
 
     constructor(driver: Driver) {
       if (currentSystem != null) {
@@ -217,6 +218,8 @@ namespace mineos {
 
       const isClick = this.driver.get_player_control().LMB
 
+      this.mouseDown = isClick;
+
       if (!this.mouseWasClicked && isClick) {
         this.mouseClicked = true
       } else {
@@ -228,6 +231,10 @@ namespace mineos {
 
     isMouseClicked() {
       return this.mouseClicked
+    }
+
+    isMouseDown() {
+      return this.mouseDown
     }
 
     getMouseDelta(): Vec2 {
