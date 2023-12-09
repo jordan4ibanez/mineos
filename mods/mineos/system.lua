@@ -313,6 +313,9 @@ do
     function System.prototype.getMouseDelta(self)
         return self.mouseDelta
     end
+    function System.prototype.requestShutdown(self)
+        minetest.request_shutdown()
+    end
     function System.prototype.main(self, delta)
         if not self.running then
             return

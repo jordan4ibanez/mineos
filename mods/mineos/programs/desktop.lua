@@ -348,7 +348,8 @@ do
                     goto __continue44
                 end
                 if element.name == "shutDown" then
-                    print("system shutdown")
+                    print("System shutting down...")
+                    self.system:requestShutdown()
                 else
                     print("launch program")
                 end

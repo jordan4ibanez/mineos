@@ -276,16 +276,31 @@ namespace mineos {
         if (!element.collisionBox.pointWithin(mousePos)) continue
         // print("I clicked: " + element.name)
         if (element.name == "shutDown") {
-          print("system shutdown")
+          print("System shutting down...")
+          this.system.requestShutdown();
         } else {
           print("launch program")
+          //todo this.desktop.launchProgram(element.program)
         }
         break;
       }
-
-      // print("main of start menu")
     }
+  }
 
+  /**
+   * Base layer for the decoration is 0 to 1, don't draw into this.
+   */
+  class WindowProgram extends Program {
+    desktop: DesktopEnvironment
+    windowSize: Vec2
+    constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
+      super(system, renderer, audio)
+      this.desktop = desktop
+      this.windowSize = windowSize
+    }
+    move() {
+
+    }
   }
 
 
@@ -303,6 +318,8 @@ namespace mineos {
     focused = true
     icons: DesktopIcons
     startMenu: StartMenu
+    programBlueprints: {[id: string] : typeof WindowProgram} = {}
+    runningPrograms: WindowProgram[] = []
 
 
     constructor(system: System, renderer: Renderer, audio: AudioController) {

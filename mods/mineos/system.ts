@@ -241,6 +241,10 @@ namespace mineos {
       return this.mouseDelta
     }
 
+    requestShutdown(): void {
+      minetest.request_shutdown();
+    }
+
 
     main(delta: number): void {
 

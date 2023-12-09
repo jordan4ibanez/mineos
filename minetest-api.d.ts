@@ -222,7 +222,7 @@ export interface minetest {
   after(seconds: number, fun: (...any: any) => void, ...any: any): Job
   handle_async(fun: (...any: any) => any, callback: (...any: any) => any, ...any: any): any // any any any any
   register_async_dofile(path: string): void
-  request_shutdown(message: string, reconnect: boolean, delay: number): void
+  request_shutdown(message?: string, reconnect?: boolean, delay?: number): void
   cancel_shutdown_requests(): void
   get_server_status(name: string, joined: boolean): void
   get_server_uptime(): number
