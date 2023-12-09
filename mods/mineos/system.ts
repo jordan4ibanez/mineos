@@ -197,6 +197,7 @@ namespace mineos {
     // GLFW Mouse simulation.
     pollMouse(): void {
       if (this.driver == null) return
+      
       const precision = 100000
 
       const trimmedPi = (math.floor(math.pi * precision)) / precision

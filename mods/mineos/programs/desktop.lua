@@ -196,7 +196,8 @@ do
             print(dump(self.mousePosition))
             self.oldFrameBufferSize = screenSize
         end
-        self.renderer:setElementComponentValue("mouse", "offset", self.mousePosition)
+        local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
+        self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
     end
     function RunProcedure.prototype.main(self, delta)
         if not self.desktopLoaded then

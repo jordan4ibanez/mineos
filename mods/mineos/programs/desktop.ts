@@ -157,12 +157,10 @@ namespace mineos {
     update() {
       this.renderer.setElementComponentValue("taskbar", "scale", create(this.renderer.frameBufferSize.x, 1))
 
-
       const screenSize = this.renderer.frameBufferSize
 
       const mouseDelta = this.system.getMouseDelta()
 
-      // screenSize.x - ((mouseDeltaX / (math.pi * 2)) * screenSize.x)
       this.mousePosition.x += mouseDelta.x * this.acceleration
       this.mousePosition.y += mouseDelta.y * this.acceleration
 
@@ -189,10 +187,16 @@ namespace mineos {
         print(dump(this.mousePosition))
         this.oldFrameBufferSize = screenSize;
       }
+
+      // -1 to have the inner pixel of the mouse be the pointer.
+      const finalizedMousePos = create(
+        this.mousePosition.x - 1,
+        this.mousePosition.y - 1
+      )
   
 
       // Mouse always positions based on the top left.
-      this.renderer.setElementComponentValue("mouse", "offset", this.mousePosition)
+      this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
     }
 
     main(delta: number): void {
