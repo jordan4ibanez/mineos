@@ -152,7 +152,7 @@ namespace mineos {
       System.out.println("desktop environment loaded")
     }
 
-    acceleration = 200
+    acceleration = 250
 
     update() {
       this.renderer.setElementComponentValue("taskbar", "scale", create(this.renderer.frameBufferSize.x, 1))

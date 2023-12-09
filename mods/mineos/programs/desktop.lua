@@ -58,7 +58,7 @@ do
         self.oldFrameBufferSize = create(0, 0)
         self.mousePosition = create(0, 0)
         self.menuComponents = {BitsBattle = "Bit's Battle"}
-        self.acceleration = 200
+        self.acceleration = 250
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
