@@ -98,6 +98,30 @@ namespace mineos {
 
     corral(): void {
 
+      print("coralling")
+
+      const windowSize = this.renderer.frameBufferSize
+      print("OI" + dump(windowSize))
+      if (windowSize.x < 100 || windowSize.y < 100) {
+        print("$too small$")
+        return
+      }
+      const limit = create(
+        windowSize.x - 32,
+        windowSize.y - 64
+      )
+      for (const [name, icon] of Object.entries(this.icons)) {
+        const offset = icon.collisionBox.offset
+        if (offset.x > limit.x) {
+          offset.x = limit.x
+          print("set offsetx to " + offset.x)
+        }
+        if (offset.y > limit.y) {
+          offset.y = limit.y
+        }
+        this.renderer.setElementComponentValue(name, "offset", offset)
+      }
+
     }
 
     load(): void {

@@ -126,6 +126,27 @@ do
         self.yOffset = self.yOffset + 40
     end
     function DesktopIcons.prototype.corral(self)
+        print("coralling")
+        local windowSize = self.renderer.frameBufferSize
+        print("OI" .. dump(windowSize))
+        if windowSize.x < 100 or windowSize.y < 100 then
+            print("$too small$")
+            return
+        end
+        local limit = create(windowSize.x - 32, windowSize.y - 64)
+        for ____, ____value in ipairs(__TS__ObjectEntries(self.icons)) do
+            local name = ____value[1]
+            local icon = ____value[2]
+            local offset = icon.collisionBox.offset
+            if offset.x > limit.x then
+                offset.x = limit.x
+                print("set offsetx to " .. tostring(offset.x))
+            end
+            if offset.y > limit.y then
+                offset.y = limit.y
+            end
+            self.renderer:setElementComponentValue(name, "offset", offset)
+        end
     end
     function DesktopIcons.prototype.load(self)
         print("loading desktop icons.")
