@@ -67,9 +67,26 @@ do
     end
     local DesktopComponent = __TS__Class()
     DesktopComponent.name = "DesktopComponent"
-    function DesktopComponent.prototype.____constructor(self, aabb, click)
+    function DesktopComponent.prototype.____constructor(self, aabb, click, hold)
         self.collisionBox = aabb
-        self.callback = click
+        self.clickCallback = click
+        self.holdCallback = hold
+    end
+    local Icon = __TS__Class()
+    Icon.name = "Icon"
+    __TS__ClassExtends(Icon, DesktopComponent)
+    local DesktopIcons = __TS__Class()
+    DesktopIcons.name = "DesktopIcons"
+    __TS__ClassExtends(DesktopIcons, mineos.Program)
+    function DesktopIcons.prototype.____constructor(self, ...)
+        DesktopIcons.____super.prototype.____constructor(self, ...)
+        self.icons = {}
+        self.currentIcon = nil
+    end
+    function DesktopIcons.prototype.main(self, delta)
+        if not self.system:isMouseDown() and not self.system:isMouseClicked() then
+            return
+        end
     end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
@@ -199,6 +216,8 @@ do
             startMenuButtonAABB,
             function()
                 print("start!")
+            end,
+            function()
             end
         )
         self.desktopLoaded = true
@@ -237,7 +256,7 @@ do
         if self.system:isMouseClicked() then
             for ____, element in ipairs(self.components) do
                 if element.collisionBox:pointWithin(self.mousePosition) then
-                    element:callback()
+                    element:clickCallback()
                 end
             end
         end
