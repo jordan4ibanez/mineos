@@ -150,7 +150,7 @@ do
                 scale = create(0, 0),
                 alignment = create(1, 1),
                 offset = create(0, 0),
-                z_index = -4
+                z_index = -5
             }
         )
     end

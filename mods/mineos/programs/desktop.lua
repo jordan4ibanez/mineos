@@ -78,32 +78,86 @@ do
     end
     local Icon = __TS__Class()
     Icon.name = "Icon"
-    function Icon.prototype.____constructor(self, cbox, texture)
+    function Icon.prototype.____constructor(self, name, cbox, texture)
+        self.name = name
         self.collisionBox = cbox
         self.texture = texture
     end
     local DesktopIcons = __TS__Class()
     DesktopIcons.name = "DesktopIcons"
     __TS__ClassExtends(DesktopIcons, mineos.Program)
-    function DesktopIcons.prototype.____constructor(self, system, renderer, audio)
+    function DesktopIcons.prototype.____constructor(self, system, renderer, audio, runProc)
         DesktopIcons.____super.prototype.____constructor(self, system, renderer, audio)
         self.icons = {}
         self.currentIcon = nil
-        local ____self_icons_0 = self.icons
-        ____self_icons_0[#____self_icons_0 + 1] = __TS__New(
+        self.payload = false
+        self.yOffset = 0
+        self.desktop = runProc
+        self:addIcon("trashIcon", "trash_icon.png")
+        self:addIcon("emailIcon", "email_icon.png")
+        self:addIcon("internetIcon", "internet_icon.png")
+    end
+    function DesktopIcons.prototype.addIcon(self, iconName, iconTexture)
+        local icon = __TS__New(
             Icon,
+            iconName,
             __TS__New(
                 AABB,
-                create(0, 0),
+                create(0, self.yOffset),
                 create(40, 40),
                 create(0, 0)
             ),
-            "trash_icon.png"
+            iconTexture
         )
+        print("adding icon " .. iconName)
+        self.renderer:addElement(
+            iconName,
+            {
+                name = iconName,
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = icon.texture,
+                scale = create(1, 1),
+                alignment = create(1, 1),
+                offset = icon.collisionBox.offset,
+                z_index = 0
+            }
+        )
+        self.icons[iconName] = icon
+        self.yOffset = self.yOffset + 40
+    end
+    function DesktopIcons.prototype.load(self)
+        print("loading desktop icons.")
+        self.payload = true
+        print("desktop icons loaded.")
     end
     function DesktopIcons.prototype.main(self, delta)
-        if not self.system:isMouseDown() and not self.system:isMouseClicked() then
-            return
+        if not self.payload then
+            self:load()
+        end
+        local mousePos = self.desktop:getMousePos()
+        local windowSize = self.renderer.frameBufferSize
+        if self.currentIcon == nil and self.system:isMouseClicked() then
+            for ____, ____value in ipairs(__TS__ObjectEntries(self.icons)) do
+                local name = ____value[1]
+                local icon = ____value[2]
+                if icon.collisionBox:pointWithin(mousePos) then
+                    print("clicking " .. name)
+                    self.currentIcon = icon
+                    break
+                end
+            end
+        end
+        if self.currentIcon ~= nil and self.system:isMouseDown() then
+            self.currentIcon.collisionBox.offset.x = mousePos.x - 20
+            self.currentIcon.collisionBox.offset.y = mousePos.y - 20
+            if self.currentIcon.collisionBox.offset.y > windowSize.y - 64 then
+                self.currentIcon.collisionBox.offset.y = windowSize.y - 64
+            end
+            self.renderer:setElementComponentValue(self.currentIcon.name, "offset", self.currentIcon.collisionBox.offset)
+        elseif self.currentIcon ~= nil and not self.system:isMouseDown() then
+            self.currentIcon = nil
+            print("let goed")
         end
     end
     local RunProcedure = __TS__Class()
@@ -120,7 +174,16 @@ do
         self.focused = true
         self.menuComponents = {BitsBattle = "Bit's Battle"}
         self.acceleration = 250
-        self.icons = __TS__New(DesktopIcons, system, renderer, audio)
+        self.icons = __TS__New(
+            DesktopIcons,
+            system,
+            renderer,
+            audio,
+            self
+        )
+    end
+    function RunProcedure.prototype.getMousePos(self)
+        return self.mousePosition
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -167,7 +230,7 @@ do
                 scale = create(1, 1),
                 alignment = create(1, -1),
                 offset = create(0, 0),
-                z_index = -3
+                z_index = -4
             }
         )
         self.renderer:addElement(
@@ -180,7 +243,7 @@ do
                 scale = create(1, 1),
                 alignment = create(1, 1),
                 offset = create(2, -29),
-                z_index = -2
+                z_index = -3
             }
         )
         self.renderer:addElement(
@@ -193,7 +256,7 @@ do
                 scale = create(1, 1),
                 alignment = create(-1, 1),
                 offset = create(-2, -29),
-                z_index = -1
+                z_index = -3
             }
         )
         self.renderer:addElement(
@@ -207,7 +270,7 @@ do
                 position = create(1, 1),
                 alignment = create(0, -1),
                 offset = create(-42, -5),
-                z_index = 0
+                z_index = -2
             }
         )
         self.renderer:addElement(
@@ -229,8 +292,8 @@ do
             create(66, 32),
             create(0, 1)
         )
-        local ____self_components_1 = self.components
-        ____self_components_1[#____self_components_1 + 1] = __TS__New(
+        local ____self_components_0 = self.components
+        ____self_components_0[#____self_components_0 + 1] = __TS__New(
             DesktopComponent,
             startMenuButtonAABB,
             function()
@@ -250,10 +313,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_2, ____x_3 = self.mousePosition, "x"
-        ____self_mousePosition_2[____x_3] = ____self_mousePosition_2[____x_3] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_4, ____y_5 = self.mousePosition, "y"
-        ____self_mousePosition_4[____y_5] = ____self_mousePosition_4[____y_5] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_1, ____x_2 = self.mousePosition, "x"
+        ____self_mousePosition_1[____x_2] = ____self_mousePosition_1[____x_2] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_3, ____y_4 = self.mousePosition, "y"
+        ____self_mousePosition_3[____y_4] = ____self_mousePosition_3[____y_4] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then
@@ -289,6 +352,7 @@ do
         end
         self.renderer:update()
         self:update()
+        self.icons:main(delta)
         self:getTimeString()
     end
     mineos.System:registerProgram(RunProcedure)

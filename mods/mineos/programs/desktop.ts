@@ -39,10 +39,12 @@ namespace mineos {
   }
 
   class Icon {
+    name: string
     collisionBox: AABB
     texture: string
 
-    constructor(cbox: AABB, texture: string) {
+    constructor(name: string, cbox: AABB, texture: string) {
+      this.name = name
       this.collisionBox = cbox
       this.texture = texture
     }
@@ -51,26 +53,90 @@ namespace mineos {
 
   // The actual desktop portion of the desktop.
   class DesktopIcons extends Program {
-    icons: Icon[] = []
-    currentIcon: Icon | null = null
 
-    constructor(system: System, renderer: Renderer, audio: AudioController) {
+    desktop: RunProcedure
+    icons: {[id: string]: Icon} = {}
+    currentIcon: Icon | null = null
+    payload = false
+
+    yOffset = 0
+
+    addIcon(iconName: string, iconTexture: string): void {
+
+      const icon = new Icon(iconName, new AABB(
+        create(0,this.yOffset),
+        create(40,40),
+        create(0,0)
+      ), iconTexture)
+
+      print("adding icon " + iconName)
+      this.renderer.addElement(iconName, {
+        name: iconName,
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: icon.texture,
+        scale: create(1,1),
+        alignment: create(1,1),
+        offset: icon.collisionBox.offset,
+        z_index: 0
+      })
+
+      this.icons[iconName] = icon
+
+      this.yOffset += 40
+
+    }
+
+    constructor(system: System, renderer: Renderer, audio: AudioController, runProc: RunProcedure) {
       super(system, renderer, audio)
-      this.icons.push(new Icon(
-        new AABB(
-          create(0,0),
-          create(40,40),
-          create(0,0)
-        ),
-        "trash_icon.png"
-      ))
+      this.desktop = runProc
+      this.addIcon("trashIcon", "trash_icon.png");
+      this.addIcon("emailIcon", "email_icon.png");
+      this.addIcon("internetIcon", "internet_icon.png");
+    }
+
+    load(): void {
+      print("loading desktop icons.")
+
+      this.payload = true
+      print("desktop icons loaded.")
     }
 
     main(delta: number): void {
-      if (!this.system.isMouseDown() && !this.system.isMouseClicked()) return
-      
+      if (!this.payload) this.load()
+
+      // if ()
+
+      // if (!this.system.isMouseDown() && !this.system.isMouseClicked()) return
+
+      const mousePos = this.desktop.getMousePos()
+      const windowSize = this.renderer.frameBufferSize
+
+      if (this.currentIcon == null && this.system.isMouseClicked()) {
+        for (const [name, icon] of Object.entries(this.icons)) {
+          if (icon.collisionBox.pointWithin(mousePos)) {
+            print("clicking " + name)
+            this.currentIcon = icon
+            break;
+          }
+        }
+      }
+
+      if (this.currentIcon != null && this.system.isMouseDown()) {
+        this.currentIcon.collisionBox.offset.x = mousePos.x - 20
+        this.currentIcon.collisionBox.offset.y = mousePos.y - 20
+        if (this.currentIcon.collisionBox.offset.y > windowSize.y - 64) {
+          this.currentIcon.collisionBox.offset.y = windowSize.y - 64
+        }
+        this.renderer.setElementComponentValue(this.currentIcon.name, "offset", this.currentIcon.collisionBox.offset)
+      } else if (this.currentIcon != null && !this.system.isMouseDown()) {
+        this.currentIcon = null
+        print("let goed")
+      }
     }
   }
+
+
 
 
   class RunProcedure extends Program {
@@ -87,11 +153,6 @@ namespace mineos {
 
     // currentFocus: Focus;
 
-    constructor(system: System, renderer: Renderer, audio: AudioController) {
-      super(system, renderer, audio);
-      this.icons = new DesktopIcons(system, renderer, audio)
-    }
-
     menuComponents: {[id: string] : string} = {
       // Chip's Challenge
       "BitsBattle": "Bit's Battle",
@@ -101,6 +162,15 @@ namespace mineos {
       // "Gong": "Gong 96",
       // Ski Free
       // "SledQuickly": "Sled Liberty"
+    }
+
+    constructor(system: System, renderer: Renderer, audio: AudioController) {
+      super(system, renderer, audio);
+      this.icons = new DesktopIcons(system, renderer, audio, this)
+    }
+
+    getMousePos(): Vec2 {
+      return this.mousePosition
     }
 
     toggleStartMenu(): void {
@@ -147,7 +217,7 @@ namespace mineos {
         scale: create(1,1),
         alignment: create(1,-1),
         offset: create(0,0),
-        z_index: -3
+        z_index: -4
       })
 
       this.renderer.addElement("start_button", {
@@ -158,7 +228,7 @@ namespace mineos {
         scale: create(1,1),
         alignment: create(1,1),
         offset: create(2,-29),
-        z_index: -2
+        z_index: -3
       })
 
       this.renderer.addElement("time_box", {
@@ -169,7 +239,7 @@ namespace mineos {
         scale: create(1,1),
         alignment: create(-1,1),
         offset: create(-2,-29),
-        z_index: -1
+        z_index: -3
       })
 
       this.renderer.addElement("time", {
@@ -182,7 +252,7 @@ namespace mineos {
         alignment: create(0,-1),
         offset: create(-42,-5),
         // style: 4,
-        z_index: 0
+        z_index: -2
       })
 
       this.renderer.addElement("mouse", {
@@ -278,7 +348,7 @@ namespace mineos {
 
       this.renderer.update()
       this.update()
-
+      this.icons.main(delta)
       this.getTimeString()
 
     }
