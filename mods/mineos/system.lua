@@ -273,8 +273,10 @@ do
         self.quitReceived = true
     end
     function System.prototype.updateFrameBuffer(self, input)
-        self.renderer.frameBufferSize = input[1]
-        self.renderer.frameBufferScale = input[2]
+        local size = input[1]
+        local scale = input[2]
+        self.renderer.frameBufferSize = vector.create2d(size.x / scale, size.y / scale)
+        self.renderer.frameBufferScale = scale
     end
     function System.prototype.doRender(self, delta)
     end

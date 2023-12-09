@@ -20,6 +20,9 @@ namespace mineos {
     desktopLoaded = false
     startMenuFlag = false
     startMenuOpened = false
+    oldFrameBufferSize = create(0,0)
+
+    mousePosition: Vec2 = create(0,0)
 
     menuComponents: {[id: string] : string} = {
       // Chip's Challenge
@@ -134,6 +137,16 @@ namespace mineos {
         z_index: 0
       })
 
+      this.renderer.addElement("mouse", {
+        name: "mouse",
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "mouse.png",
+        scale: create(1,1),
+        alignment: create(1,1),
+        offset: create(0,0),
+        z_index: 10000
+      })
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
@@ -141,6 +154,38 @@ namespace mineos {
 
     update() {
       this.renderer.setElementComponentValue("taskbar", "scale", create(this.renderer.frameBufferSize.x, 1))
+
+
+      const screenSize = this.renderer.frameBufferSize
+
+      const mouseDeltaX = this.system.getDriver().get_look_horizontal()
+      const mouseDeltaY = this.system.getDriver().get_look_vertical()
+      // const mouseVec = this.system.getDriver().get_look_dir()
+
+      if (mouseDeltaX) {
+        this.mousePosition.x = screenSize.x - ((mouseDeltaX / (math.pi * 2)) * screenSize.x)
+        // print(this.mousePosition.x)
+      }
+
+      if (mouseDeltaY) {
+        this.mousePosition.y = ((mouseDeltaY + (math.pi / 2)) / math.pi ) * screenSize.y
+        print(this.mousePosition.y)
+      }
+
+      //todo: Make this a function
+      if (this.oldFrameBufferSize.x != screenSize.x || this.oldFrameBufferSize.y != screenSize.y) {
+        print ("updating fbuffer for desktop")
+        this.mousePosition = create(
+          screenSize.x / 2,
+          screenSize.y / 2,
+        )
+        print(dump(this.mousePosition))
+        this.oldFrameBufferSize = screenSize;
+      }
+  
+
+      // Mouse always positions based on the top left.
+      this.renderer.setElementComponentValue("mouse", "offset", this.mousePosition)
     }
 
     main(delta: number): void {
@@ -152,21 +197,6 @@ namespace mineos {
       this.update()
 
       this.getTimeString()
-
-      // if (this.up) {
-      //   this.colorTest += delta * this.testMultiplier
-      //   if (this.colorTest >= 100) {
-      //     this.colorTest = 100
-      //     this.up = false
-      //   }
-      // } else {
-      //   this.colorTest -= delta * this.testMultiplier
-      //   if (this.colorTest <= 0) {
-      //     this.colorTest = 0
-      //     this.up = true
-      //   }
-      // }
-      // this.renderer.setClearColor(this.colorTest, this.colorTest, this.colorTest)
 
     }
   }

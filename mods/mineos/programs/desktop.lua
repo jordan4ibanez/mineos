@@ -55,6 +55,8 @@ do
         self.desktopLoaded = false
         self.startMenuFlag = false
         self.startMenuOpened = false
+        self.oldFrameBufferSize = create(0, 0)
+        self.mousePosition = create(0, 0)
         self.menuComponents = {BitsBattle = "Bit's Battle"}
     end
     function RunProcedure.prototype.toggleStartMenu(self)
@@ -148,6 +150,19 @@ do
                 z_index = 0
             }
         )
+        self.renderer:addElement(
+            "mouse",
+            {
+                name = "mouse",
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = "mouse.png",
+                scale = create(1, 1),
+                alignment = create(1, 1),
+                offset = create(0, 0),
+                z_index = 10000
+            }
+        )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end
@@ -157,6 +172,23 @@ do
             "scale",
             create(self.renderer.frameBufferSize.x, 1)
         )
+        local screenSize = self.renderer.frameBufferSize
+        local mouseDeltaX = self.system:getDriver():get_look_horizontal()
+        local mouseDeltaY = self.system:getDriver():get_look_vertical()
+        if mouseDeltaX then
+            self.mousePosition.x = screenSize.x - mouseDeltaX / (math.pi * 2) * screenSize.x
+        end
+        if mouseDeltaY then
+            self.mousePosition.y = (mouseDeltaY + math.pi / 2) / math.pi * screenSize.y
+            print(self.mousePosition.y)
+        end
+        if self.oldFrameBufferSize.x ~= screenSize.x or self.oldFrameBufferSize.y ~= screenSize.y then
+            print("updating fbuffer for desktop")
+            self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)
+            print(dump(self.mousePosition))
+            self.oldFrameBufferSize = screenSize
+        end
+        self.renderer:setElementComponentValue("mouse", "offset", self.mousePosition)
     end
     function RunProcedure.prototype.main(self, delta)
         if not self.desktopLoaded then

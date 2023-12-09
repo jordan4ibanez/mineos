@@ -179,8 +179,13 @@ namespace mineos {
     }
 
     updateFrameBuffer(input: LuaMultiReturn<[Vec2, number]>) {
-      this.renderer.frameBufferSize = input[0]!!
-      this.renderer.frameBufferScale = input[1]!!
+      const size = input[0]!!
+      const scale = input[1]!!
+      this.renderer.frameBufferSize = vector.create2d(
+        size.x / scale,
+        size.y / scale
+      )
+      this.renderer.frameBufferScale = scale
     }
 
     doRender(delta: number): void {
