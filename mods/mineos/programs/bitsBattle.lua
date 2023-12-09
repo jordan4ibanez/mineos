@@ -43,9 +43,17 @@ do
     local BitsBattle = __TS__Class()
     BitsBattle.name = "BitsBattle"
     __TS__ClassExtends(BitsBattle, mineos.WindowProgram)
-    function BitsBattle.prototype.____constructor(self, ...)
-        BitsBattle.____super.prototype.____constructor(self, ...)
+    function BitsBattle.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
+        BitsBattle.____super.prototype.____constructor(
+            self,
+            system,
+            renderer,
+            audio,
+            desktop,
+            windowSize
+        )
         self.loaded = false
+        self.instance = 0
         self.map = {{
             0,
             0,
@@ -56,6 +64,8 @@ do
             0,
             0
         }}
+        self.instance = BitsBattle.counter
+        BitsBattle.counter = BitsBattle.counter + 1
     end
     function BitsBattle.prototype.load(self)
         mineos.System.out:println("Loading Bits' Battle!")
@@ -361,6 +371,8 @@ do
         if not self.loaded then
             self:load()
         end
+        print((("bits battle instance " .. tostring(self.instance)) .. " is running ") .. tostring(delta))
     end
+    BitsBattle.counter = 0
     mineos.DesktopEnvironment:registerProgram(BitsBattle)
 end

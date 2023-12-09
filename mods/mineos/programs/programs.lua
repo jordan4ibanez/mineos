@@ -17,6 +17,8 @@ do
         self.renderer = renderer
         self.audioController = audioController
     end
+    function Program.prototype.destructor(self)
+    end
     function Program.prototype.main(self, delta)
     end
     mineos.loadFiles({"programs/boot_loader", "programs/os_loader", "programs/desktop", "programs/bitsBattle"})

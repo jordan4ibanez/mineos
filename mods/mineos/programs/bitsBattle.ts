@@ -5,9 +5,19 @@ namespace mineos {
   class BitsBattle extends WindowProgram {
     loaded = false
 
+    static counter = 0
+
+    instance = 0
+
     map: number[][] = [
       [0,0,0,0,0,0,0,0]
     ]
+
+    constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
+      super(system, renderer, audio, desktop, windowSize)
+      this.instance = BitsBattle.counter
+      BitsBattle.counter++
+    }
 
     load() {
       System.out.println("Loading Bits' Battle!")
@@ -89,6 +99,8 @@ namespace mineos {
 
     main(delta: number): void {
       if (!this.loaded) this.load()
+
+      print("bits battle instance " + this.instance + " is running " + delta)
 
       // this.audioController.update(delta)
     }

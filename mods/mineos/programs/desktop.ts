@@ -279,9 +279,10 @@ namespace mineos {
           print("System shutting down...")
           this.system.requestShutdown();
         } else {
-          print("launch program")
-          //todo this.desktop.launchProgram(element.program)
+          print("Launching program " + element.program)
+          this.desktop.launchProgram(element.program, create(540, 480))
         }
+        this.trigger()
         break;
       }
     }
