@@ -118,12 +118,31 @@ namespace mineos {
       System.out.println("desktop environment loaded")
     }
 
+    colorTest = 0
+    up = true
+    testMultiplier = 100
+
     main(delta: number): void {
       
       if (!this.desktopLoaded) this.loadDesktop()
       if (this.startMenuFlag) this.toggleStartMenu()
 
       this.renderer.update()
+
+      if (this.up) {
+        this.colorTest += delta * this.testMultiplier
+        if (this.colorTest >= 100) {
+          this.colorTest = 100
+          this.up = false
+        }
+      } else {
+        this.colorTest -= delta * this.testMultiplier
+        if (this.colorTest <= 0) {
+          this.colorTest = 0
+          this.up = true
+        }
+      }
+      this.renderer.setClearColor(this.colorTest, this.colorTest, this.colorTest)
 
     }
   }

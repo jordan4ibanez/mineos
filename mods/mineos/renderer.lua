@@ -193,13 +193,11 @@ do
         driver:hud_change(elementID, component, value)
     end
     function Renderer.prototype.update(self)
-        print("updating")
-        print(dump(self.frameBufferSize))
         self:setElementComponentValue("background", "scale", self.frameBufferSize)
         self:setElementComponentValue(
             "background",
             "text",
-            "pixel.png^[" .. colors.color(self.clearColor.x, self.clearColor.y, self.clearColor.z)
+            ("pixel.png^[colorize:" .. colors.color(self.clearColor.x, self.clearColor.y, self.clearColor.z)) .. ":255"
         )
     end
     print("renderer loaded.")

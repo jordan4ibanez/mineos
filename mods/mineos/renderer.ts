@@ -75,10 +75,10 @@ namespace mineos {
     }
 
     update() {
-      print("updating")
-      print(dump(this.frameBufferSize))
+      // print("updating")
+      // print(dump(this.frameBufferSize))
       this.setElementComponentValue("background", "scale", this.frameBufferSize)
-      this.setElementComponentValue("background", "text", "pixel.png^[" + colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z))
+      this.setElementComponentValue("background", "text", "pixel.png^[colorize:" + colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z) + ":255")
     }
   }
 

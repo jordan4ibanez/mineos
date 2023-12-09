@@ -57,6 +57,9 @@ do
         self.startMenuFlag = false
         self.startMenuOpened = false
         self.menuComponents = {BitsBattle = "Bit's Battle"}
+        self.colorTest = 0
+        self.up = true
+        self.testMultiplier = 100
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -96,6 +99,20 @@ do
             self:toggleStartMenu()
         end
         self.renderer:update()
+        if self.up then
+            self.colorTest = self.colorTest + delta * self.testMultiplier
+            if self.colorTest >= 100 then
+                self.colorTest = 100
+                self.up = false
+            end
+        else
+            self.colorTest = self.colorTest - delta * self.testMultiplier
+            if self.colorTest <= 0 then
+                self.colorTest = 0
+                self.up = true
+            end
+        end
+        self.renderer:setClearColor(self.colorTest, self.colorTest, self.colorTest)
     end
     mineos.System:registerProgram(RunProcedure)
 end
