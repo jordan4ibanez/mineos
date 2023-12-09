@@ -73,6 +73,12 @@ namespace mineos {
       if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
       driver.hud_change(elementID, component, value)
     }
+
+    update() {
+      print("updating")
+      print(dump(this.frameBufferSize))
+      this.setElementComponentValue("background", "scale", this.frameBufferSize)
+    }
   }
 
   print("renderer loaded.")

@@ -123,6 +123,8 @@ namespace mineos {
       if (!this.desktopLoaded) this.loadDesktop()
       if (this.startMenuFlag) this.toggleStartMenu()
 
+      this.renderer.update()
+
     }
   }
 

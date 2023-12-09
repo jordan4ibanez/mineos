@@ -95,6 +95,7 @@ do
         if self.startMenuFlag then
             self:toggleStartMenu()
         end
+        self.renderer:update()
     end
     mineos.System:registerProgram(RunProcedure)
 end

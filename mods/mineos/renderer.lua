@@ -192,5 +192,10 @@ do
         end
         driver:hud_change(elementID, component, value)
     end
+    function Renderer.prototype.update(self)
+        print("updating")
+        print(dump(self.frameBufferSize))
+        self:setElementComponentValue("background", "scale", self.frameBufferSize)
+    end
     print("renderer loaded.")
 end
