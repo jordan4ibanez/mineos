@@ -126,6 +126,34 @@ do
     TypeError = createErrorClass(nil, "TypeError")
     URIError = createErrorClass(nil, "URIError")
 end
+
+local function __TS__ObjectGetOwnPropertyDescriptors(object)
+    local metatable = getmetatable(object)
+    if not metatable then
+        return {}
+    end
+    return rawget(metatable, "_descriptors") or ({})
+end
+
+local function __TS__Delete(target, key)
+    local descriptors = __TS__ObjectGetOwnPropertyDescriptors(target)
+    local descriptor = descriptors[key]
+    if descriptor then
+        if not descriptor.configurable then
+            error(
+                __TS__New(
+                    TypeError,
+                    ((("Cannot delete property " .. tostring(key)) .. " of ") .. tostring(target)) .. "."
+                ),
+                0
+            )
+        end
+        descriptors[key] = nil
+        return true
+    end
+    target[key] = nil
+    return true
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -155,8 +183,6 @@ do
         )
     end
     function Renderer.prototype.clearMemory(self)
-    end
-    function Renderer.prototype.removeComponent(self, name)
     end
     function Renderer.prototype.internalUpdateClearColor(self)
     end
@@ -191,6 +217,18 @@ do
             )
         end
         driver:hud_change(elementID, component, value)
+    end
+    function Renderer.prototype.removeElement(self, name)
+        local driver = self.system:getDriver()
+        local elementID = self.memory[name]
+        if elementID == nil then
+            error(
+                __TS__New(Error, ("renderer: component " .. name) .. " does not exist."),
+                0
+            )
+        end
+        driver:hud_remove(elementID)
+        __TS__Delete(self.memory, name)
     end
     function Renderer.prototype.update(self)
         self:setElementComponentValue("background", "scale", self.frameBufferSize)

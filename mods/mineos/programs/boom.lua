@@ -36,6 +36,22 @@ do
     local Boom = __TS__Class()
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
+    function Boom.prototype.____constructor(self, ...)
+        Boom.____super.prototype.____constructor(self, ...)
+        self.currentPixelCount = 0
+    end
+    function Boom.prototype.clear(self)
+        do
+            local i = 0
+            while i < self.currentPixelCount do
+                self.renderer:removeElement("boompixel" .. tostring(i))
+                i = i + 1
+            end
+        end
+    end
+    function Boom.prototype.render(self)
+        self:clear()
+    end
     function Boom.prototype.main(self, delta)
         print("BOOM BABY")
     end

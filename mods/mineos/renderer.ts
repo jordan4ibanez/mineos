@@ -36,9 +36,7 @@ namespace mineos {
       // }
     }
 
-    removeComponent(name: string) {
-      // delete this.memory[name]
-    }
+
 
     internalUpdateClearColor(): void {
       // this.memory["backgroundColor"] = new BGColor({
@@ -72,6 +70,14 @@ namespace mineos {
       const elementID = this.memory[name]
       if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
       driver.hud_change(elementID, component, value)
+    }
+
+    removeElement(name: string) {
+      const driver = this.system.getDriver()
+      const elementID = this.memory[name]
+      if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
+      driver.hud_remove(elementID)
+      delete this.memory[name]
     }
 
     update() {
