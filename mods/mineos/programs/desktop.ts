@@ -175,6 +175,7 @@ namespace mineos {
 
     desktop: DesktopEnvironment
     shown = false
+    menuEntries: StartMenuEntry[] = []
 
     load(): void {
       this.renderer.addElement("startMenu", {
