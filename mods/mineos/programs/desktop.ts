@@ -206,7 +206,7 @@ namespace mineos {
     constructor(system: System, renderer: Renderer, audio: AudioController) {
       super(system, renderer, audio);
       this.icons = new DesktopIcons(system, renderer, audio, this)
-      this.startMenu = new StartMenu(system, renderer, audio)
+      this.startMenu = new StartMenu(system, renderer, audio, this)
     }
 
     getMousePos(): Vec2 {
