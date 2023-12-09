@@ -69,9 +69,7 @@ do
     DesktopComponent.name = "DesktopComponent"
     function DesktopComponent.prototype.____constructor(self, aabb, click)
         self.collisionBox = aabb
-        self.test = click
-    end
-    function DesktopComponent.prototype.test(self)
+        self.callback = click
     end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
@@ -237,7 +235,11 @@ do
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
         if self.system:isMouseClicked() then
-            print("click!")
+            for ____, element in ipairs(self.components) do
+                if element.collisionBox:pointWithin(self.mousePosition) then
+                    element:callback()
+                end
+            end
         end
     end
     function RunProcedure.prototype.main(self, delta)

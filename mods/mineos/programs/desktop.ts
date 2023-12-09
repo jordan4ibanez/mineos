@@ -29,13 +29,10 @@ namespace mineos {
 
   class DesktopComponent {
     collisionBox: AABB
+    callback: () => void;
     constructor(aabb: AABB, click: (this: DesktopComponent) => void) {
       this.collisionBox = aabb;
-      this.test = click;
-    }
-
-    test() {
-
+      this.callback = click;
     }
   }
 
@@ -222,7 +219,11 @@ namespace mineos {
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
 
       if (this.system.isMouseClicked()) {
-        print("click!")
+        for (const element of this.components) {
+          if (element.collisionBox.pointWithin(this.mousePosition)) {
+            element.callback()
+          }
+        }
       }
 
       // if (startMenuAABB.pointWithin(this.mousePosition)) {
