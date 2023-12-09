@@ -68,6 +68,14 @@ namespace mineos {
       print("start clicked!")
     }
 
+    getTimeString(): string {
+      // Filter off leading 0.
+      const hour = tostring(tonumber(os.date("%I", os.time())))
+      
+      // Get rest of timestamp and combine.
+      return hour + os.date(":%M %p", os.time())
+    }
+
     loadDesktop(): void {
       System.out.println("loading desktop environment")
 
@@ -88,7 +96,7 @@ namespace mineos {
         scale: create(1,1),
         alignment: create(1,-1),
         offset: create(0,0),
-        z_index: -1
+        z_index: -3
       })
 
       this.renderer.addElement("start_button", {
@@ -99,7 +107,7 @@ namespace mineos {
         scale: create(1,1),
         alignment: create(1,1),
         offset: create(2,-29),
-        z_index: 0
+        z_index: -2
       })
 
       this.renderer.addElement("time_box", {
@@ -110,8 +118,22 @@ namespace mineos {
         scale: create(1,1),
         alignment: create(-1,1),
         offset: create(-2,-29),
+        z_index: -1
+      })
+
+      this.renderer.addElement("time", {
+        name: "time",
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: this.getTimeString(),
+        number: colors.colorHEX(0,0,0),
+        position: create(1,1),
+        alignment: create(0,-1),
+        offset: create(-42,-5),
+        // style: 4,
         z_index: 0
       })
+
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
@@ -128,6 +150,8 @@ namespace mineos {
 
       this.renderer.update()
       this.update()
+
+      this.getTimeString()
 
       // if (this.up) {
       //   this.colorTest += delta * this.testMultiplier

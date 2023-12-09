@@ -79,6 +79,16 @@ do
         self.startMenuFlag = false
         print("start clicked!")
     end
+    function RunProcedure.prototype.getTimeString(self)
+        local hour = tostring(tonumber(os.date(
+            "%I",
+            os.time()
+        )))
+        return hour .. os.date(
+            ":%M %p",
+            os.time()
+        )
+    end
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
         self.audioController:playSound("osStartup", 0.9)
@@ -95,7 +105,7 @@ do
                 scale = create(1, 1),
                 alignment = create(1, -1),
                 offset = create(0, 0),
-                z_index = -1
+                z_index = -3
             }
         )
         self.renderer:addElement(
@@ -108,7 +118,7 @@ do
                 scale = create(1, 1),
                 alignment = create(1, 1),
                 offset = create(2, -29),
-                z_index = 0
+                z_index = -2
             }
         )
         self.renderer:addElement(
@@ -121,6 +131,20 @@ do
                 scale = create(1, 1),
                 alignment = create(-1, 1),
                 offset = create(-2, -29),
+                z_index = -1
+            }
+        )
+        self.renderer:addElement(
+            "time",
+            {
+                name = "time",
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = self:getTimeString(),
+                number = colors.colorHEX(0, 0, 0),
+                position = create(1, 1),
+                alignment = create(0, -1),
+                offset = create(-42, -5),
                 z_index = 0
             }
         )
@@ -143,6 +167,7 @@ do
         end
         self.renderer:update()
         self:update()
+        self:getTimeString()
     end
     mineos.System:registerProgram(RunProcedure)
 end
