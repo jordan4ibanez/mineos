@@ -162,6 +162,7 @@ do
         self.bootProcess = 0
         self.running = false
         self.quitReceived = false
+        self.mouseDelta = vector.create2d(0, 0)
         self.programs = {}
         self.currentProgram = nil
         self.currentProgramName = ""
@@ -280,6 +281,18 @@ do
     end
     function System.prototype.doRender(self, delta)
     end
+    function System.prototype.pollMouse(self)
+        if self.driver == nil then
+            return
+        end
+        self.mouseDelta.x = math.pi - self.driver:get_look_horizontal()
+        self.mouseDelta.y = self.driver:get_look_vertical()
+        self.driver:set_look_horizontal(math.pi)
+        self.driver:set_look_vertical(0)
+    end
+    function System.prototype.getMouseDelta(self)
+        return self.mouseDelta
+    end
     function System.prototype.main(self, delta)
         if not self.running then
             return
@@ -288,6 +301,7 @@ do
             return
         end
         self:updateFrameBuffer({mineos.osFrameBufferPoll()})
+        self:pollMouse()
         if self.booting then
             self:doBoot(delta)
         else

@@ -36,6 +36,7 @@ namespace mineos {
     bootProcess = 0
     running = false
     quitReceived = false
+    mouseDelta: Vec2 = vector.create2d(0,0)
 
 
     programs: {[id: string] : typeof Program} = {}
@@ -193,6 +194,21 @@ namespace mineos {
       // System.out.println("rendering")
     }
 
+    // GLFW Mouse simulation.
+    pollMouse(): void {
+      if (this.driver == null) return
+
+      this.mouseDelta.x = math.pi - this.driver.get_look_horizontal()
+      this.mouseDelta.y = this.driver.get_look_vertical()
+
+      this.driver.set_look_horizontal(math.pi)
+      this.driver.set_look_vertical(0)
+    }
+
+    getMouseDelta(): Vec2 {
+      return this.mouseDelta
+    }
+
 
     main(delta: number): void {
 
@@ -202,6 +218,8 @@ namespace mineos {
       if (this.quitReceived) return
 
       this.updateFrameBuffer(osFrameBufferPoll())
+
+      this.pollMouse()
 
       if (this.booting) {
         this.doBoot(delta);
