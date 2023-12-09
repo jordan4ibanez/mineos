@@ -61,6 +61,15 @@ namespace mineos {
 
     yOffset = 0
 
+
+    constructor(system: System, renderer: Renderer, audio: AudioController, runProc: RunProcedure) {
+      super(system, renderer, audio)
+      this.desktop = runProc
+      this.addIcon("trashIcon", "trash_icon.png");
+      this.addIcon("emailIcon", "email_icon.png");
+      this.addIcon("internetIcon", "internet_icon.png");
+    }
+
     addIcon(iconName: string, iconTexture: string): void {
 
       const icon = new Icon(iconName, new AABB(
@@ -69,7 +78,7 @@ namespace mineos {
         create(0,0)
       ), iconTexture)
 
-      print("adding icon " + iconName)
+      // print("adding icon " + iconName)
       this.renderer.addElement(iconName, {
         name: iconName,
         hud_elem_type: HudElementType.image,
@@ -87,12 +96,8 @@ namespace mineos {
 
     }
 
-    constructor(system: System, renderer: Renderer, audio: AudioController, runProc: RunProcedure) {
-      super(system, renderer, audio)
-      this.desktop = runProc
-      this.addIcon("trashIcon", "trash_icon.png");
-      this.addIcon("emailIcon", "email_icon.png");
-      this.addIcon("internetIcon", "internet_icon.png");
+    corral(): void {
+
     }
 
     load(): void {
@@ -112,26 +117,27 @@ namespace mineos {
       const mousePos = this.desktop.getMousePos()
       const windowSize = this.renderer.frameBufferSize
 
-      if (this.currentIcon == null && this.system.isMouseClicked()) {
-        for (const [name, icon] of Object.entries(this.icons)) {
-          if (icon.collisionBox.pointWithin(mousePos)) {
-            print("clicking " + name)
-            this.currentIcon = icon
-            break;
+      if (this.currentIcon == null) {
+        if (this.system.isMouseClicked()) {
+          for (const [name, icon] of Object.entries(this.icons)) {
+            if (icon.collisionBox.pointWithin(mousePos)) {
+              print("clicking " + name)
+              this.currentIcon = icon
+              break;
+            }
           }
         }
-      }
-
-      if (this.currentIcon != null && this.system.isMouseDown()) {
-        this.currentIcon.collisionBox.offset.x = mousePos.x - 20
-        this.currentIcon.collisionBox.offset.y = mousePos.y - 20
-        if (this.currentIcon.collisionBox.offset.y > windowSize.y - 64) {
-          this.currentIcon.collisionBox.offset.y = windowSize.y - 64
+      } else {
+        if (this.system.isMouseDown()) {
+          this.currentIcon.collisionBox.offset.x = mousePos.x - 20
+          this.currentIcon.collisionBox.offset.y = mousePos.y - 20
+          if (this.currentIcon.collisionBox.offset.y > windowSize.y - 64) {
+            this.currentIcon.collisionBox.offset.y = windowSize.y - 64
+          }
+          this.renderer.setElementComponentValue(this.currentIcon.name, "offset", this.currentIcon.collisionBox.offset)
+        } else {
+          this.currentIcon = null
         }
-        this.renderer.setElementComponentValue(this.currentIcon.name, "offset", this.currentIcon.collisionBox.offset)
-      } else if (this.currentIcon != null && !this.system.isMouseDown()) {
-        this.currentIcon = null
-        print("let goed")
       }
     }
   }
@@ -318,6 +324,7 @@ namespace mineos {
         )
         print(dump(this.mousePosition))
         this.oldFrameBufferSize = screenSize;
+        this.icons.corral()
       }
 
       // -1 to have the inner pixel of the mouse be the pointer.

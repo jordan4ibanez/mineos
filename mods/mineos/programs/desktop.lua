@@ -109,7 +109,6 @@ do
             ),
             iconTexture
         )
-        print("adding icon " .. iconName)
         self.renderer:addElement(
             iconName,
             {
@@ -126,6 +125,8 @@ do
         self.icons[iconName] = icon
         self.yOffset = self.yOffset + 40
     end
+    function DesktopIcons.prototype.corral(self)
+    end
     function DesktopIcons.prototype.load(self)
         print("loading desktop icons.")
         self.payload = true
@@ -137,27 +138,29 @@ do
         end
         local mousePos = self.desktop:getMousePos()
         local windowSize = self.renderer.frameBufferSize
-        if self.currentIcon == nil and self.system:isMouseClicked() then
-            for ____, ____value in ipairs(__TS__ObjectEntries(self.icons)) do
-                local name = ____value[1]
-                local icon = ____value[2]
-                if icon.collisionBox:pointWithin(mousePos) then
-                    print("clicking " .. name)
-                    self.currentIcon = icon
-                    break
+        if self.currentIcon == nil then
+            if self.system:isMouseClicked() then
+                for ____, ____value in ipairs(__TS__ObjectEntries(self.icons)) do
+                    local name = ____value[1]
+                    local icon = ____value[2]
+                    if icon.collisionBox:pointWithin(mousePos) then
+                        print("clicking " .. name)
+                        self.currentIcon = icon
+                        break
+                    end
                 end
             end
-        end
-        if self.currentIcon ~= nil and self.system:isMouseDown() then
-            self.currentIcon.collisionBox.offset.x = mousePos.x - 20
-            self.currentIcon.collisionBox.offset.y = mousePos.y - 20
-            if self.currentIcon.collisionBox.offset.y > windowSize.y - 64 then
-                self.currentIcon.collisionBox.offset.y = windowSize.y - 64
+        else
+            if self.system:isMouseDown() then
+                self.currentIcon.collisionBox.offset.x = mousePos.x - 20
+                self.currentIcon.collisionBox.offset.y = mousePos.y - 20
+                if self.currentIcon.collisionBox.offset.y > windowSize.y - 64 then
+                    self.currentIcon.collisionBox.offset.y = windowSize.y - 64
+                end
+                self.renderer:setElementComponentValue(self.currentIcon.name, "offset", self.currentIcon.collisionBox.offset)
+            else
+                self.currentIcon = nil
             end
-            self.renderer:setElementComponentValue(self.currentIcon.name, "offset", self.currentIcon.collisionBox.offset)
-        elseif self.currentIcon ~= nil and not self.system:isMouseDown() then
-            self.currentIcon = nil
-            print("let goed")
         end
     end
     local RunProcedure = __TS__Class()
@@ -339,6 +342,7 @@ do
             self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)
             print(dump(self.mousePosition))
             self.oldFrameBufferSize = screenSize
+            self.icons:corral()
         end
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
