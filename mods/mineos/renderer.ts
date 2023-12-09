@@ -5,7 +5,7 @@ namespace mineos {
   
     
     clearColor: Vec3 = vector.create(0,0,0)
-    // memory: {[id: string] : gui.Element} = {}
+    memory: {[id: string] : number} = {}
     shouldDraw = true
     frameBufferSize: Vec2 = create(0,0)
     frameBufferScale: number = 1
@@ -41,18 +41,23 @@ namespace mineos {
       this.internalUpdateClearColor()
     }
 
-    // getBuffer(): string {
-    //   return this.buffer
-    // }
-
-    addElement(name: string) {
-      this.system.driver
-      // this.memory[name] = element
+    addElement(name: string, component: GUIComponent): void {
+      const driver = this.system.getDriver()
+      this.memory[name] = driver.hud_add(component)
     }
 
-    // getElement(name: string): gui.Element {
-      // return this.memory[name]
-    // }
+    getElement(name: string): GUIComponent {
+      const driver = this.system.getDriver()
+      const elementID = this.memory[name]
+      if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
+      return driver.hud_get(elementID)!!
+    }
+
+    setElementComponentValue(name: string, component: string, value: any): void {
+      const elementID = this.memory[name]
+      if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
+                  
+    }
   }
 
   print("renderer loaded.")

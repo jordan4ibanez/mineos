@@ -2,6 +2,8 @@ namespace mineos {
 
   // Oh yeah we're taking it that far
   export type Driver = ObjectRef;
+  export type GUIComponent = HudDefinition;
+  export type GUIType = HudElementType;
 
   minetest.register_on_joinplayer((player: ObjectRef) => {
     player.set_physics_override({
