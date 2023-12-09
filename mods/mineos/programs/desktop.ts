@@ -163,6 +163,12 @@ namespace mineos {
 
   class StartMenu extends Program {
 
+    desktop: DesktopEnvironment
+
+    constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment) {
+      super(system, renderer, audio)
+      this.desktop = desktop            
+    }
 
   }
 
@@ -180,6 +186,7 @@ namespace mineos {
     components: DesktopComponent[] = []
     focused = true
     icons: DesktopIcons
+    startMenu: StartMenu
 
 
 
@@ -199,6 +206,7 @@ namespace mineos {
     constructor(system: System, renderer: Renderer, audio: AudioController) {
       super(system, renderer, audio);
       this.icons = new DesktopIcons(system, renderer, audio, this)
+      this.startMenu = new StartMenu(system, renderer, audio)
     }
 
     getMousePos(): Vec2 {
@@ -302,14 +310,13 @@ namespace mineos {
         z_index: 10000
       })
 
-      const startMenuButtonAABB = new AABB(
-        create(0,-32),
-        create(66,32),
-        create(0,1)
-      )
-
+      // ? Start menu button.
       this.components.push(new DesktopComponent(
-        startMenuButtonAABB,
+        new AABB(
+          create(0,-32),
+          create(66,32),
+          create(0,1)
+        ),
         () => {
           print("start!")
         },
