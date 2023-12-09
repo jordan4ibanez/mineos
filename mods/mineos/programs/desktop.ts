@@ -152,25 +152,19 @@ namespace mineos {
       System.out.println("desktop environment loaded")
     }
 
+    acceleration = 200
+
     update() {
       this.renderer.setElementComponentValue("taskbar", "scale", create(this.renderer.frameBufferSize.x, 1))
 
 
       const screenSize = this.renderer.frameBufferSize
 
-      const mouseDeltaX = this.system.getDriver().get_look_horizontal()
-      const mouseDeltaY = this.system.getDriver().get_look_vertical()
-      // const mouseVec = this.system.getDriver().get_look_dir()
+      const mouseDelta = this.system.getMouseDelta()
 
-      if (mouseDeltaX) {
-        this.mousePosition.x = screenSize.x - ((mouseDeltaX / (math.pi * 2)) * screenSize.x)
-        // print(this.mousePosition.x)
-      }
-
-      if (mouseDeltaY) {
-        this.mousePosition.y = ((mouseDeltaY + (math.pi / 2)) / math.pi ) * screenSize.y
-        print(this.mousePosition.y)
-      }
+      // screenSize.x - ((mouseDeltaX / (math.pi * 2)) * screenSize.x)
+      this.mousePosition.x += mouseDelta.x * this.acceleration
+      this.mousePosition.y += mouseDelta.y * this.acceleration
 
       //todo: Make this a function
       if (this.oldFrameBufferSize.x != screenSize.x || this.oldFrameBufferSize.y != screenSize.y) {

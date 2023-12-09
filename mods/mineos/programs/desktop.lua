@@ -58,6 +58,7 @@ do
         self.oldFrameBufferSize = create(0, 0)
         self.mousePosition = create(0, 0)
         self.menuComponents = {BitsBattle = "Bit's Battle"}
+        self.acceleration = 200
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -173,15 +174,11 @@ do
             create(self.renderer.frameBufferSize.x, 1)
         )
         local screenSize = self.renderer.frameBufferSize
-        local mouseDeltaX = self.system:getDriver():get_look_horizontal()
-        local mouseDeltaY = self.system:getDriver():get_look_vertical()
-        if mouseDeltaX then
-            self.mousePosition.x = screenSize.x - mouseDeltaX / (math.pi * 2) * screenSize.x
-        end
-        if mouseDeltaY then
-            self.mousePosition.y = (mouseDeltaY + math.pi / 2) / math.pi * screenSize.y
-            print(self.mousePosition.y)
-        end
+        local mouseDelta = self.system:getMouseDelta()
+        local ____self_mousePosition_0, ____x_1 = self.mousePosition, "x"
+        ____self_mousePosition_0[____x_1] = ____self_mousePosition_0[____x_1] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_2, ____y_3 = self.mousePosition, "y"
+        ____self_mousePosition_2[____y_3] = ____self_mousePosition_2[____y_3] + mouseDelta.y * self.acceleration
         if self.oldFrameBufferSize.x ~= screenSize.x or self.oldFrameBufferSize.y ~= screenSize.y then
             print("updating fbuffer for desktop")
             self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)
