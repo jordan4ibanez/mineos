@@ -167,12 +167,12 @@ namespace mineos {
     collisionBox: AABB
     icon: string
 
-    constructor(name: string, program: string, text: string, icon: string) {
+    constructor(name: string, program: string, text: string, icon: string, yOffset?: number) {
       this.name = name
       this.program = program
       this.text = text
       this.collisionBox = new AABB(
-        create(1,StartMenuEntry.yOffset), //offset
+        create(1, yOffset || StartMenuEntry.yOffset), //offset
         create(198,32),
         create(0,1) // anchor
       )
@@ -203,6 +203,7 @@ namespace mineos {
       this.menuEntries.push(new StartMenuEntry("fezSphere", "FezSphere", "Fez Sphere", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("gong", "Gong", "Gong", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("sledLiberty", "SledLiberty", "Sled Liberty", "minetest.png"))
+      this.menuEntries.push(new StartMenuEntry("shutDown", "", "Shut Down...", "minetest.png", -65))
 
       for (const entry of this.menuEntries) {
         const offset = entry.collisionBox.offset
@@ -263,6 +264,26 @@ namespace mineos {
       super(system, renderer, audio)
       this.desktop = desktop            
       this.load()
+    }
+
+    main(delta: number): void {
+      if (!this.shown) return
+      if (!this.system.isMouseClicked()) return
+
+      const mousePos = this.desktop.getMousePos()
+
+      for (const element of this.menuEntries) {
+        if (!element.collisionBox.pointWithin(mousePos)) continue
+        // print("I clicked: " + element.name)
+        if (element.name == "shutDown") {
+          print("system shutdown")
+        } else {
+          print("launch program")
+        }
+        break;
+      }
+
+      // print("main of start menu")
     }
 
   }
@@ -469,6 +490,7 @@ namespace mineos {
       this.renderer.update()
       this.update()
       this.icons.main(delta)
+      this.startMenu.main(delta)
       this.updateTime()
 
     }

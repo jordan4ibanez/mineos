@@ -181,13 +181,13 @@ do
     end
     local StartMenuEntry = __TS__Class()
     StartMenuEntry.name = "StartMenuEntry"
-    function StartMenuEntry.prototype.____constructor(self, name, program, text, icon)
+    function StartMenuEntry.prototype.____constructor(self, name, program, text, icon, yOffset)
         self.name = name
         self.program = program
         self.text = text
         self.collisionBox = __TS__New(
             AABB,
-            create(1, StartMenuEntry.yOffset),
+            create(1, yOffset or StartMenuEntry.yOffset),
             create(198, 32),
             create(0, 1)
         )
@@ -250,6 +250,15 @@ do
             "SledLiberty",
             "Sled Liberty",
             "minetest.png"
+        )
+        local ____self_menuEntries_4 = self.menuEntries
+        ____self_menuEntries_4[#____self_menuEntries_4 + 1] = __TS__New(
+            StartMenuEntry,
+            "shutDown",
+            "",
+            "Shut Down...",
+            "minetest.png",
+            -65
         )
         for ____, entry in ipairs(self.menuEntries) do
             local offset = entry.collisionBox.offset
@@ -323,6 +332,29 @@ do
                     create(-241, offset.y)
                 )
             end
+        end
+    end
+    function StartMenu.prototype.main(self, delta)
+        if not self.shown then
+            return
+        end
+        if not self.system:isMouseClicked() then
+            return
+        end
+        local mousePos = self.desktop:getMousePos()
+        for ____, element in ipairs(self.menuEntries) do
+            do
+                if not element.collisionBox:pointWithin(mousePos) then
+                    goto __continue44
+                end
+                if element.name == "shutDown" then
+                    print("system shutdown")
+                else
+                    print("launch program")
+                end
+                break
+            end
+            ::__continue44::
         end
     end
     local DesktopEnvironment = __TS__Class()
@@ -445,8 +477,8 @@ do
                 z_index = 10000
             }
         )
-        local ____self_components_4 = self.components
-        ____self_components_4[#____self_components_4 + 1] = __TS__New(
+        local ____self_components_5 = self.components
+        ____self_components_5[#____self_components_5 + 1] = __TS__New(
             DesktopComponent,
             __TS__New(
                 AABB,
@@ -471,10 +503,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_5, ____x_6 = self.mousePosition, "x"
-        ____self_mousePosition_5[____x_6] = ____self_mousePosition_5[____x_6] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_7, ____y_8 = self.mousePosition, "y"
-        ____self_mousePosition_7[____y_8] = ____self_mousePosition_7[____y_8] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_6, ____x_7 = self.mousePosition, "x"
+        ____self_mousePosition_6[____x_7] = ____self_mousePosition_6[____x_7] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_8, ____y_9 = self.mousePosition, "y"
+        ____self_mousePosition_8[____y_9] = ____self_mousePosition_8[____y_9] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then
@@ -509,6 +541,7 @@ do
         self.renderer:update()
         self:update()
         self.icons:main(delta)
+        self.startMenu:main(delta)
         self:updateTime()
     end
     mineos.System:registerProgram(DesktopEnvironment)
