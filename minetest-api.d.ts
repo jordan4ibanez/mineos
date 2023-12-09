@@ -1496,7 +1496,7 @@ declare global {
   
   export interface HudDefinition {
     hud_elem_type: HudElementType
-    position: Vec2
+    position?: Vec2
     name: string
     scale?: Vec2
     text?: string
