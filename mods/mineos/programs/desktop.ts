@@ -48,7 +48,6 @@ namespace mineos {
       this.collisionBox = cbox
       this.texture = texture
     }
-    
   }
 
   // The actual desktop portion of the desktop.
@@ -160,14 +159,46 @@ namespace mineos {
     }
   }
 
+  class StartMenuEntry {
+    name: string
+    collisionBox: AABB
+    icon: string
+
+    constructor(name: string, cbox: AABB, icon: string) {
+      this.name = name
+      this.collisionBox = cbox
+      this.icon = icon
+    }
+  }
 
   class StartMenu extends Program {
 
     desktop: DesktopEnvironment
 
+    loaded = false
+
+    load(): void {
+      this.renderer.addElement("startMenu", {
+        name: "startMenu",
+        hud_elem_type: HudElementType.image,
+        position: create(0,1),
+        text: "start_menu.png",
+        scale: create(1,1),
+        alignment: create(1,1),
+        offset: create(2,-332),
+        z_index: -3
+      })
+      
+    }
+
+    trigger(): void {
+
+    }
+
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment) {
       super(system, renderer, audio)
       this.desktop = desktop            
+      this.load()
     }
 
   }

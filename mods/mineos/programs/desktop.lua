@@ -179,9 +179,39 @@ do
             end
         end
     end
+    local StartMenuEntry = __TS__Class()
+    StartMenuEntry.name = "StartMenuEntry"
+    function StartMenuEntry.prototype.____constructor(self, name, cbox, icon)
+        self.name = name
+        self.collisionBox = cbox
+        self.icon = icon
+    end
     local StartMenu = __TS__Class()
     StartMenu.name = "StartMenu"
     __TS__ClassExtends(StartMenu, mineos.Program)
+    function StartMenu.prototype.____constructor(self, system, renderer, audio, desktop)
+        StartMenu.____super.prototype.____constructor(self, system, renderer, audio)
+        self.loaded = false
+        self.desktop = desktop
+        self:load()
+    end
+    function StartMenu.prototype.load(self)
+        self.renderer:addElement(
+            "startMenu",
+            {
+                name = "startMenu",
+                hud_elem_type = HudElementType.image,
+                position = create(0, 1),
+                text = "start_menu.png",
+                scale = create(1, 1),
+                alignment = create(1, 1),
+                offset = create(2, -332),
+                z_index = -3
+            }
+        )
+    end
+    function StartMenu.prototype.trigger(self)
+    end
     local DesktopEnvironment = __TS__Class()
     DesktopEnvironment.name = "DesktopEnvironment"
     __TS__ClassExtends(DesktopEnvironment, mineos.Program)
@@ -198,6 +228,13 @@ do
         self.acceleration = 250
         self.icons = __TS__New(
             DesktopIcons,
+            system,
+            renderer,
+            audio,
+            self
+        )
+        self.startMenu = __TS__New(
+            StartMenu,
             system,
             renderer,
             audio,
@@ -315,16 +352,15 @@ do
                 z_index = 10000
             }
         )
-        local startMenuButtonAABB = __TS__New(
-            AABB,
-            create(0, -32),
-            create(66, 32),
-            create(0, 1)
-        )
         local ____self_components_0 = self.components
         ____self_components_0[#____self_components_0 + 1] = __TS__New(
             DesktopComponent,
-            startMenuButtonAABB,
+            __TS__New(
+                AABB,
+                create(0, -32),
+                create(66, 32),
+                create(0, 1)
+            ),
             function()
                 print("start!")
             end,
