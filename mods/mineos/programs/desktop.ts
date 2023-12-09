@@ -199,6 +199,8 @@ namespace mineos {
         z_index: -3
       })
 
+      // This stays in order in the start menu
+      this.menuEntries.push(new StartMenuEntry("boom", "Boom", "Boom", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("bitsBattle", "BitsBattle", "Bit's Battle", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("fezSphere", "FezSphere", "Fez Sphere", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("gong", "Gong", "Gong", "minetest.png"))

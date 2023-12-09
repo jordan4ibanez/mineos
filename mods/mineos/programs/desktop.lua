@@ -222,37 +222,45 @@ do
         local ____self_menuEntries_0 = self.menuEntries
         ____self_menuEntries_0[#____self_menuEntries_0 + 1] = __TS__New(
             StartMenuEntry,
+            "boom",
+            "Boom",
+            "Boom",
+            "minetest.png"
+        )
+        local ____self_menuEntries_1 = self.menuEntries
+        ____self_menuEntries_1[#____self_menuEntries_1 + 1] = __TS__New(
+            StartMenuEntry,
             "bitsBattle",
             "BitsBattle",
             "Bit's Battle",
             "minetest.png"
         )
-        local ____self_menuEntries_1 = self.menuEntries
-        ____self_menuEntries_1[#____self_menuEntries_1 + 1] = __TS__New(
+        local ____self_menuEntries_2 = self.menuEntries
+        ____self_menuEntries_2[#____self_menuEntries_2 + 1] = __TS__New(
             StartMenuEntry,
             "fezSphere",
             "FezSphere",
             "Fez Sphere",
             "minetest.png"
         )
-        local ____self_menuEntries_2 = self.menuEntries
-        ____self_menuEntries_2[#____self_menuEntries_2 + 1] = __TS__New(
+        local ____self_menuEntries_3 = self.menuEntries
+        ____self_menuEntries_3[#____self_menuEntries_3 + 1] = __TS__New(
             StartMenuEntry,
             "gong",
             "Gong",
             "Gong",
             "minetest.png"
         )
-        local ____self_menuEntries_3 = self.menuEntries
-        ____self_menuEntries_3[#____self_menuEntries_3 + 1] = __TS__New(
+        local ____self_menuEntries_4 = self.menuEntries
+        ____self_menuEntries_4[#____self_menuEntries_4 + 1] = __TS__New(
             StartMenuEntry,
             "sledLiberty",
             "SledLiberty",
             "Sled Liberty",
             "minetest.png"
         )
-        local ____self_menuEntries_4 = self.menuEntries
-        ____self_menuEntries_4[#____self_menuEntries_4 + 1] = __TS__New(
+        local ____self_menuEntries_5 = self.menuEntries
+        ____self_menuEntries_5[#____self_menuEntries_5 + 1] = __TS__New(
             StartMenuEntry,
             "shutDown",
             "",
@@ -415,8 +423,8 @@ do
         programQueue[progBlueprint.name] = progBlueprint
     end
     function DesktopEnvironment.prototype.launchProgram(self, progName, windowSize)
-        local ____self_runningPrograms_5 = self.runningPrograms
-        ____self_runningPrograms_5[#____self_runningPrograms_5 + 1] = __TS__New(
+        local ____self_runningPrograms_6 = self.runningPrograms
+        ____self_runningPrograms_6[#____self_runningPrograms_6 + 1] = __TS__New(
             self.programBlueprints[progName],
             self.system,
             self.renderer,
@@ -517,8 +525,8 @@ do
                 z_index = 10000
             }
         )
-        local ____self_components_6 = self.components
-        ____self_components_6[#____self_components_6 + 1] = __TS__New(
+        local ____self_components_7 = self.components
+        ____self_components_7[#____self_components_7 + 1] = __TS__New(
             DesktopComponent,
             __TS__New(
                 AABB,
@@ -543,10 +551,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_7, ____x_8 = self.mousePosition, "x"
-        ____self_mousePosition_7[____x_8] = ____self_mousePosition_7[____x_8] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_9, ____y_10 = self.mousePosition, "y"
-        ____self_mousePosition_9[____y_10] = ____self_mousePosition_9[____y_10] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_8, ____x_9 = self.mousePosition, "x"
+        ____self_mousePosition_8[____x_9] = ____self_mousePosition_8[____x_9] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_10, ____y_11 = self.mousePosition, "y"
+        ____self_mousePosition_10[____y_11] = ____self_mousePosition_10[____y_11] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then

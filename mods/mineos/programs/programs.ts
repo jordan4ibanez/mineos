@@ -31,7 +31,8 @@ namespace mineos {
     "programs/boot_loader",
     "programs/os_loader",
     "programs/desktop",
-    "programs/bitsBattle"
+    "programs/bitsBattle",
+    "programs/boom"
   ])
 
   System.out.println("programs loaded!");
