@@ -7,13 +7,13 @@ namespace mineos {
 
 
   // Callback to actually start the menu.
-  function sendStartMenuSignal(_: any): void {
-    print("hi")
-    const system = getSystem()
-    const currProg = system.currentProgram as RunProcedure
-    currProg.startMenuFlag = true
-    system.audioController.playSound("mouseClick", 1)
-  }
+  // function sendStartMenuSignal(_: any): void {
+  //   print("hi")
+  //   const system = getSystem()
+  //   const currProg = system.currentProgram as RunProcedure
+  //   currProg.startMenuFlag = true
+  //   system.audioController.playSound("mouseClick", 1)
+  // }
 
   class RunProcedure extends Program {
 
@@ -53,23 +53,6 @@ namespace mineos {
 
         this.renderer.setClearColor(48,48,48)
 
-        // Causes things to randomly overlap
-        // this.renderer.addElement("startMenuBackground", new gui.Box({
-        //   position: create2d(0.25,5.5),
-        //   size: create2d(6,10),
-        //   color: colorScalar(65)
-        // }))
-
-        // We have to shift the entire wallpaper to the right so it doesn't blend 
-        // const background = this.renderer.getElement("background") as gui.Box
-        // background.position.x = 6.25
-        // Then we gotta patch the space
-        // this.renderer.addElement("backgroundDuctTape", new gui.Box({
-        //   position: create2d(0,0),
-        //   size: create2d(6.25,5.5),
-        //   color: colorRGB(1,130,129,255)
-        // }))
-
         // Now duct tape on the buttons that randomly won't be clickable
         let i = 0
         for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
@@ -104,7 +87,7 @@ namespace mineos {
 
       this.audioController.playSound("osStartup", 0.9)
 
-      this.system.clearCallbacks()
+      // this.system.clearCallbacks()
       this.renderer.clearMemory()
 
       this.renderer.setClearColor(0,0,0)
@@ -129,7 +112,7 @@ namespace mineos {
       //   label: "Start"
       // }))
 
-      this.system.registerCallback("startButton", sendStartMenuSignal);
+      // this.system.registerCallback("startButton", sendStartMenuSignal);
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")

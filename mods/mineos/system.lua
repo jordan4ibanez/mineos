@@ -126,44 +126,6 @@ do
     TypeError = createErrorClass(nil, "TypeError")
     URIError = createErrorClass(nil, "URIError")
 end
-
-local function __TS__ObjectEntries(obj)
-    local result = {}
-    local len = 0
-    for key in pairs(obj) do
-        len = len + 1
-        result[len] = {key, obj[key]}
-    end
-    return result
-end
-
-local function __TS__ObjectGetOwnPropertyDescriptors(object)
-    local metatable = getmetatable(object)
-    if not metatable then
-        return {}
-    end
-    return rawget(metatable, "_descriptors") or ({})
-end
-
-local function __TS__Delete(target, key)
-    local descriptors = __TS__ObjectGetOwnPropertyDescriptors(target)
-    local descriptor = descriptors[key]
-    if descriptor then
-        if not descriptor.configurable then
-            error(
-                __TS__New(
-                    TypeError,
-                    ((("Cannot delete property " .. tostring(key)) .. " of ") .. tostring(target)) .. "."
-                ),
-                0
-            )
-        end
-        descriptors[key] = nil
-        return true
-    end
-    target[key] = nil
-    return true
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -192,16 +154,15 @@ do
     mineos.System = __TS__Class()
     local System = mineos.System
     System.name = "System"
-    function System.prototype.____constructor(self)
-        self.renderer = __TS__New(mineos.Renderer, self)
+    function System.prototype.____constructor(self, driver)
         self.audioController = __TS__New(mineos.AudioController, self)
+        self.driver = nil
         self.skipToDesktopHackjob = true
         self.booting = true
         self.bootProcess = 0
         self.running = false
         self.quitReceived = false
         self.programs = {}
-        self.callbacks = {}
         self.currentProgram = nil
         self.currentProgramName = ""
         self.mousePos = vector.create2d(0, 0)
@@ -212,30 +173,30 @@ do
             )
         end
         currentSystem = self
+        self.driver = driver
+        self.renderer = __TS__New(mineos.Renderer, self)
         self:receivePrograms()
     end
     function System.prototype.getRenderer(self)
         return self.renderer
+    end
+    function System.prototype.setDriver(self, driver)
+        self.driver = driver
+    end
+    function System.prototype.getDriver(self)
+        if self.driver == nil then
+            error(
+                __TS__New(Error, "Attempted to get driver before available."),
+                0
+            )
+        end
+        return self.driver
     end
     function System.prototype.getAudioController(self)
         return self.audioController
     end
     function System.prototype.isKeyDown(self, keyName)
         return mineos.osKeyboardPoll(keyName)
-    end
-    function System.prototype.registerCallback(self, name, callback)
-        self.callbacks[name] = callback
-    end
-    function System.prototype.triggerCallbacks(self, fields)
-        for ____, ____value in ipairs(__TS__ObjectEntries(fields)) do
-            local name = ____value[1]
-            local thing = ____value[2]
-            local pulledCallback = self.callbacks[name]
-            if pulledCallback == nil then
-                return
-            end
-            pulledCallback(thing)
-        end
     end
     function System.prototype.receivePrograms(self)
         while #registrationQueue > 0 do
@@ -265,13 +226,6 @@ do
         self.audioController:playSoundRepeat("hardDrive", 0.5, 0.2)
         mineos.System.out:println("power button pushed.")
         mineos.System.out:println("starting computer.")
-    end
-    function System.prototype.clearCallbacks(self)
-        for ____, ____value in ipairs(__TS__ObjectEntries(self.callbacks)) do
-            local name = ____value[1]
-            local _ = ____value[2]
-            __TS__Delete(self.callbacks, name)
-        end
     end
     function System.prototype.doBoot(self, delta)
         if self.bootProcess == 0 then

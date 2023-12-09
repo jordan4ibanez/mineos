@@ -34,9 +34,6 @@ do
         })
         player:set_moon({visible = false})
         player:set_sun({visible = false, sunrise_visible = false})
-        minetest.register_on_player_receive_fields(function(_, __, fields)
-            mineos.getSystem():triggerCallbacks(fields)
-        end)
     end)
     function mineos.osFrameBufferPoll()
         local monitorInformation = minetest.get_player_window_information("singleplayer")
@@ -50,59 +47,60 @@ do
     function mineos.osKeyboardPoll(key)
         local a = minetest.get_player_by_name("singleplayer"):get_player_control()
         repeat
-            local ____switch8 = key
-            local ____cond8 = ____switch8 == "up"
-            if ____cond8 then
+            local ____switch7 = key
+            local ____cond7 = ____switch7 == "up"
+            if ____cond7 then
                 return a.up
             end
-            ____cond8 = ____cond8 or ____switch8 == "down"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "down"
+            if ____cond7 then
                 return a.down
             end
-            ____cond8 = ____cond8 or ____switch8 == "left"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "left"
+            if ____cond7 then
                 return a.left
             end
-            ____cond8 = ____cond8 or ____switch8 == "right"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "right"
+            if ____cond7 then
                 return a.right
             end
-            ____cond8 = ____cond8 or ____switch8 == "jump"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "jump"
+            if ____cond7 then
                 return a.jump
             end
-            ____cond8 = ____cond8 or ____switch8 == "aux1"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "aux1"
+            if ____cond7 then
                 return a.aux1
             end
-            ____cond8 = ____cond8 or ____switch8 == "sneak"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "sneak"
+            if ____cond7 then
                 return a.sneak
             end
-            ____cond8 = ____cond8 or ____switch8 == "dig"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "dig"
+            if ____cond7 then
                 return a.dig
             end
-            ____cond8 = ____cond8 or ____switch8 == "place"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "place"
+            if ____cond7 then
                 return a.place
             end
-            ____cond8 = ____cond8 or ____switch8 == "LMB"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "LMB"
+            if ____cond7 then
                 return a.LMB
             end
-            ____cond8 = ____cond8 or ____switch8 == "RMB"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "RMB"
+            if ____cond7 then
                 return a.RMB
             end
-            ____cond8 = ____cond8 or ____switch8 == "zoom"
-            if ____cond8 then
+            ____cond7 = ____cond7 or ____switch7 == "zoom"
+            if ____cond7 then
                 return a.zoom
             end
         until true
         return false
     end
-    minetest.register_on_joinplayer(function()
+    minetest.register_on_joinplayer(function(driver)
+        mineos.initializeSystem(driver)
         mineos.getSystem():triggerBoot()
     end)
     mineos.System.out:println("hacks loaded.")

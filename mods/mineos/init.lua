@@ -20,8 +20,10 @@ do
         "programs/programs",
         "hacks"
     })
-    local system = __TS__New(mineos.System)
-    minetest.register_globalstep(function(delta)
-        system:main(delta)
-    end)
+    function mineos.initializeSystem(driver)
+        local system = __TS__New(mineos.System, driver)
+        minetest.register_globalstep(function(delta)
+            system:main(delta)
+        end)
+    end
 end

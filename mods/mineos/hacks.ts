@@ -1,10 +1,5 @@
 namespace mineos {
 
-  // Oh yeah we're taking it that far
-  export type Driver = ObjectRef;
-  export type GUIComponent = HudDefinition;
-  export type GUIType = HudElementType;
-
   minetest.register_on_joinplayer((player: ObjectRef) => {
     player.set_physics_override({
       gravity: 0
@@ -55,9 +50,9 @@ namespace mineos {
     })
 
     // "OS sends the program things" or some nonsense
-    minetest.register_on_player_receive_fields((_: ObjectRef, __: string, fields: {[id: string] : any}) => {
-      getSystem().triggerCallbacks(fields)
-    })
+    // minetest.register_on_player_receive_fields((_: ObjectRef, __: string, fields: {[id: string] : any}) => {
+    //   // getSystem().triggerCallbacks(fields)
+    // })
 
 
   })
@@ -94,10 +89,9 @@ namespace mineos {
   }
 
   // Automatically start mineos when the player loads in.
-  minetest.register_on_joinplayer(() => {
+  minetest.register_on_joinplayer((driver: ObjectRef) => {
+    mineos.initializeSystem(driver)
     getSystem().triggerBoot()
   })
-
-
   System.out.println("hacks loaded.")
 }

@@ -1,5 +1,7 @@
 namespace mineos {
 
+  export type Driver = ObjectRef;
+
   let currentSystem: System | null = null;
   let registrationQueue: [string, typeof Program][] = []
 
@@ -21,7 +23,7 @@ namespace mineos {
 
   export class System {
 
-    renderer = new Renderer(this);
+    renderer: Renderer;
     audioController = new AudioController(this)
     driver: Driver | null = null
 
@@ -38,17 +40,19 @@ namespace mineos {
 
     programs: {[id: string] : typeof Program} = {}
 
-    callbacks: {[id: string]: (fields: any) => void} = {}
+    // callbacks: {[id: string]: (fields: any) => void} = {}
 
     currentProgram: Program | null = null
     currentProgramName = ""
     mousePos = vector.create2d(0,0)
 
-    constructor() {
+    constructor(driver: Driver) {
       if (currentSystem != null) {
         throw new Error("Cannot create more than one instance of mineos.");
       }
       currentSystem = this
+      this.driver = driver
+      this.renderer = new Renderer(this)
       this.receivePrograms()
     }
 
@@ -73,17 +77,17 @@ namespace mineos {
       return osKeyboardPoll(keyName)
     }
 
-    registerCallback(name: string, callback: (fields: any) => void): void {
-      this.callbacks[name] = callback
-    }
+    // registerCallback(name: string, callback: (fields: any) => void): void {
+    //   this.callbacks[name] = callback
+    // }
 
-    triggerCallbacks(fields: {[id: string] : any}): void {
-      for (const [name, thing] of Object.entries(fields)) {
-        const pulledCallback = this.callbacks[name]
-        if (pulledCallback == null) return
-        pulledCallback(thing);
-      }
-    }
+    // triggerCallbacks(fields: {[id: string] : any}): void {
+    //   for (const [name, thing] of Object.entries(fields)) {
+    //     const pulledCallback = this.callbacks[name]
+    //     if (pulledCallback == null) return
+    //     pulledCallback(thing);
+    //   }
+    // }
 
     receivePrograms() {
       while (registrationQueue.length > 0) {
@@ -122,11 +126,11 @@ namespace mineos {
       System.out.println("starting computer.")
     }
 
-    clearCallbacks() {
-      for (const [name,_] of Object.entries(this.callbacks)) {
-        delete this.callbacks[name]
-      }
-    }
+    // clearCallbacks() {
+    //   for (const [name,_] of Object.entries(this.callbacks)) {
+    //     delete this.callbacks[name]
+    //   }
+    // }
 
     doBoot(delta: number): void {
       if (this.bootProcess == 0) {

@@ -48,13 +48,6 @@ do
     local color = colors.color
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
-    local function sendStartMenuSignal(_)
-        print("hi")
-        local system = mineos.getSystem()
-        local currProg = system.currentProgram
-        currProg.startMenuFlag = true
-        system.audioController:playSound("mouseClick", 1)
-    end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
     __TS__ClassExtends(RunProcedure, mineos.Program)
@@ -90,10 +83,8 @@ do
     function RunProcedure.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
         self.audioController:playSound("osStartup", 0.9)
-        self.system:clearCallbacks()
         self.renderer:clearMemory()
         self.renderer:setClearColor(0, 0, 0)
-        self.system:registerCallback("startButton", sendStartMenuSignal)
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end

@@ -1,4 +1,5 @@
 namespace mineos {
+
   const create = vector.create2d
 
   export class Renderer {
@@ -13,13 +14,20 @@ namespace mineos {
 
     constructor(system: System) {
       this.system = system
+      this.system.getDriver().hud_add({
+        name: "background",
+        hud_elem_type: HudElementType.image,
+        position: create(0,0)
+      })
     }
 
     clearMemory(): void {
-      // for (const [name, _] of Object.entries(this.memory)) {
-      //   if (name == "backgroundColor") continue
-      //   delete this.memory[name]
-      // }
+      for (const [name, elementID] of Object.entries(this.memory)) {
+        if (name == "background") continue
+        const driver = this.system.getDriver()
+        driver.hud_remove(elementID)
+        delete this.memory[name]
+      }
     }
 
     removeComponent(name: string) {
@@ -41,12 +49,12 @@ namespace mineos {
       this.internalUpdateClearColor()
     }
 
-    addElement(name: string, component: GUIComponent): void {
+    addElement(name: string, component: HudDefinition): void {
       const driver = this.system.getDriver()
       this.memory[name] = driver.hud_add(component)
     }
 
-    getElement(name: string): GUIComponent {
+    getElement(name: string): HudDefinition {
       const driver = this.system.getDriver()
       const elementID = this.memory[name]
       if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
@@ -54,9 +62,10 @@ namespace mineos {
     }
 
     setElementComponentValue(name: string, component: string, value: any): void {
+      const driver = this.system.getDriver()
       const elementID = this.memory[name]
       if (elementID == null) throw new Error("renderer: component " + name + " does not exist.")
-                  
+      driver.hud_change(elementID, component, value)
     }
   }
 

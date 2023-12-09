@@ -16,10 +16,13 @@ namespace mineos {
   // Computer turns on. Beep boop.
   
   // Hard drive spins up.
-  const system = new System();
+  export function initializeSystem(driver: Driver) {
 
-  // Now begins mineos.
-  minetest.register_globalstep((delta: number) => {
-    system.main(delta)
-  })
+    const system = new System(driver);
+
+    // Now begins mineos.
+    minetest.register_globalstep((delta: number) => {
+      system.main(delta)
+    })
+  }
 }

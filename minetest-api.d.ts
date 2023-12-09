@@ -1245,7 +1245,7 @@ declare global {
     get_physics_override(): PhysicsOverride
     hud_add(definition: HudDefinition): number
     hud_remove(id: number): void
-    hud_change(id: number, stat: HudElementType, value: any): void
+    hud_change(id: number, stat: string, value: any): void
     hud_get(id: number): HudDefinition
     hud_set_flags(flags: HudFlags): void
     hud_get_flags(): HudFlags
