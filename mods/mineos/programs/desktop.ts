@@ -102,6 +102,17 @@ namespace mineos {
         z_index: 0
       })
 
+      this.renderer.addElement("time_box", {
+        name: "time_box",
+        hud_elem_type: HudElementType.image,
+        position: create(1,1),
+        text: "time_box.png",
+        scale: create(1,1),
+        alignment: create(-1,1),
+        offset: create(-2,-29),
+        z_index: 0
+      })
+
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
     }
