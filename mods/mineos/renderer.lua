@@ -126,44 +126,6 @@ do
     TypeError = createErrorClass(nil, "TypeError")
     URIError = createErrorClass(nil, "URIError")
 end
-
-local function __TS__ObjectGetOwnPropertyDescriptors(object)
-    local metatable = getmetatable(object)
-    if not metatable then
-        return {}
-    end
-    return rawget(metatable, "_descriptors") or ({})
-end
-
-local function __TS__Delete(target, key)
-    local descriptors = __TS__ObjectGetOwnPropertyDescriptors(target)
-    local descriptor = descriptors[key]
-    if descriptor then
-        if not descriptor.configurable then
-            error(
-                __TS__New(
-                    TypeError,
-                    ((("Cannot delete property " .. tostring(key)) .. " of ") .. tostring(target)) .. "."
-                ),
-                0
-            )
-        end
-        descriptors[key] = nil
-        return true
-    end
-    target[key] = nil
-    return true
-end
-
-local function __TS__ObjectEntries(obj)
-    local result = {}
-    local len = 0
-    for key in pairs(obj) do
-        len = len + 1
-        result[len] = {key, obj[key]}
-    end
-    return result
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -178,26 +140,22 @@ do
         self.frameBufferSize = create(0, 0)
         self.frameBufferScale = 1
         self.system = system
+        print(self.system:getDriver():get_player_name() .. "alkfjasdflkjasdflkasdj")
+        print(HudElementType.image)
+        print(colors.color(100, 100, 100))
         self.system:getDriver():hud_add({
-            name = "background",
-            hud_elem_type = HudElementType.image,
-            position = create(0, 0)
+            name = "testing",
+            hud_elem_type = HudElementType.text,
+            text = "minetest.png",
+            number = colors.colorHEX(100, 100, 100),
+            size = create(0, 0),
+            scale = create(1, 1),
+            alignment = create(0, 0),
+            z_index = 100
         })
+        print("added afkjadsklfjasdfklsdajf")
     end
     function Renderer.prototype.clearMemory(self)
-        for ____, ____value in ipairs(__TS__ObjectEntries(self.memory)) do
-            local name = ____value[1]
-            local elementID = ____value[2]
-            do
-                if name == "background" then
-                    goto __continue5
-                end
-                local driver = self.system:getDriver()
-                driver:hud_remove(elementID)
-                __TS__Delete(self.memory, name)
-            end
-            ::__continue5::
-        end
     end
     function Renderer.prototype.removeComponent(self, name)
     end

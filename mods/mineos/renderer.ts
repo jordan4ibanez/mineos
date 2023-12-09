@@ -14,20 +14,39 @@ namespace mineos {
 
     constructor(system: System) {
       this.system = system
+      print(this.system.getDriver().get_player_name() + "alkfjasdflkjasdflkasdj")
+      print(HudElementType.image)
+      print(colors.color(100,100,100))
       this.system.getDriver().hud_add({
-        name: "background",
-        hud_elem_type: HudElementType.image,
-        position: create(0,0)
+        name: "testing",
+        hud_elem_type: HudElementType.text,
+        // position: create(0,0),
+        text: "minetest.png",
+        number: colors.colorHEX(100,100,100),
+        size: create(0,0),
+        scale: create(1,1),
+        alignment: create(0,0),
+        // offset: create(0,0),
+        z_index: 100
+        // name: "background",
+        // hud_elem_type: HudElementType.text,
+        // text: "hi",//minetest.colorize(colors.colorScalar(100), "hi there"),
+        // scale: create(100,100),
+        // position: create(0,0),
+        // alignment: create(0,0),
+        // offset: create(0,0),
+        // size: create(10,10)
       })
+      print("added afkjadsklfjasdfklsdajf")
     }
 
     clearMemory(): void {
-      for (const [name, elementID] of Object.entries(this.memory)) {
-        if (name == "background") continue
-        const driver = this.system.getDriver()
-        driver.hud_remove(elementID)
-        delete this.memory[name]
-      }
+      // for (const [name, elementID] of Object.entries(this.memory)) {
+      //   if (name == "background") continue
+      //   const driver = this.system.getDriver()
+      //   driver.hud_remove(elementID)
+      //   delete this.memory[name]
+      // }
     }
 
     removeComponent(name: string) {
