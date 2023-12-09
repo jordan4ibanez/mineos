@@ -43,8 +43,7 @@ end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
-    local create = vector.create
-    local create2d = vector.create2d
+    local create = vector.create2d
     local color = colors.color
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
@@ -57,9 +56,6 @@ do
         self.startMenuFlag = false
         self.startMenuOpened = false
         self.menuComponents = {BitsBattle = "Bit's Battle"}
-        self.colorTest = 0
-        self.up = true
-        self.testMultiplier = 100
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -88,8 +84,42 @@ do
         self.audioController:playSound("osStartup", 0.9)
         self.renderer:clearMemory()
         self.renderer:setClearColor(0, 0, 0)
+        self.renderer:setClearColor(0.39215686274, 50.9803921569, 50.5882352941)
+        self.renderer:addElement(
+            "taskbar",
+            {
+                name = "taskbar",
+                hud_elem_type = HudElementType.image,
+                position = create(0, 1),
+                text = "task_bar.png",
+                scale = create(1, 1),
+                alignment = create(1, -1),
+                offset = create(0, 0),
+                z_index = -1
+            }
+        )
+        self.renderer:addElement(
+            "start_button",
+            {
+                name = "start_button",
+                hud_elem_type = HudElementType.image,
+                position = create(0, 1),
+                text = "start_button.png",
+                scale = create(1, 1),
+                alignment = create(1, 1),
+                offset = create(2, -29),
+                z_index = 0
+            }
+        )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
+    end
+    function RunProcedure.prototype.update(self)
+        self.renderer:setElementComponentValue(
+            "taskbar",
+            "scale",
+            create(self.renderer.frameBufferSize.x, 1)
+        )
     end
     function RunProcedure.prototype.main(self, delta)
         if not self.desktopLoaded then
@@ -99,20 +129,7 @@ do
             self:toggleStartMenu()
         end
         self.renderer:update()
-        if self.up then
-            self.colorTest = self.colorTest + delta * self.testMultiplier
-            if self.colorTest >= 100 then
-                self.colorTest = 100
-                self.up = false
-            end
-        else
-            self.colorTest = self.colorTest - delta * self.testMultiplier
-            if self.colorTest <= 0 then
-                self.colorTest = 0
-                self.up = true
-            end
-        end
-        self.renderer:setClearColor(self.colorTest, self.colorTest, self.colorTest)
+        self:update()
     end
     mineos.System:registerProgram(RunProcedure)
 end

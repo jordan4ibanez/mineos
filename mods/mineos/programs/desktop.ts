@@ -1,6 +1,6 @@
 namespace mineos {
-  const create = vector.create;
-  const create2d = vector.create2d;
+  // const create = vector.create;
+  const create = vector.create2d;
   const color = colors.color;
   const colorRGB = colors.colorRGB;
   const colorScalar = colors.colorScalar;
@@ -56,20 +56,6 @@ namespace mineos {
         // Now duct tape on the buttons that randomly won't be clickable
         let i = 0
         for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
-          // this.renderer.addElement(name, new gui.Button({
-          //   position: create2d(0,6 + (i * 2.5)),
-          //   size: create2d(6.25,1),
-          //   name: name,
-          //   label: progNameNice
-          // }))
-          // this.system.registerCallback(name, () => {
-          //   const system = getSystem()
-          //   system.clearCallbacks()
-          //   system.renderer.clearMemory()
-          //   system.audioController.playSound("mouseClick", 1)
-          //   print("launching: " + name)
-          //   system.changeProgram(name)
-          // });
 
           i++
         }
@@ -92,35 +78,37 @@ namespace mineos {
 
       this.renderer.setClearColor(0,0,0)
 
-      // this.renderer.addElement("background", new gui.Box({
-      //   position: create2d(0,0),
-      //   size: create2d(4000, 15.5),
-      //   color: colorRGB(1,130,129,255)
-      // }))
-      
-      // print("adding menu bar")
-      // this.renderer.addElement("menuBar", new gui.Box({
-      //   position: create2d(2,15.5),
-      //   size: create2d(4000,1),
-      //   color: colorScalar(50,100)
-      // }))
+      this.renderer.setClearColor(0.39215686274, 50.9803921569, 50.5882352941)
 
-      // this.renderer.addElement("startButton", new gui.Button({
-      //   position: create2d(0,15.5),
-      //   size: create2d(2,1),
-      //   name: "startButton",
-      //   label: "Start"
-      // }))
+      this.renderer.addElement("taskbar", {
+        name: "taskbar",
+        hud_elem_type: HudElementType.image,
+        position: create(0,1),
+        text: "task_bar.png",
+        scale: create(1,1),
+        alignment: create(1,-1),
+        offset: create(0,0),
+        z_index: -1
+      })
 
-      // this.system.registerCallback("startButton", sendStartMenuSignal);
+      this.renderer.addElement("start_button", {
+        name: "start_button",
+        hud_elem_type: HudElementType.image,
+        position: create(0,1),
+        text: "start_button.png",
+        scale: create(1,1),
+        alignment: create(1,1),
+        offset: create(2,-29),
+        z_index: 0
+      })
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
     }
 
-    colorTest = 0
-    up = true
-    testMultiplier = 100
+    update() {
+      this.renderer.setElementComponentValue("taskbar", "scale", create(this.renderer.frameBufferSize.x, 1))
+    }
 
     main(delta: number): void {
       
@@ -128,21 +116,22 @@ namespace mineos {
       if (this.startMenuFlag) this.toggleStartMenu()
 
       this.renderer.update()
+      this.update()
 
-      if (this.up) {
-        this.colorTest += delta * this.testMultiplier
-        if (this.colorTest >= 100) {
-          this.colorTest = 100
-          this.up = false
-        }
-      } else {
-        this.colorTest -= delta * this.testMultiplier
-        if (this.colorTest <= 0) {
-          this.colorTest = 0
-          this.up = true
-        }
-      }
-      this.renderer.setClearColor(this.colorTest, this.colorTest, this.colorTest)
+      // if (this.up) {
+      //   this.colorTest += delta * this.testMultiplier
+      //   if (this.colorTest >= 100) {
+      //     this.colorTest = 100
+      //     this.up = false
+      //   }
+      // } else {
+      //   this.colorTest -= delta * this.testMultiplier
+      //   if (this.colorTest <= 0) {
+      //     this.colorTest = 0
+      //     this.up = true
+      //   }
+      // }
+      // this.renderer.setClearColor(this.colorTest, this.colorTest, this.colorTest)
 
     }
   }

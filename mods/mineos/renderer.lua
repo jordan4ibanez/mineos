@@ -147,10 +147,10 @@ do
                 hud_elem_type = HudElementType.image,
                 position = create(0, 0),
                 text = "pixel.png",
-                scale = create(10, 10),
+                scale = create(0, 0),
                 alignment = create(1, 1),
                 offset = create(0, 0),
-                z_index = -1
+                z_index = -2
             }
         )
     end
