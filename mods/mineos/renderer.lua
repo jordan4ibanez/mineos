@@ -196,6 +196,11 @@ do
         print("updating")
         print(dump(self.frameBufferSize))
         self:setElementComponentValue("background", "scale", self.frameBufferSize)
+        self:setElementComponentValue(
+            "background",
+            "text",
+            "pixel.png^[" .. colors.color(self.clearColor.x, self.clearColor.y, self.clearColor.z)
+        )
     end
     print("renderer loaded.")
 end

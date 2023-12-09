@@ -78,6 +78,7 @@ namespace mineos {
       print("updating")
       print(dump(this.frameBufferSize))
       this.setElementComponentValue("background", "scale", this.frameBufferSize)
+      this.setElementComponentValue("background", "text", "pixel.png^[" + colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z))
     }
   }
 
