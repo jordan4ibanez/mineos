@@ -31,6 +31,12 @@ local function __TS__ClassExtends(target, base)
     end
 end
 
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
+
 local function __TS__ObjectEntries(obj)
     local result = {}
     local len = 0
@@ -39,12 +45,6 @@ local function __TS__ObjectEntries(obj)
         result[len] = {key, obj[key]}
     end
     return result
-end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
 end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
@@ -67,21 +67,39 @@ do
     end
     local DesktopComponent = __TS__Class()
     DesktopComponent.name = "DesktopComponent"
-    function DesktopComponent.prototype.____constructor(self, aabb, click, hold)
-        self.collisionBox = aabb
-        self.clickCallback = click
-        self.holdCallback = hold
+    function DesktopComponent.prototype.____constructor(self, cbox, onClick, onHold)
+        self.collisionBox = cbox
+        self.onClick = onClick
+        self.onHold = onHold
+    end
+    function DesktopComponent.prototype.onClick(self, desktop)
+    end
+    function DesktopComponent.prototype.onHold(self, desktop)
     end
     local Icon = __TS__Class()
     Icon.name = "Icon"
-    __TS__ClassExtends(Icon, DesktopComponent)
+    function Icon.prototype.____constructor(self, cbox, texture)
+        self.collisionBox = cbox
+        self.texture = texture
+    end
     local DesktopIcons = __TS__Class()
     DesktopIcons.name = "DesktopIcons"
     __TS__ClassExtends(DesktopIcons, mineos.Program)
-    function DesktopIcons.prototype.____constructor(self, ...)
-        DesktopIcons.____super.prototype.____constructor(self, ...)
+    function DesktopIcons.prototype.____constructor(self, system, renderer, audio)
+        DesktopIcons.____super.prototype.____constructor(self, system, renderer, audio)
         self.icons = {}
         self.currentIcon = nil
+        local ____self_icons_0 = self.icons
+        ____self_icons_0[#____self_icons_0 + 1] = __TS__New(
+            Icon,
+            __TS__New(
+                AABB,
+                create(0, 0),
+                create(40, 40),
+                create(0, 0)
+            ),
+            "trash_icon.png"
+        )
     end
     function DesktopIcons.prototype.main(self, delta)
         if not self.system:isMouseDown() and not self.system:isMouseClicked() then
@@ -102,6 +120,7 @@ do
         self.focused = true
         self.menuComponents = {BitsBattle = "Bit's Battle"}
         self.acceleration = 250
+        self.icons = __TS__New(DesktopIcons, system, renderer, audio)
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
@@ -210,8 +229,8 @@ do
             create(66, 32),
             create(0, 1)
         )
-        local ____self_components_0 = self.components
-        ____self_components_0[#____self_components_0 + 1] = __TS__New(
+        local ____self_components_1 = self.components
+        ____self_components_1[#____self_components_1 + 1] = __TS__New(
             DesktopComponent,
             startMenuButtonAABB,
             function()
@@ -231,10 +250,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_1, ____x_2 = self.mousePosition, "x"
-        ____self_mousePosition_1[____x_2] = ____self_mousePosition_1[____x_2] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_3, ____y_4 = self.mousePosition, "y"
-        ____self_mousePosition_3[____y_4] = ____self_mousePosition_3[____y_4] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_2, ____x_3 = self.mousePosition, "x"
+        ____self_mousePosition_2[____x_3] = ____self_mousePosition_2[____x_3] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_4, ____y_5 = self.mousePosition, "y"
+        ____self_mousePosition_4[____y_5] = ____self_mousePosition_4[____y_5] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then
@@ -256,7 +275,7 @@ do
         if self.system:isMouseClicked() then
             for ____, element in ipairs(self.components) do
                 if element.collisionBox:pointWithin(self.mousePosition) then
-                    element:clickCallback()
+                    element:onClick(self)
                 end
             end
         end

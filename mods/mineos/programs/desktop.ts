@@ -29,24 +29,46 @@ namespace mineos {
 
   class DesktopComponent {
     collisionBox: AABB
-    clickCallback: () => void;
-    holdCallback: () => void;
-    constructor(aabb: AABB, click: (this: DesktopComponent) => void, hold: (this: DesktopComponent) => void) {
-      this.collisionBox = aabb;
-      this.clickCallback = click;
-      this.holdCallback = hold;
+    onClick(desktop: RunProcedure) {}
+    onHold(desktop: RunProcedure) {}
+    constructor(cbox: AABB, onClick: (this: DesktopComponent, desktop: RunProcedure) => void, onHold: (this: DesktopComponent, desktop: RunProcedure) => void) {
+      this.collisionBox = cbox
+      this.onClick = onClick
+      this.onHold = onHold
     }
   }
 
-  class Icon extends DesktopComponent {}
+  class Icon {
+    collisionBox: AABB
+    texture: string
+
+    constructor(cbox: AABB, texture: string) {
+      this.collisionBox = cbox
+      this.texture = texture
+    }
+    
+  }
 
   // The actual desktop portion of the desktop.
   class DesktopIcons extends Program {
     icons: Icon[] = []
     currentIcon: Icon | null = null
 
+    constructor(system: System, renderer: Renderer, audio: AudioController) {
+      super(system, renderer, audio)
+      this.icons.push(new Icon(
+        new AABB(
+          create(0,0),
+          create(40,40),
+          create(0,0)
+        ),
+        "trash_icon.png"
+      ))
+    }
+
     main(delta: number): void {
       if (!this.system.isMouseDown() && !this.system.isMouseClicked()) return
+      
     }
   }
 
@@ -61,11 +83,13 @@ namespace mineos {
 
     components: DesktopComponent[] = []
     focused = true
+    icons: DesktopIcons
 
     // currentFocus: Focus;
 
     constructor(system: System, renderer: Renderer, audio: AudioController) {
       super(system, renderer, audio);
+      this.icons = new DesktopIcons(system, renderer, audio)
     }
 
     menuComponents: {[id: string] : string} = {
@@ -236,7 +260,7 @@ namespace mineos {
       if (this.system.isMouseClicked()) {
         for (const element of this.components) {
           if (element.collisionBox.pointWithin(this.mousePosition)) {
-            element.clickCallback()
+            element.onClick(this)
           }
         }
       }
