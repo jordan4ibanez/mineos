@@ -130,6 +130,18 @@ namespace colors {
     return newColor
   }
 
+  export function colorHEX(r: number, g: number, b: number, a?: number): number {
+    let newColor = "0x"
+    for (const channel of [r,g,b,a]) {
+      if (channel) {
+        newColor += hexValues[lockChannel(channel)]
+      }
+    }
+    const colorNumber = tonumber(newColor)
+    if (colorNumber == null) throw new Error("NULL COLOR!")
+    return colorNumber
+  }
+
   /**
    * Like the color() function, but can take in raw (0-255) rgba elements.
    * @param r Red channel. (0-255)
