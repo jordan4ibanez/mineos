@@ -98,12 +98,10 @@ namespace mineos {
 
     corral(): void {
 
-      print("coralling")
-
       const windowSize = this.renderer.frameBufferSize
-      print("OI" + dump(windowSize))
+      
+      // Don't even bother, this causes problems
       if (windowSize.x < 100 || windowSize.y < 100) {
-        print("$too small$")
         return
       }
       const limit = create(
@@ -114,7 +112,6 @@ namespace mineos {
         const offset = icon.collisionBox.offset
         if (offset.x > limit.x) {
           offset.x = limit.x
-          print("set offsetx to " + offset.x)
         }
         if (offset.y > limit.y) {
           offset.y = limit.y
@@ -134,10 +131,6 @@ namespace mineos {
     main(delta: number): void {
       if (!this.payload) this.load()
 
-      // if ()
-
-      // if (!this.system.isMouseDown() && !this.system.isMouseClicked()) return
-
       const mousePos = this.desktop.getMousePos()
       const windowSize = this.renderer.frameBufferSize
 
@@ -145,7 +138,8 @@ namespace mineos {
         if (this.system.isMouseClicked()) {
           for (const [name, icon] of Object.entries(this.icons)) {
             if (icon.collisionBox.pointWithin(mousePos)) {
-              print("clicking " + name)
+              //todo: Could use this portion to launch an app
+              // print("clicking " + name)
               this.currentIcon = icon
               break;
             }
