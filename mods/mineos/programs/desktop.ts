@@ -5,15 +5,34 @@ namespace mineos {
   const colorRGB = colors.colorRGB;
   const colorScalar = colors.colorScalar;
 
+  class AABB {
+    offset: Vec2
+    size: Vec2
+    anchor: Vec2
 
-  // Callback to actually start the menu.
-  // function sendStartMenuSignal(_: any): void {
-  //   print("hi")
-  //   const system = getSystem()
-  //   const currProg = system.currentProgram as RunProcedure
-  //   currProg.startMenuFlag = true
-  //   system.audioController.playSound("mouseClick", 1)
-  // }
+    constructor(offset: Vec2, size: Vec2, anchor: Vec2) {
+      this.offset = offset
+      this.size = size
+      this.anchor = anchor
+    }
+
+    pointWithin(point: Vec2) {
+      const windowSize = getSystem().getRenderer().frameBufferSize
+      const pos = create(
+        (this.anchor.x * windowSize.x) + this.offset.x,
+        (this.anchor.y * windowSize.y) + this.offset.y,
+      )
+      return (point.x > pos.x && point.x < pos.x + this.size.x &&
+              point.y > pos.y && point.y < pos.y + this.size.y)
+    }
+  }
+
+  class Focus {
+    name: string
+    constructor(name: string) {
+      this.name = name
+    }
+  }
 
   class RunProcedure extends Program {
 
@@ -21,8 +40,15 @@ namespace mineos {
     startMenuFlag = false
     startMenuOpened = false
     oldFrameBufferSize = create(0,0)
-
     mousePosition: Vec2 = create(0,0)
+
+    focused = true
+
+    // currentFocus: Focus;
+
+    constructor(system: System, renderer: Renderer, audio: AudioController) {
+      super(system, renderer, audio);
+    }
 
     menuComponents: {[id: string] : string} = {
       // Chip's Challenge
@@ -37,35 +63,15 @@ namespace mineos {
 
     toggleStartMenu(): void {
       if (this.startMenuOpened) {
-
-        this.renderer.setClearColor(0,0,0)
-
-        // Now rip off the duct tape
         for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
           this.renderer.removeComponent(name)
         }
-
-        // We have to shift the entire wallpaper back to the left
-        // const background = this.renderer.getElement("background") as gui.Box
-        // background.position.x = 0
-        // And remove this hack job
-        // this.renderer.removeComponent("startMenuBackground")
-        this.renderer.removeComponent("backgroundDuctTape")
-
       } else {
-
-        this.renderer.setClearColor(48,48,48)
-
-        // Now duct tape on the buttons that randomly won't be clickable
         let i = 0
         for (const [name,progNameNice] of Object.entries(this.menuComponents)) {
-
           i++
         }
-
-
       }
-
       this.startMenuOpened = !this.startMenuOpened
       this.startMenuFlag = false
       print("start clicked!")
@@ -175,8 +181,6 @@ namespace mineos {
         this.mousePosition.y = 0
       }
 
-      print(this.mousePosition.x)
-
       //todo: Make this a function
       if (this.oldFrameBufferSize.x != screenSize.x || this.oldFrameBufferSize.y != screenSize.y) {
         print ("updating fbuffer for desktop")
@@ -194,9 +198,18 @@ namespace mineos {
         this.mousePosition.y - 1
       )
   
-
       // Mouse always positions based on the top left.
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
+
+      const startMenuAABB = new AABB(
+        create(0,-32),
+        create(66,32),
+        create(0,1)
+      )
+      if (startMenuAABB.pointWithin(this.mousePosition)) {
+
+        print("mouse is in " + math.random())
+      }
     }
 
     main(delta: number): void {

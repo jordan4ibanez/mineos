@@ -40,6 +40,12 @@ local function __TS__ObjectEntries(obj)
     end
     return result
 end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -47,30 +53,45 @@ do
     local color = colors.color
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
+    local AABB = __TS__Class()
+    AABB.name = "AABB"
+    function AABB.prototype.____constructor(self, offset, size, anchor)
+        self.offset = offset
+        self.size = size
+        self.anchor = anchor
+    end
+    function AABB.prototype.pointWithin(self, point)
+        local windowSize = mineos.getSystem():getRenderer().frameBufferSize
+        local pos = create(self.anchor.x * windowSize.x + self.offset.x, self.anchor.y * windowSize.y + self.offset.y)
+        return point.x > pos.x and point.x < pos.x + self.size.x and point.y > pos.y and point.y < pos.y + self.size.y
+    end
+    local Focus = __TS__Class()
+    Focus.name = "Focus"
+    function Focus.prototype.____constructor(self, name)
+        self.name = name
+    end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
     __TS__ClassExtends(RunProcedure, mineos.Program)
-    function RunProcedure.prototype.____constructor(self, ...)
-        RunProcedure.____super.prototype.____constructor(self, ...)
+    function RunProcedure.prototype.____constructor(self, system, renderer, audio)
+        RunProcedure.____super.prototype.____constructor(self, system, renderer, audio)
         self.desktopLoaded = false
         self.startMenuFlag = false
         self.startMenuOpened = false
         self.oldFrameBufferSize = create(0, 0)
         self.mousePosition = create(0, 0)
+        self.focused = true
         self.menuComponents = {BitsBattle = "Bit's Battle"}
         self.acceleration = 250
     end
     function RunProcedure.prototype.toggleStartMenu(self)
         if self.startMenuOpened then
-            self.renderer:setClearColor(0, 0, 0)
             for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
                 local name = ____value[1]
                 local progNameNice = ____value[2]
                 self.renderer:removeComponent(name)
             end
-            self.renderer:removeComponent("backgroundDuctTape")
         else
-            self.renderer:setClearColor(48, 48, 48)
             local i = 0
             for ____, ____value in ipairs(__TS__ObjectEntries(self.menuComponents)) do
                 local name = ____value[1]
@@ -189,7 +210,6 @@ do
         elseif self.mousePosition.y < 0 then
             self.mousePosition.y = 0
         end
-        print(self.mousePosition.x)
         if self.oldFrameBufferSize.x ~= screenSize.x or self.oldFrameBufferSize.y ~= screenSize.y then
             print("updating fbuffer for desktop")
             self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)
@@ -198,6 +218,15 @@ do
         end
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
+        local startMenuAABB = __TS__New(
+            AABB,
+            create(0, -32),
+            create(66, 32),
+            create(0, 1)
+        )
+        if startMenuAABB:pointWithin(self.mousePosition) then
+            print("mouse is in " .. tostring(math.random()))
+        end
     end
     function RunProcedure.prototype.main(self, delta)
         if not self.desktopLoaded then
