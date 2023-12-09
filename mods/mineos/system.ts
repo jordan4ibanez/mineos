@@ -179,8 +179,8 @@ namespace mineos {
     }
 
     updateFrameBuffer(input: LuaMultiReturn<[Vec2, number]>) {
-      this.renderer.frameBufferSize = input[0]
-      this.renderer.frameBufferScale = input[1]
+      this.renderer.frameBufferSize = input[0]!!
+      this.renderer.frameBufferScale = input[1]!!
     }
 
     doRender(delta: number): void {
@@ -197,6 +197,7 @@ namespace mineos {
       if (this.quitReceived) return
 
       this.updateFrameBuffer(osFrameBufferPoll())
+
       if (this.booting) {
         this.doBoot(delta);
       } else {
