@@ -166,6 +166,19 @@ namespace mineos {
       this.mousePosition.x += mouseDelta.x * this.acceleration
       this.mousePosition.y += mouseDelta.y * this.acceleration
 
+      if (this.mousePosition.x >= screenSize.x) {
+        this.mousePosition.x = screenSize.x
+      } else if (this.mousePosition.x < 0) {
+        this.mousePosition.x = 0
+      }
+      if (this.mousePosition.y >= screenSize.y) {
+        this.mousePosition.y = screenSize.y
+      } else if (this.mousePosition.y < 0) {
+        this.mousePosition.y = 0
+      }
+
+      print(this.mousePosition.x)
+
       //todo: Make this a function
       if (this.oldFrameBufferSize.x != screenSize.x || this.oldFrameBufferSize.y != screenSize.y) {
         print ("updating fbuffer for desktop")

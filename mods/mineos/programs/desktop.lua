@@ -179,6 +179,17 @@ do
         ____self_mousePosition_0[____x_1] = ____self_mousePosition_0[____x_1] + mouseDelta.x * self.acceleration
         local ____self_mousePosition_2, ____y_3 = self.mousePosition, "y"
         ____self_mousePosition_2[____y_3] = ____self_mousePosition_2[____y_3] + mouseDelta.y * self.acceleration
+        if self.mousePosition.x >= screenSize.x then
+            self.mousePosition.x = screenSize.x
+        elseif self.mousePosition.x < 0 then
+            self.mousePosition.x = 0
+        end
+        if self.mousePosition.y >= screenSize.y then
+            self.mousePosition.y = screenSize.y
+        elseif self.mousePosition.y < 0 then
+            self.mousePosition.y = 0
+        end
+        print(self.mousePosition.x)
         if self.oldFrameBufferSize.x ~= screenSize.x or self.oldFrameBufferSize.y ~= screenSize.y then
             print("updating fbuffer for desktop")
             self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)

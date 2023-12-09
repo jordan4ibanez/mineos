@@ -285,7 +285,10 @@ do
         if self.driver == nil then
             return
         end
-        self.mouseDelta.x = math.pi - self.driver:get_look_horizontal()
+        local precision = 100000
+        local trimmedPi = math.floor(math.pi * precision) / precision
+        local trimmedHorizontal = math.floor(self.driver:get_look_horizontal() * precision) / precision
+        self.mouseDelta.x = trimmedPi - trimmedHorizontal
         self.mouseDelta.y = self.driver:get_look_vertical()
         self.driver:set_look_horizontal(math.pi)
         self.driver:set_look_vertical(0)

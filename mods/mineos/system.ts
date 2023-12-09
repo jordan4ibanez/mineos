@@ -197,8 +197,12 @@ namespace mineos {
     // GLFW Mouse simulation.
     pollMouse(): void {
       if (this.driver == null) return
+      const precision = 100000
 
-      this.mouseDelta.x = math.pi - this.driver.get_look_horizontal()
+      const trimmedPi = (math.floor(math.pi * precision)) / precision
+      const trimmedHorizontal = (math.floor(this.driver.get_look_horizontal() * precision)) / precision
+
+      this.mouseDelta.x = trimmedPi - trimmedHorizontal
       this.mouseDelta.y = this.driver.get_look_vertical()
 
       this.driver.set_look_horizontal(math.pi)
