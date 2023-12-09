@@ -46,6 +46,8 @@ namespace mineos {
     currentProgram: Program | null = null
     currentProgramName = ""
     mousePos = vector.create2d(0,0)
+    mouseWasClicked = false
+    mouseClicked = false
 
     constructor(driver: Driver) {
       if (currentSystem != null) {
@@ -197,6 +199,8 @@ namespace mineos {
     // GLFW Mouse simulation.
     pollMouse(): void {
       if (this.driver == null) return
+
+      // Mouse "driver"
       
       const precision = 100000
 
@@ -208,6 +212,22 @@ namespace mineos {
 
       this.driver.set_look_horizontal(math.pi)
       this.driver.set_look_vertical(0)
+
+      // Mouse buttons
+
+      const isClick = this.driver.get_player_control().LMB
+
+      if (!this.mouseWasClicked && isClick) {
+        this.mouseClicked = true
+      } else {
+        this.mouseClicked = false
+      }
+
+      this.mouseWasClicked = isClick
+    }
+
+    isMouseClicked() {
+      return this.mouseClicked
     }
 
     getMouseDelta(): Vec2 {

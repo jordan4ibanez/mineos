@@ -65,10 +65,13 @@ do
         local pos = create(self.anchor.x * windowSize.x + self.offset.x, self.anchor.y * windowSize.y + self.offset.y)
         return point.x > pos.x and point.x < pos.x + self.size.x and point.y > pos.y and point.y < pos.y + self.size.y
     end
-    local Focus = __TS__Class()
-    Focus.name = "Focus"
-    function Focus.prototype.____constructor(self, name)
-        self.name = name
+    local DesktopComponent = __TS__Class()
+    DesktopComponent.name = "DesktopComponent"
+    function DesktopComponent.prototype.____constructor(self, aabb, click)
+        self.collisionBox = aabb
+        self.test = click
+    end
+    function DesktopComponent.prototype.test(self)
     end
     local RunProcedure = __TS__Class()
     RunProcedure.name = "RunProcedure"
@@ -80,6 +83,7 @@ do
         self.startMenuOpened = false
         self.oldFrameBufferSize = create(0, 0)
         self.mousePosition = create(0, 0)
+        self.components = {}
         self.focused = true
         self.menuComponents = {BitsBattle = "Bit's Battle"}
         self.acceleration = 250
@@ -185,6 +189,20 @@ do
                 z_index = 10000
             }
         )
+        local startMenuButtonAABB = __TS__New(
+            AABB,
+            create(0, -32),
+            create(66, 32),
+            create(0, 1)
+        )
+        local ____self_components_0 = self.components
+        ____self_components_0[#____self_components_0 + 1] = __TS__New(
+            DesktopComponent,
+            startMenuButtonAABB,
+            function()
+                print("start!")
+            end
+        )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end
@@ -196,10 +214,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_0, ____x_1 = self.mousePosition, "x"
-        ____self_mousePosition_0[____x_1] = ____self_mousePosition_0[____x_1] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_2, ____y_3 = self.mousePosition, "y"
-        ____self_mousePosition_2[____y_3] = ____self_mousePosition_2[____y_3] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_1, ____x_2 = self.mousePosition, "x"
+        ____self_mousePosition_1[____x_2] = ____self_mousePosition_1[____x_2] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_3, ____y_4 = self.mousePosition, "y"
+        ____self_mousePosition_3[____y_4] = ____self_mousePosition_3[____y_4] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then
@@ -218,14 +236,8 @@ do
         end
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
-        local startMenuAABB = __TS__New(
-            AABB,
-            create(0, -32),
-            create(66, 32),
-            create(0, 1)
-        )
-        if startMenuAABB:pointWithin(self.mousePosition) then
-            print("mouse is in " .. tostring(math.random()))
+        if self.system:isMouseClicked() then
+            print("click!")
         end
     end
     function RunProcedure.prototype.main(self, delta)

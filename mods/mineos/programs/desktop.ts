@@ -27,12 +27,18 @@ namespace mineos {
     }
   }
 
-  class Focus {
-    name: string
-    constructor(name: string) {
-      this.name = name
+  class DesktopComponent {
+    collisionBox: AABB
+    constructor(aabb: AABB, click: (this: DesktopComponent) => void) {
+      this.collisionBox = aabb;
+      this.test = click;
+    }
+
+    test() {
+
     }
   }
+
 
   class RunProcedure extends Program {
 
@@ -42,6 +48,7 @@ namespace mineos {
     oldFrameBufferSize = create(0,0)
     mousePosition: Vec2 = create(0,0)
 
+    components: DesktopComponent[] = []
     focused = true
 
     // currentFocus: Focus;
@@ -154,6 +161,19 @@ namespace mineos {
         z_index: 10000
       })
 
+      const startMenuButtonAABB = new AABB(
+        create(0,-32),
+        create(66,32),
+        create(0,1)
+      )
+
+      this.components.push(new DesktopComponent(
+        startMenuButtonAABB,
+        () => {
+          print("start!")
+        }
+      ))
+
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
     }
@@ -201,15 +221,14 @@ namespace mineos {
       // Mouse always positions based on the top left.
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
 
-      const startMenuAABB = new AABB(
-        create(0,-32),
-        create(66,32),
-        create(0,1)
-      )
-      if (startMenuAABB.pointWithin(this.mousePosition)) {
-
-        print("mouse is in " + math.random())
+      if (this.system.isMouseClicked()) {
+        print("click!")
       }
+
+      // if (startMenuAABB.pointWithin(this.mousePosition)) {
+
+      //   print("mouse is in " + math.random())
+      // }
     }
 
     main(delta: number): void {

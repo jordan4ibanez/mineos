@@ -167,6 +167,8 @@ do
         self.currentProgram = nil
         self.currentProgramName = ""
         self.mousePos = vector.create2d(0, 0)
+        self.mouseWasClicked = false
+        self.mouseClicked = false
         if currentSystem ~= nil then
             error(
                 __TS__New(Error, "Cannot create more than one instance of mineos."),
@@ -292,6 +294,16 @@ do
         self.mouseDelta.y = self.driver:get_look_vertical()
         self.driver:set_look_horizontal(math.pi)
         self.driver:set_look_vertical(0)
+        local isClick = self.driver:get_player_control().LMB
+        if not self.mouseWasClicked and isClick then
+            self.mouseClicked = true
+        else
+            self.mouseClicked = false
+        end
+        self.mouseWasClicked = isClick
+    end
+    function System.prototype.isMouseClicked(self)
+        return self.mouseClicked
     end
     function System.prototype.getMouseDelta(self)
         return self.mouseDelta
