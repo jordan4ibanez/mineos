@@ -29,10 +29,24 @@ namespace mineos {
 
   class DesktopComponent {
     collisionBox: AABB
-    callback: () => void;
-    constructor(aabb: AABB, click: (this: DesktopComponent) => void) {
+    clickCallback: () => void;
+    holdCallback: () => void;
+    constructor(aabb: AABB, click: (this: DesktopComponent) => void, hold: (this: DesktopComponent) => void) {
       this.collisionBox = aabb;
-      this.callback = click;
+      this.clickCallback = click;
+      this.holdCallback = hold;
+    }
+  }
+
+  class Icon extends DesktopComponent {}
+
+  // The actual desktop portion of the desktop.
+  class DesktopIcons extends Program {
+    icons: Icon[] = []
+    currentIcon: Icon | null = null
+
+    main(delta: number): void {
+      if (!this.system.isMouseDown() && !this.system.isMouseClicked()) return
     }
   }
 
@@ -168,7 +182,8 @@ namespace mineos {
         startMenuButtonAABB,
         () => {
           print("start!")
-        }
+        },
+        () => {}
       ))
 
       this.desktopLoaded = true
@@ -221,7 +236,7 @@ namespace mineos {
       if (this.system.isMouseClicked()) {
         for (const element of this.components) {
           if (element.collisionBox.pointWithin(this.mousePosition)) {
-            element.callback()
+            element.clickCallback()
           }
         }
       }
