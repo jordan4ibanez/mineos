@@ -5,7 +5,95 @@ namespace mineos {
   const create = vector.create2d;
   const color = colors.color;
 
-  // Following a tutorial on how to do this: https://github.com/ssloy/tinyrenderer/wiki
+  class Vertex implements Vec3 {
+    z: number;
+    x: number;
+    y: number;
+    r: number;
+    g: number;
+    b: number;
+    constructor(x: number, y: number, z: number, r: number, g: number, b: number) {
+      this.x = x
+      this.y = y
+      this.z = z
+      this.r = r
+      this.g = g
+      this.b = b
+    }
+
+    __eq(other: Vec3): boolean {
+      throw new Error("Method not implemented.");
+    }
+    __unm(): Vec3 {
+      throw new Error("Method not implemented.");
+    }
+    __add(other: Vec3): Vec3 {
+      throw new Error("Method not implemented.");
+    }
+    __sub(other: Vec3): Vec3 {
+      throw new Error("Method not implemented.");
+    }
+    __mul(other: Vec3): Vec3 {
+      throw new Error("Method not implemented.");
+    }
+    __div(other: Vec3): Vec3 {
+      throw new Error("Method not implemented.");
+    }
+  }
+  function vert(x: number, y: number, z: number, r: number, g: number, b: number): Vertex {
+    return new Vertex(x,y,z,r,g,b)
+  } 
+
+  class EdgeEquation {
+    a: number;
+    b: number;
+    c: number;
+    tie: boolean;
+  
+    constructor(v0: Vec2, v1: Vec2) {
+      this.a = v0.y - v1.y;
+      this.b = v1.x - v0.x;
+      this.c = - (this.a * (v0.x + v1.x) + this.b * (v0.y + v1.y)) / 2;
+      this.tie = (this.a != 0) ? (this.a > 0) : (this.b > 0);
+    }
+
+    /// Evaluate the edge equation for the given point.
+    evaluate(x: number, y: number): number {
+      return this.a * x + this.b * y + this.c;
+    }
+  
+    /// Test if the given point is inside the edge.
+    /// Test for a given evaluated value.
+    test(x: number, y?: number): boolean {
+      if (y) {
+        return this.test(this.evaluate(x, y));
+      } else {
+        return (x > 0 || x == 0 && this.tie);
+      }
+    }
+  }
+
+  class ParameterEquation {
+    a: number;
+    b: number;
+    c: number;
+  
+    constructor(p0: number,p1: number,p2: number,e0: EdgeEquation,e1: EdgeEquation,e2: EdgeEquation,area: number) {
+      let factor: number = 1.0 / (2.0 * area);
+  
+      this.a = factor * (p0 * e0.a + p1 * e1.a + p2 * e2.a);
+      this.b = factor * (p0 * e0.b + p1 * e1.b + p2 * e2.b);
+      this.c = factor * (p0 * e0.c + p1 * e1.c + p2 * e2.c);
+    }
+  
+    /// Evaluate the parameter equation for the given point.
+    evaluate(x: number, y: number): number {
+      return this.a * x + this.b * y + this.c;
+    }
+  };
+  
+
+  // Following a tutorial on how to do this: https://trenki2.github.io/blog/2017/06/06/developing-a-software-renderer-part1/
 
   function swap(i: number, z: number): [number, number] {
     const oldI = i
@@ -106,16 +194,16 @@ namespace mineos {
 
 
 
-    model: Vec2[] = [
-      v2f(10,10),
-      v2f(100,30),
-      v2f(190,160)
+    model: Vertex[] = [
+      vert(10,10,   0, 1.0, 0.0, 0.0),
+      vert(100,30,  0, 0.0, 1.0, 0.0),
+      vert(190,160, 0, 0.0, 0.0, 1.0)
     ]
     drawModel(): void {
       const width = 200
       const height = 200
       const offset = v2f(100,100)
-      this.triangle(this.model,"red")
+      this.drawTriangle(this.model[0], this.model[1], this.model[2], "red")
 
       // this.triangle(v2f(x0, y0), v2f)
 
@@ -131,47 +219,64 @@ namespace mineos {
       //   this.drawLine(x0, y0, x1, y1, "black")
       // }
     }
+  
 
-    barycentric(pts: Vec2[], P: Vec2): Vec3 { 
+    drawTriangle(v0: Vertex, v1: Vertex, v2: Vertex, color: string): void {
+      // Compute triangle bounding box.
+      let minX = math.min(math.min(v0.x, v1.x), v2.x);
+      let maxX = math.max(math.max(v0.x, v1.x), v2.x);
+      let minY = math.min(math.min(v0.y, v1.y), v2.y);
+      let maxY = math.max(math.max(v0.y, v1.y), v2.y);
 
-      let u: Vec3 = v3fxor( v3f(pts[2].x - pts[0].x, pts[1].x - pts[0].x, pts[0].x - P.x), v3f(pts[2].y - pts[0].y, pts[1].y - pts[0].y, pts[0].y - P.y));
+      //! manually guessed
+      let m_minX = 0
+      let m_minY = 0
+      let m_maxX = 200
+      let m_maxY = 200
+
+      // Clip to scissor rect.
+      minX = math.max(minX, m_minX);
+      maxX = math.min(maxX, m_maxX);
+      minY = math.max(minY, m_minY);
+      maxY = math.min(maxY, m_maxY);
+
+      // Compute edge equations.
+      let e0 = new EdgeEquation(v1, v2);
+      let e1 = new EdgeEquation(v2, v0);
+      let e2 = new EdgeEquation(v0, v1);
+
+      let area = 0.5 * (e0.c + e1.c + e2.c);
       
-      if (math.abs(u.z) < 1) {
-        // print("uh oh")
-        return v3f(-1,1,1)
+      // Check if triangle is backfacing.
+      if (area < 0)
+        return;
+
+      // const red = 1.0
+      // const green = 0
+      // const blue = 0
+
+      let r = new ParameterEquation(v0.r, v1.r, v2.r, e0, e1, e2, area);
+      let g = new ParameterEquation(v0.g, v1.g, v2.g, e0, e1, e2, area);
+      let b = new ParameterEquation(v0.b, v1.b, v2.b, e0, e1, e2, area);
+
+      // Add 0.5 to sample at pixel centers.
+      for (let x = minX + 0.5, xm = maxX + 0.5; x <= xm; x += 1.0)
+      for (let y = minY + 0.5, ym = maxY + 0.5; y <= ym; y += 1.0)
+      {
+        if (e0.test(x, y) && e1.test(x, y) && e2.test(x, y))
+        {
+          const rint = r.evaluate(x, y) * 100;
+          const gint = g.evaluate(x, y) * 100;
+          const bint = b.evaluate(x, y) * 100;
+          // print(rint)
+          this.drawPixel(x, y, rint, gint, bint)
+          // Uint32 color = SDL_MapRGB(m_surface->format, rint, gint, bint);
+          // putpixel(m_surface, x, y, color);
+        }
       }
-      // print("Not uh oh")
-      return v3f(1 - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
-    } 
-   
-    triangle(pts: Vec2[], color: string): void {
-      let bboxmin: Vec2 = v2f(199, 199)//v2f(this.windowSize.x - 1, this.windowSize.y - 1); 
-      let bboxmax: Vec2 = v2f(0, 0);
-      const clamp = v2f(199, 199)//v2f(this.windowSize.x - 1, this.windowSize.y - 1); 
+    }
 
-      for (let i = 0; i < 3; i++) { 
-        bboxmin.x = math.max(0, math.floor(math.min(bboxmin.x, pts[i].x)));
-        bboxmin.y = math.max(0, math.floor(math.min(bboxmin.y, pts[i].y)));
 
-        bboxmax.x = math.min(clamp.x, math.floor(math.max(bboxmax.x, pts[i].x)));
-        bboxmax.y = math.min(clamp.y, math.floor(math.max(bboxmax.y, pts[i].y)));
-      }
-
-      let P: Vec2 = v2f(0,0)
-      for (P.x = bboxmin.x; P.x <= bboxmax.x; P.x++) { 
-        // print("at: " + P.x)
-        for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++) { 
-
-          let bc_screen: Vec3 = this.barycentric(pts, P); 
-
-          if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) {
-            continue
-          }
-          // print("drawing pixel at " + P.x + ", " + P.y)
-          this.drawPixelString(P.x, P.y, color)
-        } 
-      } 
-    } 
    
 
     // https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt

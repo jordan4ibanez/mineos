@@ -6,6 +6,22 @@ local function __TS__Class(self)
     return c
 end
 
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
+
 local function __TS__ClassExtends(target, base)
     target.____super = base
     local staticMetatable = setmetatable({__index = base}, base)
@@ -29,22 +45,6 @@ local function __TS__ClassExtends(target, base)
     if type(base.prototype.__tostring) == "function" then
         target.prototype.__tostring = base.prototype.__tostring
     end
-end
-
-local function __TS__StringIncludes(self, searchString, position)
-    if not position then
-        position = 1
-    else
-        position = position + 1
-    end
-    local index = string.find(self, searchString, position, true)
-    return index ~= nil
-end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
 end
 
 local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
@@ -222,6 +222,98 @@ do
     local v2f = vector.create2d
     local create = vector.create2d
     local color = colors.color
+    local Vertex = __TS__Class()
+    Vertex.name = "Vertex"
+    function Vertex.prototype.____constructor(self, x, y, z, r, g, b)
+        self.x = x
+        self.y = y
+        self.z = z
+        self.r = r
+        self.g = g
+        self.b = b
+    end
+    function Vertex.prototype.__eq(self, other)
+        error(
+            __TS__New(Error, "Method not implemented."),
+            0
+        )
+    end
+    function Vertex.prototype.__unm(self)
+        error(
+            __TS__New(Error, "Method not implemented."),
+            0
+        )
+    end
+    function Vertex.prototype.__add(self, other)
+        error(
+            __TS__New(Error, "Method not implemented."),
+            0
+        )
+    end
+    function Vertex.prototype.__sub(self, other)
+        error(
+            __TS__New(Error, "Method not implemented."),
+            0
+        )
+    end
+    function Vertex.prototype.__mul(self, other)
+        error(
+            __TS__New(Error, "Method not implemented."),
+            0
+        )
+    end
+    function Vertex.prototype.__div(self, other)
+        error(
+            __TS__New(Error, "Method not implemented."),
+            0
+        )
+    end
+    local function vert(x, y, z, r, g, b)
+        return __TS__New(
+            Vertex,
+            x,
+            y,
+            z,
+            r,
+            g,
+            b
+        )
+    end
+    local EdgeEquation = __TS__Class()
+    EdgeEquation.name = "EdgeEquation"
+    function EdgeEquation.prototype.____constructor(self, v0, v1)
+        self.a = v0.y - v1.y
+        self.b = v1.x - v0.x
+        self.c = -(self.a * (v0.x + v1.x) + self.b * (v0.y + v1.y)) / 2
+        local ____temp_0
+        if self.a ~= 0 then
+            ____temp_0 = self.a > 0
+        else
+            ____temp_0 = self.b > 0
+        end
+        self.tie = ____temp_0
+    end
+    function EdgeEquation.prototype.evaluate(self, x, y)
+        return self.a * x + self.b * y + self.c
+    end
+    function EdgeEquation.prototype.test(self, x, y)
+        if y then
+            return self:test(self:evaluate(x, y))
+        else
+            return x > 0 or x == 0 and self.tie
+        end
+    end
+    local ParameterEquation = __TS__Class()
+    ParameterEquation.name = "ParameterEquation"
+    function ParameterEquation.prototype.____constructor(self, p0, p1, p2, e0, e1, e2, area)
+        local factor = 1 / (2 * area)
+        self.a = factor * (p0 * e0.a + p1 * e1.a + p2 * e2.a)
+        self.b = factor * (p0 * e0.b + p1 * e1.b + p2 * e2.b)
+        self.c = factor * (p0 * e0.c + p1 * e1.c + p2 * e2.c)
+    end
+    function ParameterEquation.prototype.evaluate(self, x, y)
+        return self.a * x + self.b * y + self.c
+    end
     local function swap(i, z)
         local oldI = i
         i = z
@@ -271,9 +363,30 @@ do
         self.cache = create(0, 0)
         self.buffers = {}
         self.model = {
-            v2f(10, 10),
-            v2f(100, 30),
-            v2f(190, 160)
+            vert(
+                10,
+                10,
+                0,
+                1,
+                0,
+                0
+            ),
+            vert(
+                100,
+                30,
+                0,
+                0,
+                1,
+                0
+            ),
+            vert(
+                190,
+                160,
+                0,
+                0,
+                0,
+                1
+            )
         }
         self.offset = 0
         if windowSize.x ~= 500 or windowSize.y ~= 500 then
@@ -297,8 +410,8 @@ do
                 do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_WIDTH do
-                        local ____self_buffers_0 = self.buffers
-                        ____self_buffers_0[#____self_buffers_0 + 1] = __TS__ArrayFrom(
+                        local ____self_buffers_1 = self.buffers
+                        ____self_buffers_1[#____self_buffers_1 + 1] = __TS__ArrayFrom(
                             {length = size},
                             function(____, _, i) return "red" end
                         )
@@ -326,63 +439,94 @@ do
         local width = 200
         local height = 200
         local offset = v2f(100, 100)
-        self:triangle(self.model, "red")
+        self:drawTriangle(self.model[1], self.model[2], self.model[3], "red")
     end
-    function Boom.prototype.barycentric(self, pts, P)
-        local u = v3fxor(
-            v3f(pts[3].x - pts[1].x, pts[2].x - pts[1].x, pts[1].x - P.x),
-            v3f(pts[3].y - pts[1].y, pts[2].y - pts[1].y, pts[1].y - P.y)
+    function Boom.prototype.drawTriangle(self, v0, v1, v2, color)
+        local minX = math.min(
+            math.min(v0.x, v1.x),
+            v2.x
         )
-        if math.abs(u.z) < 1 then
-            return v3f(-1, 1, 1)
+        local maxX = math.max(
+            math.max(v0.x, v1.x),
+            v2.x
+        )
+        local minY = math.min(
+            math.min(v0.y, v1.y),
+            v2.y
+        )
+        local maxY = math.max(
+            math.max(v0.y, v1.y),
+            v2.y
+        )
+        local m_minX = 0
+        local m_minY = 0
+        local m_maxX = 200
+        local m_maxY = 200
+        minX = math.max(minX, m_minX)
+        maxX = math.min(maxX, m_maxX)
+        minY = math.max(minY, m_minY)
+        maxY = math.min(maxY, m_maxY)
+        local e0 = __TS__New(EdgeEquation, v1, v2)
+        local e1 = __TS__New(EdgeEquation, v2, v0)
+        local e2 = __TS__New(EdgeEquation, v0, v1)
+        local area = 0.5 * (e0.c + e1.c + e2.c)
+        if area < 0 then
+            return
         end
-        return v3f(1 - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z)
-    end
-    function Boom.prototype.triangle(self, pts, color)
-        local bboxmin = v2f(199, 199)
-        local bboxmax = v2f(0, 0)
-        local clamp = v2f(199, 199)
+        local r = __TS__New(
+            ParameterEquation,
+            v0.r,
+            v1.r,
+            v2.r,
+            e0,
+            e1,
+            e2,
+            area
+        )
+        local g = __TS__New(
+            ParameterEquation,
+            v0.g,
+            v1.g,
+            v2.g,
+            e0,
+            e1,
+            e2,
+            area
+        )
+        local b = __TS__New(
+            ParameterEquation,
+            v0.b,
+            v1.b,
+            v2.b,
+            e0,
+            e1,
+            e2,
+            area
+        )
         do
-            local i = 0
-            while i < 3 do
-                bboxmin.x = math.max(
-                    0,
-                    math.floor(math.min(bboxmin.x, pts[i + 1].x))
-                )
-                bboxmin.y = math.max(
-                    0,
-                    math.floor(math.min(bboxmin.y, pts[i + 1].y))
-                )
-                bboxmax.x = math.min(
-                    clamp.x,
-                    math.floor(math.max(bboxmax.x, pts[i + 1].x))
-                )
-                bboxmax.y = math.min(
-                    clamp.y,
-                    math.floor(math.max(bboxmax.y, pts[i + 1].y))
-                )
-                i = i + 1
-            end
-        end
-        local P = v2f(0, 0)
-        do
-            P.x = bboxmin.x
-            while P.x <= bboxmax.x do
+            local x = minX + 0.5
+            local xm = maxX + 0.5
+            while x <= xm do
                 do
-                    P.y = bboxmin.y
-                    while P.y <= bboxmax.y do
-                        do
-                            local bc_screen = self:barycentric(pts, P)
-                            if bc_screen.x < 0 or bc_screen.y < 0 or bc_screen.z < 0 then
-                                goto __continue21
-                            end
-                            self:drawPixelString(P.x, P.y, color)
+                    local y = minY + 0.5
+                    local ym = maxY + 0.5
+                    while y <= ym do
+                        if e0:test(x, y) and e1:test(x, y) and e2:test(x, y) then
+                            local rint = r:evaluate(x, y) * 100
+                            local gint = g:evaluate(x, y) * 100
+                            local bint = b:evaluate(x, y) * 100
+                            self:drawPixel(
+                                x,
+                                y,
+                                rint,
+                                gint,
+                                bint
+                            )
                         end
-                        ::__continue21::
-                        P.y = P.y + 1
+                        y = y + 1
                     end
                 end
-                P.x = P.x + 1
+                x = x + 1
             end
         end
     end
