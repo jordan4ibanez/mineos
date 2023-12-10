@@ -218,6 +218,8 @@ end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
+    local v3f = vector.create
+    local v2f = vector.create2d
     local create = vector.create2d
     local color = colors.color
     local Boom = __TS__Class()
@@ -228,7 +230,7 @@ do
         self.BUFFERS_ARRAY_WIDTH = 5
         self.loaded = false
         self.currentPixelCount = 0
-        self.currentColor = color(0, 0, 0)
+        self.clearColor = v3f(100, 100, 100)
         self.pixelMemory = {}
         self.zIndex = 0
         self.cache = create(0, 0)
@@ -284,6 +286,28 @@ do
         return x % self.BUFFERS_ARRAY_WIDTH + y * self.BUFFERS_ARRAY_WIDTH
     end
     function Boom.prototype.clear(self)
+        local clearString = color(self.clearColor.x, self.clearColor.y, self.clearColor.z)
+        do
+            local x = 0
+            while x < self.windowSize.x do
+                do
+                    local y = 0
+                    while y < self.windowSize.y do
+                        self:drawPixelString(x, y, clearString)
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
+    end
+    function Boom.prototype.drawPixelString(self, x, y, ____string)
+        local bufferX = math.floor(x / self.BUFFER_SIZE)
+        local bufferY = math.floor(y / self.BUFFER_SIZE)
+        local inBufferX = x % self.BUFFER_SIZE
+        local inBufferY = y % self.BUFFER_SIZE
+        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
+        currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = ____string
     end
     function Boom.prototype.drawPixel(self, x, y, r, g, b)
         local bufferX = math.floor(x / self.BUFFER_SIZE)
@@ -293,31 +317,7 @@ do
         local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
         currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = color(r, g, b)
     end
-    function Boom.prototype.flushBuffer(self)
-    end
-    function Boom.prototype.render(self, delta)
-        self:clear()
-        self.offset = self.offset + delta * 100
-        do
-            local x = 0
-            while x < self.windowSize.x do
-                do
-                    local y = 0
-                    while y < self.windowSize.y do
-                        local calc = (x + self.offset) % self.windowSize.x / self.windowSize.x
-                        self:drawPixel(
-                            x,
-                            y,
-                            calc * 100,
-                            1,
-                            y / self.windowSize.y * 100
-                        )
-                        y = y + 1
-                    end
-                end
-                x = x + 1
-            end
-        end
+    function Boom.prototype.flushBuffers(self)
         do
             local x = 0
             while x < self.BUFFERS_ARRAY_WIDTH do
@@ -338,6 +338,10 @@ do
                 x = x + 1
             end
         end
+    end
+    function Boom.prototype.render(self, delta)
+        self:clear()
+        self:flushBuffers()
     end
     function Boom.prototype.load(self)
     end

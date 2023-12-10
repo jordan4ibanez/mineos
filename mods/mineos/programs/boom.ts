@@ -1,7 +1,11 @@
 namespace mineos {
 
+  const v3f = vector.create;
+  const v2f = vector.create2d;
   const create = vector.create2d;
   const color = colors.color;
+
+  // Following a tutorial on how to do this: https://github.com/ssloy/tinyrenderer/wiki
 
   class Boom extends WindowProgram {
 
@@ -10,7 +14,7 @@ namespace mineos {
 
     loaded = false
     currentPixelCount = 0
-    currentColor = color(0,0,0)
+    clearColor = v3f(100,100,100)
     pixelMemory: number[] = []
     zIndex = 0
     // readonly basePos = create(100,100)
@@ -56,6 +60,21 @@ namespace mineos {
     }
 
     clear(): void {
+      const clearString = color(this.clearColor.x, this.clearColor.y, this.clearColor.z)
+      for (let x = 0; x < this.windowSize.x; x++) {
+        for (let y = 0; y < this.windowSize.y; y++) {
+          this.drawPixelString(x,y, clearString)
+        }
+      }
+    }
+
+    drawPixelString(x: number, y: number, string: string) {
+      const bufferX = math.floor(x / this.BUFFER_SIZE)
+      const bufferY = math.floor(y / this.BUFFER_SIZE)
+      const inBufferX = (x % this.BUFFER_SIZE)
+      const inBufferY = (y % this.BUFFER_SIZE)
+      const currentBuffer = this.buffers[this.bufferKey(bufferX, bufferY)]
+      currentBuffer[(inBufferX % this.BUFFER_SIZE) + (inBufferY * this.BUFFER_SIZE)] = string
     }
 
     drawPixel(x: number, y: number, r: number, g: number, b: number): void {
@@ -63,35 +82,11 @@ namespace mineos {
       const bufferY = math.floor(y / this.BUFFER_SIZE)
       const inBufferX = (x % this.BUFFER_SIZE)
       const inBufferY = (y % this.BUFFER_SIZE)
-
-      // print(x + " " + bufferX + " | " + inBufferX)
       const currentBuffer = this.buffers[this.bufferKey(bufferX, bufferY)]
       currentBuffer[(inBufferX % this.BUFFER_SIZE) + (inBufferY * this.BUFFER_SIZE)] = color(r,g,b)
     }
 
-    flushBuffer(): void {
-      
-    }
-
-    offset = 0
-
-    render(delta: number): void {
-      this.clear()
-
-      this.offset += delta * 100
-
-      for (let x = 0; x < this.windowSize.x; x++) {
-        for (let y = 0; y < this.windowSize.y; y++) {
-          // if (x % 8 == 0 && y % 8 == 0) {
-            // print((x / this.windowSize.x) * 100)
-            const calc = (((x + this.offset) % this.windowSize.x) / this.windowSize.x)
-            // print(calc)
-            this.drawPixel(x,y, 
-              calc * 100, 1, (y / this.windowSize.y) * 100)//y) 
-          // }
-        }
-      }
-
+    flushBuffers() {
       for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
           const currentBuffer = this.buffers[this.bufferKey(x,y)]
@@ -100,14 +95,23 @@ namespace mineos {
           this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
         }
       }
+    }
 
-      // for (let i = 0; i < this.buffer.length; i++) {
-      //   this.buffer[i] = color(math.random() * 100, math.random() * 100, math.random() * 100)
+    offset = 0
+
+    render(delta: number): void {
+      this.clear()
+
+      // this.offset += delta * 100
+      // for (let x = 0; x < this.windowSize.x; x++) {
+      //   for (let y = 0; y < this.windowSize.y; y++) {
+      //     const calc = (((x + this.offset) % this.windowSize.x) / this.windowSize.x)
+      //     this.drawPixel(x,y, 
+      //       calc * 100, 1, (y / this.windowSize.y) * 100)
+      //   }
       // }
 
-      // 
-      // this.renderer.setElementComponentValue("boomBuffer", "text", "[png:" + rawData)
-      // print(rawData)
+      this.flushBuffers()
     }
 
     load(): void {
@@ -116,7 +120,6 @@ namespace mineos {
 
     main(delta: number): void {
       if (!this.loaded) this.load()
-      // print("BOOM BABY")
       this.render(delta)
     }
 
