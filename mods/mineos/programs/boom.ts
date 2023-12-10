@@ -16,7 +16,7 @@ namespace mineos {
     // readonly basePos = create(100,100)
     cache = create(0,0)
     
-    buffers: {[id: string] : string[]} = {}
+    buffers: string[][] = []
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
 
@@ -30,7 +30,7 @@ namespace mineos {
       for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
 
-          this.buffers[this.bufferKey(x,y)] = Array.from({length: size}, (_,i) => "red")
+          this.buffers.push(Array.from({length: size}, (_,i) => "red"))
 
           this.renderer.addElement("boomBuffer" + x + " " + y, {
             name: "boomBuffer" + x + " " + y,
@@ -51,8 +51,8 @@ namespace mineos {
       }
     }
 
-    bufferKey(x: number, y: number): string {
-      return x + " " + y
+    bufferKey(x: number, y: number): number {
+      return (x % this.BUFFERS_ARRAY_WIDTH) + (y * this.BUFFERS_ARRAY_WIDTH)
     }
 
     clear(): void {

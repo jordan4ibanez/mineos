@@ -255,7 +255,8 @@ do
                 do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_WIDTH do
-                        self.buffers[self:bufferKey(x, y)] = __TS__ArrayFrom(
+                        local ____self_buffers_0 = self.buffers
+                        ____self_buffers_0[#____self_buffers_0 + 1] = __TS__ArrayFrom(
                             {length = size},
                             function(____, _, i) return "red" end
                         )
@@ -280,7 +281,7 @@ do
         end
     end
     function Boom.prototype.bufferKey(self, x, y)
-        return (tostring(x) .. " ") .. tostring(y)
+        return x % self.BUFFERS_ARRAY_WIDTH + y * self.BUFFERS_ARRAY_WIDTH
     end
     function Boom.prototype.clear(self)
     end
@@ -289,7 +290,7 @@ do
         local bufferY = math.floor(y / self.BUFFER_SIZE)
         local inBufferX = x % self.BUFFER_SIZE
         local inBufferY = y % self.BUFFER_SIZE
-        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY)]
+        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
         currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = color(r, g, b)
     end
     function Boom.prototype.flushBuffer(self)
@@ -323,7 +324,13 @@ do
                 do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_WIDTH do
-                        local currentBuffer = self.buffers[self:bufferKey(x, y)]
+                        local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
+                        local rawData = minetest.encode_base64(minetest.encode_png(self.BUFFER_SIZE, self.BUFFER_SIZE, currentBuffer, 9))
+                        self.renderer:setElementComponentValue(
+                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            "text",
+                            "[png:" .. rawData
+                        )
                         y = y + 1
                     end
                 end
