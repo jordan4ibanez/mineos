@@ -111,8 +111,8 @@ namespace mineos {
       super(system, renderer, audio, desktop, windowSize)
 
       for (const arr of this.textures) {
-        print("Length: " + arr.length)
-        print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
+        // print("Length: " + arr.length)
+        // print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
         assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
       }
 
@@ -433,8 +433,6 @@ namespace mineos {
 
         const texNum = this.worldMap[mapX][mapY] - 1;
 
-        print(texNum)
-
         // How much to increase the texture coordinate per screen pixel
         let step = 1.0 * this.texHeight / lineHeight;
         // Starting texture coordinate
@@ -445,16 +443,16 @@ namespace mineos {
           texPos += step;
 
           const container = this.textures[texNum]
-          print(container)
-          const index = (this.texHeight * texY + texX)
+          // print(container)
+          const index = (this.texHeight * texY + texX) * CHANNELS
 
           let r: number = container[index]
-          // let g: number = container[index + 1]
-          // let b: number = container[index + 2]
-          print(r,r,r)
+          let g: number = container[index + 1]
+          let b: number = container[index + 2]
+          // print(r,r,r)
           //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
           // if(side == 1) color = bit.band(bit.rshift(color, 1), 8355711);
-          this.drawPixel(x,y, r, r, r)
+          this.drawPixel(x,y, r, g, b)
           // buffer[y][x] = color;
         }
         

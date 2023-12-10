@@ -966,14 +966,8 @@ do
             windowSize
         )
         for ____, arr in ipairs(self.textures) do
-            print("Length: " .. tostring(#arr))
-            print("GOAL: " .. tostring(self.texHeight * self.texWidth * CHANNELS))
             assert(#arr == self.texHeight * self.texWidth * CHANNELS)
         end
-        error(
-            __TS__New(Error, "poop"),
-            0
-        )
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
         do
             local x = 0
@@ -1302,7 +1296,6 @@ do
                     end
                 until true
                 local texNum = self.worldMap[mapX + 1][mapY + 1] - 1
-                print(texNum)
                 local step = 1 * self.texHeight / lineHeight
                 local texPos = (drawStart - h / 2 + lineHeight / 2) * step
                 do
@@ -1314,16 +1307,16 @@ do
                         )
                         texPos = texPos + step
                         local container = self.textures[texNum + 1]
-                        print(container)
-                        local index = self.texHeight * texY + texX
+                        local index = (self.texHeight * texY + texX) * CHANNELS
                         local r = container[index + 1]
-                        print(r, r, r)
+                        local g = container[index + 1 + 1]
+                        local b = container[index + 2 + 1]
                         self:drawPixel(
                             x,
                             y,
                             r,
-                            r,
-                            r
+                            g,
+                            b
                         )
                         y = y + 1
                     end
