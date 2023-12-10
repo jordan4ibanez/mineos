@@ -210,15 +210,20 @@ namespace mineos {
       }
     }
 
+    playerPos = create(22,12)
+    playerDir = create(-1, 0)
+    time = 0
+    oldTime = 0
+
+    
+
     rayCast() {
-      const posX = 22
-      const posY = 12
-      const dirX = -1
-      const dirY = 0
+      const posX = this.playerPos.x
+      const posY = this.playerPos.y
+      const dirX = this.playerDir.x
+      const dirY = this.playerDir.y
       const planeX = 0
       const planeY = 0.66
-      const time = 0
-      const oldTime = 0
 
       const w = this.windowSize.x
       const h = this.windowSize.y

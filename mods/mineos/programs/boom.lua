@@ -1045,7 +1045,7 @@ do
         end
     end
     function Boom.prototype.rayCast(self)
-        local posX = 22
+        local posX = 22 + math.random()
         local posY = 12
         local dirX = -1
         local dirY = 0
