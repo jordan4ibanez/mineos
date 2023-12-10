@@ -426,6 +426,11 @@ do
     end
     function DesktopEnvironment.prototype.unlockMouse(self)
         self.mouseLocked = false
+        local screenSize = self.renderer.frameBufferSize
+        self.mousePosition = create(screenSize.x / 2, screenSize.y / 2)
+    end
+    function DesktopEnvironment.prototype.isMouseLocked(self)
+        return self.mouseLocked
     end
     function DesktopEnvironment.registerProgram(self, progBlueprint)
         programQueue[progBlueprint.name] = progBlueprint

@@ -342,11 +342,19 @@ namespace mineos {
       }
     }
 
-    lockMouse() {
+    lockMouse(): void {
       this.mouseLocked = true
     }
-    unlockMouse() {
+    unlockMouse(): void {
       this.mouseLocked = false
+      const screenSize = this.renderer.frameBufferSize
+      this.mousePosition = create(
+        screenSize.x / 2,
+        screenSize.y / 2,
+      )
+    }
+    isMouseLocked(): boolean {
+      return this.mouseLocked
     }
 
     static registerProgram(progBlueprint: typeof WindowProgram): void {

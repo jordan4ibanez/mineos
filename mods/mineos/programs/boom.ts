@@ -49,6 +49,8 @@ namespace mineos {
     // readonly basePos = create(100,100)
     cache = create(0,0)
 
+    auxWasPressed = false
+
     // Think of this as opengl buffering.
     // 0 - vsync off
     // 1 - vsync
@@ -220,10 +222,24 @@ namespace mineos {
     planeX = 0
     planeY = 0.66
 
-
-
-
     playerControls(delta: number) {
+
+      // Toggle capturing mouse with aux1
+      const auxPressed = this.system.isKeyDown("aux1")
+      if (auxPressed && !this.auxWasPressed) {
+        if (this.desktop.isMouseLocked()) {
+          this.desktop.unlockMouse()
+        } else {
+          this.desktop.lockMouse()
+        }
+      }
+
+      this.auxWasPressed = auxPressed
+
+      // Don't control boom if the mouse isn't locked into the window
+      if (!this.desktop.isMouseLocked()) {
+        return
+      }
 
       const moveSpeed = delta * 5.0
   
@@ -245,7 +261,7 @@ namespace mineos {
         }
       }
 
-      print(this.system.getMouseDelta().x)
+      // print(this.system.getMouseDelta().x)
 
       const rotSpeed = this.system.getMouseDelta().x
       // //rotate to the right
@@ -399,7 +415,8 @@ namespace mineos {
     load(): void {
 
       this.desktop.lockMouse()
-      
+
+      this.loaded = true      
     }
 
     main(delta: number): void {

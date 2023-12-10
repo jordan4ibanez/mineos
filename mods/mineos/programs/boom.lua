@@ -257,6 +257,7 @@ do
         self.pixelMemory = {}
         self.zIndex = 0
         self.cache = create(0, 0)
+        self.auxWasPressed = false
         self.frameAccum = 0
         self.buffering = 0
         self.buffers = {}
@@ -1053,6 +1054,18 @@ do
         end
     end
     function Boom.prototype.playerControls(self, delta)
+        local auxPressed = self.system:isKeyDown("aux1")
+        if auxPressed and not self.auxWasPressed then
+            if self.desktop:isMouseLocked() then
+                self.desktop:unlockMouse()
+            else
+                self.desktop:lockMouse()
+            end
+        end
+        self.auxWasPressed = auxPressed
+        if not self.desktop:isMouseLocked() then
+            return
+        end
         local moveSpeed = delta * 5
         if self.system:isKeyDown("up") then
             if self.worldMap[floor(self.playerPos.x + self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
@@ -1074,7 +1087,6 @@ do
                 ____self_playerPos_7[____y_8] = ____self_playerPos_7[____y_8] - self.playerDir.y * moveSpeed
             end
         end
-        print(self.system:getMouseDelta().x)
         local rotSpeed = self.system:getMouseDelta().x
         local oldDirX = self.playerDir.x
         self.playerDir.x = self.playerDir.x * cos(-rotSpeed) - self.playerDir.y * sin(-rotSpeed)
@@ -1153,24 +1165,24 @@ do
                 end
                 local color = v3f()
                 repeat
-                    local ____switch48 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond48 = ____switch48 == 1
-                    if ____cond48 then
+                    local ____switch52 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond52 = ____switch52 == 1
+                    if ____cond52 then
                         color = v3f(255, 0, 0)
                         break
                     end
-                    ____cond48 = ____cond48 or ____switch48 == 2
-                    if ____cond48 then
+                    ____cond52 = ____cond52 or ____switch52 == 2
+                    if ____cond52 then
                         color = v3f(0, 255, 0)
                         break
                     end
-                    ____cond48 = ____cond48 or ____switch48 == 3
-                    if ____cond48 then
+                    ____cond52 = ____cond52 or ____switch52 == 3
+                    if ____cond52 then
                         color = v3f(0, 0, 255)
                         break
                     end
-                    ____cond48 = ____cond48 or ____switch48 == 4
-                    if ____cond48 then
+                    ____cond52 = ____cond52 or ____switch52 == 4
+                    if ____cond52 then
                         color = v3f(255, 255, 255)
                         break
                     end
@@ -1204,6 +1216,7 @@ do
     end
     function Boom.prototype.load(self)
         self.desktop:lockMouse()
+        self.loaded = true
     end
     function Boom.prototype.main(self, delta)
         if not self.loaded then
