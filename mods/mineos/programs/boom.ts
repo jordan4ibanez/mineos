@@ -226,7 +226,7 @@ namespace mineos {
     playerControls(delta: number) {
 
       const moveSpeed = delta * 5.0
-      const rotSpeed = delta * 3.0
+  
 
       if (this.system.isKeyDown("up")) {
         if(this.worldMap[floor(this.playerPos.x + this.playerDir.x * moveSpeed)][floor(this.playerPos.y)] == 0) {
@@ -244,8 +244,12 @@ namespace mineos {
           this.playerPos.y -= this.playerDir.y * moveSpeed;
         }
       }
+
+      print(this.system.getMouseDelta().x)
+
+      const rotSpeed = this.system.getMouseDelta().x
       // //rotate to the right
-      if (this.system.isKeyDown("right")) {
+      // if (this.system.isKeyDown("right")) {
         //both camera direction and camera plane must be rotated
         let oldDirX = this.playerDir.x;
         this.playerDir.x = this.playerDir.x * cos(-rotSpeed) - this.playerDir.y * sin(-rotSpeed);
@@ -253,17 +257,17 @@ namespace mineos {
         let oldPlaneX = this.planeX;
         this.planeX = this.planeX * cos(-rotSpeed) - this.planeY * sin(-rotSpeed);
         this.planeY = oldPlaneX * sin(-rotSpeed) + this.planeY * cos(-rotSpeed);
-      }
+      // }
       //rotate to the left
-      if (this.system.isKeyDown("left")) {
-        //both camera direction and camera plane must be rotated
-        let oldDirX = this.playerDir.x;
-        this.playerDir.x = this.playerDir.x * cos(rotSpeed) - this.playerDir.y * sin(rotSpeed);
-        this.playerDir.y = oldDirX * sin(rotSpeed) + this.playerDir.y * cos(rotSpeed);
-        let oldPlaneX = this.planeX;
-        this.planeX = this.planeX * cos(rotSpeed) - this.planeY * sin(rotSpeed);
-        this.planeY = oldPlaneX * sin(rotSpeed) + this.planeY * cos(rotSpeed);
-      }
+      // if (this.system.isKeyDown("left")) {
+      //   //both camera direction and camera plane must be rotated
+      //   let oldDirX = this.playerDir.x;
+      //   this.playerDir.x = this.playerDir.x * cos(rotSpeed) - this.playerDir.y * sin(rotSpeed);
+      //   this.playerDir.y = oldDirX * sin(rotSpeed) + this.playerDir.y * cos(rotSpeed);
+      //   let oldPlaneX = this.planeX;
+      //   this.planeX = this.planeX * cos(rotSpeed) - this.planeY * sin(rotSpeed);
+      //   this.planeY = oldPlaneX * sin(rotSpeed) + this.planeY * cos(rotSpeed);
+      // }
     }
 
 

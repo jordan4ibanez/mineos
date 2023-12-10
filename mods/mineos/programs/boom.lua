@@ -1054,7 +1054,6 @@ do
     end
     function Boom.prototype.playerControls(self, delta)
         local moveSpeed = delta * 5
-        local rotSpeed = delta * 3
         if self.system:isKeyDown("up") then
             if self.worldMap[floor(self.playerPos.x + self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
                 local ____self_playerPos_1, ____x_2 = self.playerPos, "x"
@@ -1075,22 +1074,14 @@ do
                 ____self_playerPos_7[____y_8] = ____self_playerPos_7[____y_8] - self.playerDir.y * moveSpeed
             end
         end
-        if self.system:isKeyDown("right") then
-            local oldDirX = self.playerDir.x
-            self.playerDir.x = self.playerDir.x * cos(-rotSpeed) - self.playerDir.y * sin(-rotSpeed)
-            self.playerDir.y = oldDirX * sin(-rotSpeed) + self.playerDir.y * cos(-rotSpeed)
-            local oldPlaneX = self.planeX
-            self.planeX = self.planeX * cos(-rotSpeed) - self.planeY * sin(-rotSpeed)
-            self.planeY = oldPlaneX * sin(-rotSpeed) + self.planeY * cos(-rotSpeed)
-        end
-        if self.system:isKeyDown("left") then
-            local oldDirX = self.playerDir.x
-            self.playerDir.x = self.playerDir.x * cos(rotSpeed) - self.playerDir.y * sin(rotSpeed)
-            self.playerDir.y = oldDirX * sin(rotSpeed) + self.playerDir.y * cos(rotSpeed)
-            local oldPlaneX = self.planeX
-            self.planeX = self.planeX * cos(rotSpeed) - self.planeY * sin(rotSpeed)
-            self.planeY = oldPlaneX * sin(rotSpeed) + self.planeY * cos(rotSpeed)
-        end
+        print(self.system:getMouseDelta().x)
+        local rotSpeed = self.system:getMouseDelta().x
+        local oldDirX = self.playerDir.x
+        self.playerDir.x = self.playerDir.x * cos(-rotSpeed) - self.playerDir.y * sin(-rotSpeed)
+        self.playerDir.y = oldDirX * sin(-rotSpeed) + self.playerDir.y * cos(-rotSpeed)
+        local oldPlaneX = self.planeX
+        self.planeX = self.planeX * cos(-rotSpeed) - self.planeY * sin(-rotSpeed)
+        self.planeY = oldPlaneX * sin(-rotSpeed) + self.planeY * cos(-rotSpeed)
     end
     function Boom.prototype.rayCast(self)
         local posX = self.playerPos.x
@@ -1162,24 +1153,24 @@ do
                 end
                 local color = v3f()
                 repeat
-                    local ____switch50 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond50 = ____switch50 == 1
-                    if ____cond50 then
+                    local ____switch48 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond48 = ____switch48 == 1
+                    if ____cond48 then
                         color = v3f(255, 0, 0)
                         break
                     end
-                    ____cond50 = ____cond50 or ____switch50 == 2
-                    if ____cond50 then
+                    ____cond48 = ____cond48 or ____switch48 == 2
+                    if ____cond48 then
                         color = v3f(0, 255, 0)
                         break
                     end
-                    ____cond50 = ____cond50 or ____switch50 == 3
-                    if ____cond50 then
+                    ____cond48 = ____cond48 or ____switch48 == 3
+                    if ____cond48 then
                         color = v3f(0, 0, 255)
                         break
                     end
-                    ____cond50 = ____cond50 or ____switch50 == 4
-                    if ____cond50 then
+                    ____cond48 = ____cond48 or ____switch48 == 4
+                    if ____cond48 then
                         color = v3f(255, 255, 255)
                         break
                     end
