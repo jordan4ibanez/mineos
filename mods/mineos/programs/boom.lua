@@ -999,18 +999,20 @@ do
     end
     function Boom.prototype.render(self, delta)
         self:clear()
+        self.offset = self.offset + delta * 100
         do
             local x = 0
             while x < self.windowSize.x do
                 do
                     local y = 0
                     while y < self.windowSize.y do
+                        local calc = (x + self.offset) % self.windowSize.x / self.windowSize.x
                         self:drawPixel(
                             x,
                             y,
-                            floor(random() * 255),
-                            floor(random() * 255),
-                            floor(random() * 255)
+                            calc * 100,
+                            1,
+                            y / self.windowSize.y * 100
                         )
                         y = y + 1
                     end
