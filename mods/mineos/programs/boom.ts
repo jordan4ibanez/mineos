@@ -175,7 +175,40 @@ namespace mineos {
       }
     }
 
-    
+    // https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt
+    drawLine(x0: number, y0: number, x1: number, y1: number, r: number, b: number, g: number): void {
+
+      let steep = false
+
+      if (math.abs(x0 - x1) < math.abs(y0 - y1)) {
+        [x0,y0] = swap(x0, y0);
+        [x1,y1] = swap(x1, y1);
+        steep = true
+      }
+      if (x0 > x1) {
+        [x0, x1] = swap(x0, x1);
+        [y0, y1] = swap(y0, y1);
+      }
+
+      let dx = x1 - x0;
+      let dy = y1 - y0;
+      let derror2 = math.abs(dy) * 2;
+      let error2 = 0
+      let y = y0
+
+      for (let x = x0; x <= x1; x++) {
+        if (steep) {
+          this.drawPixel(y, x, r, g, b)
+        } else {
+          this.drawPixel(x, y, r, g, b)
+        }
+        error2 += derror2
+        if (error2 > dx) {
+          y += (y1 > y0) ? 1 : -1
+          error2 -= dx * 2
+        }
+      }
+    }
 
     rayCast() {
       const posX = 22
