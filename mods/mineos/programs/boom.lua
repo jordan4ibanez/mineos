@@ -222,6 +222,12 @@ do
     local v2f = vector.create2d
     local create = vector.create2d
     local color = colors.color
+    local function swap(i, z)
+        local oldI = i
+        i = z
+        z = oldI
+        return {i, z}
+    end
     local Boom = __TS__Class()
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
@@ -283,13 +289,35 @@ do
         end
     end
     function Boom.prototype.drawLine(self, x0, y0, x1, y1, color)
+        local steep = false
+        if math.abs(x0 - x1) < math.abs(y0 - y1) then
+            x0, y0 = unpack(swap(x0, y0))
+            x1, y1 = unpack(swap(x1, y1))
+            steep = true
+        end
+        if x0 > x1 then
+            x0, x1 = unpack(swap(x0, x1))
+            y0, y1 = unpack(swap(y0, y1))
+        end
+        local dx = x1 - x0
+        local dy = y1 - y0
+        local derror2 = math.abs(dy) * 2
+        local error2 = 0
+        local y = y0
         do
-            local t = 0
-            while t < 1 do
-                local x = x0 + (x1 - x0) * t
-                local y = y0 + (y1 - y0) * t
-                self:drawPixelString(x, y, color)
-                t = t + 0.01
+            local x = x0
+            while x <= x1 do
+                if steep then
+                    self:drawPixelString(y, x, color)
+                else
+                    self:drawPixelString(x, y, color)
+                end
+                error2 = error2 + derror2
+                if error2 > dx then
+                    y = y + (y1 > y0 and 1 or -1)
+                    error2 = error2 - dx * 2
+                end
+                x = x + 1
             end
         end
     end

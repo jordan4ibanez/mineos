@@ -7,6 +7,13 @@ namespace mineos {
 
   // Following a tutorial on how to do this: https://github.com/ssloy/tinyrenderer/wiki
 
+  function swap(i: number, z: number): [number, number] {
+    const oldI = i
+    i = z
+    z = oldI
+    return [i,z]
+  }
+
   class Boom extends WindowProgram {
 
     readonly BUFFER_SIZE = 100
@@ -55,12 +62,46 @@ namespace mineos {
       }
     }
 
+    // https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt
     drawLine(x0: number, y0: number, x1: number, y1: number, color: string) {
-      for (let t = 0; t < 1; t += 0.01) {
-        const x = x0 + (x1 - x0) * t
-        const y = y0 + (y1 - y0) * t
-        this.drawPixelString(x,y, color)
+
+      let steep = false
+
+      if (math.abs(x0 - x1) < math.abs(y0 - y1)) {
+        [x0,y0] = swap(x0, y0);
+        [x1,y1] = swap(x1, y1);
+        steep = true
       }
+      if (x0 > x1) {
+        [x0, x1] = swap(x0, x1);
+        [y0, y1] = swap(y0, y1);
+      }
+
+      let dx = x1 - x0;
+      let dy = y1 - y0;
+      let derror2 = math.abs(dy) * 2;
+      let error2 = 0
+      let y = y0
+
+      for (let x = x0; x <= x1; x++) {
+        if (steep) {
+          this.drawPixelString(y, x, color)
+        } else {
+          this.drawPixelString(x, y, color)
+        }
+        error2 += derror2
+        if (error2 > dx) {
+          y += (y1 > y0) ? 1 : -1
+          error2 -= dx * 2
+        }
+      }
+
+
+      // for (let t = 0; t < 1; t += 0.01) {
+      //   const x = x0 + (x1 - x0) * t
+      //   const y = y0 + (y1 - y0) * t
+      //   this.drawPixelString(x,y, color)
+      // }
     }
 
     bufferKey(x: number, y: number): number {
