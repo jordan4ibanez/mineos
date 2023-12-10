@@ -324,12 +324,6 @@ do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_WIDTH do
                         local currentBuffer = self.buffers[self:bufferKey(x, y)]
-                        local rawData = minetest.encode_base64(minetest.encode_png(self.BUFFER_SIZE, self.BUFFER_SIZE, currentBuffer, 9))
-                        self.renderer:setElementComponentValue(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
-                            "text",
-                            "[png:" .. rawData
-                        )
                         y = y + 1
                     end
                 end
