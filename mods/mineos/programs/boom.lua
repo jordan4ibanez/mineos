@@ -1087,6 +1087,32 @@ do
                 ____self_playerPos_7[____y_8] = ____self_playerPos_7[____y_8] - self.playerDir.y * moveSpeed
             end
         end
+        if self.system:isKeyDown("right") then
+            local yaw = minetest.dir_to_yaw(vector.create(self.playerDir.x, 0, self.playerDir.y))
+            local shiftedDirX = sin(yaw + math.pi / 2)
+            local shiftedDirY = cos(yaw - math.pi / 2)
+            if self.worldMap[floor(self.playerPos.x + shiftedDirX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
+                local ____self_playerPos_9, ____x_10 = self.playerPos, "x"
+                ____self_playerPos_9[____x_10] = ____self_playerPos_9[____x_10] + shiftedDirX * moveSpeed
+            end
+            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + shiftedDirY * moveSpeed) + 1] == 0 then
+                local ____self_playerPos_11, ____y_12 = self.playerPos, "y"
+                ____self_playerPos_11[____y_12] = ____self_playerPos_11[____y_12] + shiftedDirY * moveSpeed
+            end
+        end
+        if self.system:isKeyDown("left") then
+            local yaw = minetest.dir_to_yaw(vector.create(self.playerDir.x, 0, self.playerDir.y))
+            local shiftedDirX = sin(yaw - math.pi / 2)
+            local shiftedDirY = cos(yaw + math.pi / 2)
+            if self.worldMap[floor(self.playerPos.x + shiftedDirX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
+                local ____self_playerPos_13, ____x_14 = self.playerPos, "x"
+                ____self_playerPos_13[____x_14] = ____self_playerPos_13[____x_14] + shiftedDirX * moveSpeed
+            end
+            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + shiftedDirY * moveSpeed) + 1] == 0 then
+                local ____self_playerPos_15, ____y_16 = self.playerPos, "y"
+                ____self_playerPos_15[____y_16] = ____self_playerPos_15[____y_16] + shiftedDirY * moveSpeed
+            end
+        end
         local rotSpeed = self.system:getMouseDelta().x
         local oldDirX = self.playerDir.x
         self.playerDir.x = self.playerDir.x * cos(-rotSpeed) - self.playerDir.y * sin(-rotSpeed)
@@ -1165,24 +1191,24 @@ do
                 end
                 local color = v3f()
                 repeat
-                    local ____switch52 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond52 = ____switch52 == 1
-                    if ____cond52 then
+                    local ____switch58 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond58 = ____switch58 == 1
+                    if ____cond58 then
                         color = v3f(255, 0, 0)
                         break
                     end
-                    ____cond52 = ____cond52 or ____switch52 == 2
-                    if ____cond52 then
+                    ____cond58 = ____cond58 or ____switch58 == 2
+                    if ____cond58 then
                         color = v3f(0, 255, 0)
                         break
                     end
-                    ____cond52 = ____cond52 or ____switch52 == 3
-                    if ____cond52 then
+                    ____cond58 = ____cond58 or ____switch58 == 3
+                    if ____cond58 then
                         color = v3f(0, 0, 255)
                         break
                     end
-                    ____cond52 = ____cond52 or ____switch52 == 4
-                    if ____cond52 then
+                    ____cond58 = ____cond58 or ____switch58 == 4
+                    if ____cond58 then
                         color = v3f(255, 255, 255)
                         break
                     end
