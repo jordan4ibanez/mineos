@@ -5,93 +5,6 @@ namespace mineos {
   const create = vector.create2d;
   const color = colors.color;
 
-  class Vertex implements Vec3 {
-    z: number;
-    x: number;
-    y: number;
-    r: number;
-    g: number;
-    b: number;
-    constructor(x: number, y: number, z: number, r: number, g: number, b: number) {
-      this.x = x
-      this.y = y
-      this.z = z
-      this.r = r
-      this.g = g
-      this.b = b
-    }
-
-    __eq(other: Vec3): boolean {
-      throw new Error("Method not implemented.");
-    }
-    __unm(): Vec3 {
-      throw new Error("Method not implemented.");
-    }
-    __add(other: Vec3): Vec3 {
-      throw new Error("Method not implemented.");
-    }
-    __sub(other: Vec3): Vec3 {
-      throw new Error("Method not implemented.");
-    }
-    __mul(other: Vec3): Vec3 {
-      throw new Error("Method not implemented.");
-    }
-    __div(other: Vec3): Vec3 {
-      throw new Error("Method not implemented.");
-    }
-  }
-  function vert(x: number, y: number, z: number, r: number, g: number, b: number): Vertex {
-    return new Vertex(x,y,z,r,g,b)
-  } 
-
-  class EdgeEquation {
-    a: number;
-    b: number;
-    c: number;
-    tie: boolean;
-  
-    constructor(v0: Vec2, v1: Vec2) {
-      this.a = v0.y - v1.y;
-      this.b = v1.x - v0.x;
-      this.c = - (this.a * (v0.x + v1.x) + this.b * (v0.y + v1.y)) / 2;
-      this.tie = (this.a != 0) ? (this.a > 0) : (this.b > 0);
-    }
-
-    /// Evaluate the edge equation for the given point.
-    evaluate(x: number, y: number): number {
-      return this.a * x + this.b * y + this.c;
-    }
-  
-    /// Test if the given point is inside the edge.
-    /// Test for a given evaluated value.
-    test(x: number, y?: number): boolean {
-      if (y) {
-        return this.test(this.evaluate(x, y));
-      } else {
-        return (x > 0 || x == 0 && this.tie);
-      }
-    }
-  }
-
-  class ParameterEquation {
-    a: number;
-    b: number;
-    c: number;
-  
-    constructor(p0: number,p1: number,p2: number,e0: EdgeEquation,e1: EdgeEquation,e2: EdgeEquation,area: number) {
-      let factor: number = 1.0 / (2.0 * area);
-  
-      this.a = factor * (p0 * e0.a + p1 * e1.a + p2 * e2.a);
-      this.b = factor * (p0 * e0.b + p1 * e1.b + p2 * e2.b);
-      this.c = factor * (p0 * e0.c + p1 * e1.c + p2 * e2.c);
-    }
-  
-    /// Evaluate the parameter equation for the given point.
-    evaluate(x: number, y: number): number {
-      return this.a * x + this.b * y + this.c;
-    }
-  };
-  
 
   // Following a tutorial on how to do this: https://trenki2.github.io/blog/2017/06/06/developing-a-software-renderer-part1/
 
@@ -107,41 +20,6 @@ namespace mineos {
     i = z
     z = oldI
     return [i, z]
-  }
-
-  function v2add(a: Vec2, b: Vec2): Vec2 {
-    return v2f(
-      a.x + b.x,
-      a.y + b.y
-    )
-  }
-  function v2sub(a: Vec2, b: Vec2): Vec2 {
-    return v2f(
-      a.x - b.x,
-      a.y - b.y
-    )
-  }
-  function v2mul(a: Vec2, scalar: number): Vec2 {
-    return v2f(
-      a.x * scalar,
-      a.y * scalar
-    )
-  }
-  function v3pow(a: Vec3, b: Vec3): Vec3 {
-    return v3f(
-      a.x ^ b.x,
-      a.y ^ b.y,
-      a.z ^ b.z
-    )
-  }
-
-
-  function v3fxor(a: Vec3, b: Vec3): Vec3 {
-    return v3f(
-      bit.bxor(a.x, b.x),
-      bit.bxor(a.y, b.y),
-      bit.bxor(a.z, b.z)
-    )
   }
 
   class Boom extends WindowProgram {
@@ -192,13 +70,6 @@ namespace mineos {
       }
     }
 
-
-
-    model: Vertex[] = [
-      vert(0,200,   0, 1.0, 0.0, 0.0),
-      vert(150,0, 0, 0.0, 0.0, 1.0),
-      vert(300,200,  0, 0.0, 1.0, 0.0)
-    ]
     // drawModel(): void {
     //   const width = 200
     //   const height = 200
