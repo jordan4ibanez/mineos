@@ -115,7 +115,6 @@ namespace mineos {
         print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
         assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
       }
-      throw new Error("poop")
 
 
       const size = this.BUFFER_SIZE_X * this.BUFFER_SIZE_Y
