@@ -96,7 +96,7 @@ namespace mineos {
      * ! WILL CREATE MEMORY LEAK IF DONE WRONG!
      * ! WILL CRASH IF DONE WRONG!
      */
-    rawDeleta(id: number): void {
+    rawDelete(id: number): void {
       this.system.driver!!.hud_remove(id)
     }
 

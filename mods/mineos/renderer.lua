@@ -230,6 +230,12 @@ do
         driver:hud_remove(elementID)
         __TS__Delete(self.memory, name)
     end
+    function Renderer.prototype.rawDraw(self, component)
+        return self.system.driver:hud_add(component)
+    end
+    function Renderer.prototype.rawDelete(self, id)
+        self.system.driver:hud_remove(id)
+    end
     function Renderer.prototype.update(self)
         self:setElementComponentValue("background", "scale", self.frameBufferSize)
         self:setElementComponentValue(

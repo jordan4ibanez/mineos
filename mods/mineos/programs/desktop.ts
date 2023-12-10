@@ -299,6 +299,7 @@ namespace mineos {
   export class WindowProgram extends Program {
     desktop: DesktopEnvironment
     windowSize: Vec2
+    windowPosition: Vec2 = create(100,100)
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
       super(system, renderer, audio)
       this.desktop = desktop
@@ -460,6 +461,9 @@ namespace mineos {
         },
         () => {}
       ))
+
+      //!!!! DEBUGGING BOOM !!!!!!!
+      this.launchProgram("Boom", create(540, 480))
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")

@@ -378,6 +378,7 @@ do
     __TS__ClassExtends(WindowProgram, mineos.Program)
     function WindowProgram.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
         WindowProgram.____super.prototype.____constructor(self, system, renderer, audio)
+        self.windowPosition = create(100, 100)
         self.desktop = desktop
         self.windowSize = windowSize
     end
@@ -539,6 +540,10 @@ do
             end,
             function()
             end
+        )
+        self:launchProgram(
+            "Boom",
+            create(540, 480)
         )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
