@@ -4,6 +4,7 @@ namespace mineos {
   const v2f = vector.create2d;
   const create = vector.create2d;
   const color = colors.color;
+  const floor = math.floor
 
   // RGBA
   const CHANNELS = 4
@@ -123,11 +124,11 @@ namespace mineos {
     }
 
     drawPixel(x: number, y: number, r: number, g: number, b: number): void {
-      x = math.round(x)
-      y = math.round(y)
+      x = floor(x)
+      y = floor(y)
 
-      const bufferX = math.floor(x / this.BUFFER_SIZE_Y)
-      const bufferY = math.floor(y / this.BUFFER_SIZE_Y)
+      const bufferX = floor(x / this.BUFFER_SIZE_Y)
+      const bufferY = floor(y / this.BUFFER_SIZE_Y)
 
       const currentBuffer = this.buffers[this.bufferKey(bufferX, bufferY)]
 
@@ -136,10 +137,10 @@ namespace mineos {
 
       const index = ((inBufferX % this.BUFFER_SIZE_Y) + (inBufferY * this.BUFFER_SIZE_Y)) * CHANNELS
 
-      currentBuffer[index] = string.char(math.floor(r))
-      currentBuffer[index + 1] = string.char(math.floor(g))
-      currentBuffer[index + 2] = string.char(math.floor(b))
-      currentBuffer[index + 3] = string.char(math.floor(255))
+      currentBuffer[index] = string.char(floor(r))
+      currentBuffer[index + 1] = string.char(floor(g))
+      currentBuffer[index + 2] = string.char(floor(b))
+      currentBuffer[index + 3] = string.char(floor(255))
     }
 
     flushBuffers() {
@@ -170,7 +171,7 @@ namespace mineos {
           //! cool colors:
           //this.drawPixel(x,y, calc * 100, 1, (y / this.windowSize.y) * 100)
 
-          // this.drawPixel(x,y, math.floor(math.random() * 255), 1, math.floor(math.random() * 255))
+          // this.drawPixel(x,y, floor(math.random() * 255), 1, floor(math.random() * 255))
         }
       }
 
