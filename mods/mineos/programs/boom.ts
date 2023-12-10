@@ -4,7 +4,8 @@ namespace mineos {
   const v2f = vector.create2d;
   const create = vector.create2d;
   const color = colors.color;
-  const floor = math.floor
+  const floor = math.floor;
+  const char = string.char;
 
   // RGBA
   const CHANNELS = 4
@@ -91,7 +92,7 @@ namespace mineos {
       for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
           
-          this.buffers.push(Array.from({length: size}, (_,i) => ((i + 1) % 4 == 0) ? string.char(255) : string.char(0)))
+          this.buffers.push(Array.from({length: size}, (_,i) => ((i + 1) % 4 == 0) ? char(255) : char(0)))
 
           this.renderer.addElement("boomBuffer" + x + " " + y, {
             name: "boomBuffer" + x + " " + y,
@@ -137,10 +138,10 @@ namespace mineos {
 
       const index = ((inBufferX % this.BUFFER_SIZE_Y) + (inBufferY * this.BUFFER_SIZE_Y)) * CHANNELS
 
-      currentBuffer[index] = string.char(floor(r))
-      currentBuffer[index + 1] = string.char(floor(g))
-      currentBuffer[index + 2] = string.char(floor(b))
-      currentBuffer[index + 3] = string.char(floor(255))
+      currentBuffer[index] = char(floor(r))
+      currentBuffer[index + 1] = char(floor(g))
+      currentBuffer[index + 2] = char(floor(b))
+      currentBuffer[index + 3] = char(floor(255))
     }
 
     flushBuffers() {
