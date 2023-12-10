@@ -468,7 +468,6 @@ do
     end
     function DesktopEnvironment.prototype.loadDesktop(self)
         mineos.System.out:println("loading desktop environment")
-        self.audioController:playSound("osStartup", 0.9)
         self.renderer:clearMemory()
         self.renderer:setClearColor(0, 0, 0)
         self.renderer:setClearColor(0.39215686274, 50.9803921569, 50.5882352941)

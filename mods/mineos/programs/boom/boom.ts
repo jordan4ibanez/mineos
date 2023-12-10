@@ -73,7 +73,7 @@ namespace mineos {
     readonly mapWidth = 24
     readonly mapHeight = 24
 
-    readonly fileData = loadFileManual("mineos","programs/boom/png_data").fileData;
+    readonly textures: number[][] = loadFile("programs/boom/png_data").fileData;
 
     readonly worldMap: number[][] = [
       [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7],
@@ -109,6 +109,14 @@ namespace mineos {
         throw new Error("BOOM MUST RUN IN 500 X 500!")
       }
       super(system, renderer, audio, desktop, windowSize)
+
+      for (const arr of this.textures) {
+        print("Length: " + arr.length)
+        print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
+        assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
+      }
+      throw new Error("poop")
+
 
       const size = this.BUFFER_SIZE_X * this.BUFFER_SIZE_Y
 
@@ -165,6 +173,29 @@ namespace mineos {
       currentBuffer[index + 1] = char(floor(g))
       currentBuffer[index + 2] = char(floor(b))
       currentBuffer[index + 3] = char(floor(255))
+    }
+
+    drawPixelUint_16(x: number, y: number, val: number): void {
+      x = floor(x)
+      y = floor(y)
+
+      const bufferX = floor(x / this.BUFFER_SIZE_Y)
+      const bufferY = floor(y / this.BUFFER_SIZE_Y)
+
+      const currentBuffer = this.buffers[this.bufferKey(bufferX, bufferY)]
+
+      const inBufferX = (x % this.BUFFER_SIZE_Y)
+      const inBufferY = (y % this.BUFFER_SIZE_Y)
+
+      const index = ((inBufferX % this.BUFFER_SIZE_Y) + (inBufferY * this.BUFFER_SIZE_Y)) * CHANNELS
+
+      let hex = val.toString(16)
+
+
+      // currentBuffer[index] = char(floor(r))
+      // currentBuffer[index + 1] = char(floor(g))
+      // currentBuffer[index + 2] = char(floor(b))
+      // currentBuffer[index + 3] = char(floor(255))
     }
 
     flushBuffers() {
@@ -289,26 +320,12 @@ namespace mineos {
       // print(this.system.getMouseDelta().x)
 
       const rotSpeed = this.system.getMouseDelta().x
-      // //rotate to the right
-      // if (this.system.isKeyDown("right")) {
-        //both camera direction and camera plane must be rotated
-        let oldDirX = this.playerDir.x;
-        this.playerDir.x = this.playerDir.x * cos(-rotSpeed) - this.playerDir.y * sin(-rotSpeed);
-        this.playerDir.y = oldDirX * sin(-rotSpeed) + this.playerDir.y * cos(-rotSpeed);
-        let oldPlaneX = this.planeX;
-        this.planeX = this.planeX * cos(-rotSpeed) - this.planeY * sin(-rotSpeed);
-        this.planeY = oldPlaneX * sin(-rotSpeed) + this.planeY * cos(-rotSpeed);
-      // }
-      //rotate to the left
-      // if (this.system.isKeyDown("left")) {
-      //   //both camera direction and camera plane must be rotated
-      //   let oldDirX = this.playerDir.x;
-      //   this.playerDir.x = this.playerDir.x * cos(rotSpeed) - this.playerDir.y * sin(rotSpeed);
-      //   this.playerDir.y = oldDirX * sin(rotSpeed) + this.playerDir.y * cos(rotSpeed);
-      //   let oldPlaneX = this.planeX;
-      //   this.planeX = this.planeX * cos(rotSpeed) - this.planeY * sin(rotSpeed);
-      //   this.planeY = oldPlaneX * sin(rotSpeed) + this.planeY * cos(rotSpeed);
-      // }
+      let oldDirX = this.playerDir.x;
+      this.playerDir.x = this.playerDir.x * cos(-rotSpeed) - this.playerDir.y * sin(-rotSpeed);
+      this.playerDir.y = oldDirX * sin(-rotSpeed) + this.playerDir.y * cos(-rotSpeed);
+      let oldPlaneX = this.planeX;
+      this.planeX = this.planeX * cos(-rotSpeed) - this.planeY * sin(-rotSpeed);
+      this.planeY = oldPlaneX * sin(-rotSpeed) + this.planeY * cos(-rotSpeed);
     }
 
 
@@ -382,9 +399,26 @@ namespace mineos {
 
         //calculate lowest and highest pixel to fill in current stripe
         let drawStart = -lineHeight / 2 + h / 2;
-        if(drawStart < 0) drawStart = 0;
+        if (drawStart < 0) drawStart = 0;
         let drawEnd = lineHeight / 2 + h / 2;
-        if(drawEnd >= h) drawEnd = h - 1;
+        if (drawEnd >= h) drawEnd = h - 1;
+
+        let wallX; //where exactly the wall was hit
+        if (side == 0) {
+          wallX = posY + perpWallDist * rayDirY;
+        } else {
+          wallX = posX + perpWallDist * rayDirX;
+        }
+        wallX -= floor(wallX);
+
+        //x coordinate on the texture
+        let texX = floor(wallX * this.texWidth);
+        if (side == 0 && rayDirX > 0) {
+          texX = this.texWidth - texX - 1;
+        }
+        if (side == 1 && rayDirY < 0) {
+          texX = this.texWidth - texX - 1;
+        }
 
         // Optimize this part
         let color: Vec3 = v3f();
@@ -395,21 +429,51 @@ namespace mineos {
           case 4:  color = v3f(255,255,255);  break; //white
           default: color = v3f(255,255,0); break; //yellow
         }
-      
-        //give x and y sides different brightness
-        if(side == 1) {
-          color.x /= 2;
-          color.y /= 2;
-          color.z /= 2;
-        }
 
-        this.drawLine(
-          x, drawStart,
-          x, drawEnd,
-          color.x,
-          color.y,
-          color.z
-        )
+        // textured
+
+        const texNum = this.worldMap[mapX][mapY] - 1;
+
+        print(texNum)
+
+        // How much to increase the texture coordinate per screen pixel
+        let step = 1.0 * this.texHeight / lineHeight;
+        // Starting texture coordinate
+        let texPos = (drawStart - h / 2 + lineHeight / 2) * step;
+        for(let y = drawStart; y < drawEnd; y++) {
+          // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+          let texY = bit.band(floor(texPos), (this.texHeight - 1));
+          texPos += step;
+
+          const container = this.textures[texNum]
+          print(container)
+          const index = (this.texHeight * texY + texX)
+
+          let r: number = container[index]
+          // let g: number = container[index + 1]
+          // let b: number = container[index + 2]
+          print(r,r,r)
+          //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+          // if(side == 1) color = bit.band(bit.rshift(color, 1), 8355711);
+          this.drawPixel(x,y, r, r, r)
+          // buffer[y][x] = color;
+        }
+        
+        // Untextured
+        //give x and y sides different brightness
+        // if(side == 1) {
+        //   color.x /= 2;
+        //   color.y /= 2;
+        //   color.z /= 2;
+        // }
+
+        // this.drawLine(
+        //   x, drawStart,
+        //   x, drawEnd,
+        //   color.x,
+        //   color.y,
+        //   color.z
+        // )
 
       }
     }

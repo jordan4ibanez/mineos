@@ -215,6 +215,59 @@ do
         return result
     end
 end
+
+local function __TS__StringAccess(self, index)
+    if index >= 0 and index < #self then
+        return string.sub(self, index + 1, index + 1)
+    end
+end
+
+local __TS__MathModf = math.modf
+
+local __TS__NumberToString
+do
+    local radixChars = "0123456789abcdefghijklmnopqrstuvwxyz"
+    function __TS__NumberToString(self, radix)
+        if radix == nil or radix == 10 or self == math.huge or self == -math.huge or self ~= self then
+            return tostring(self)
+        end
+        radix = math.floor(radix)
+        if radix < 2 or radix > 36 then
+            error("toString() radix argument must be between 2 and 36", 0)
+        end
+        local integer, fraction = __TS__MathModf(math.abs(self))
+        local result = ""
+        if radix == 8 then
+            result = string.format("%o", integer)
+        elseif radix == 16 then
+            result = string.format("%x", integer)
+        else
+            repeat
+                do
+                    result = __TS__StringAccess(radixChars, integer % radix) .. result
+                    integer = math.floor(integer / radix)
+                end
+            until not (integer ~= 0)
+        end
+        if fraction ~= 0 then
+            result = result .. "."
+            local delta = 1e-16
+            repeat
+                do
+                    fraction = fraction * radix
+                    delta = delta * radix
+                    local digit = math.floor(fraction)
+                    result = result .. __TS__StringAccess(radixChars, digit)
+                    fraction = fraction - digit
+                end
+            until not (fraction >= delta)
+        end
+        if self < 0 then
+            result = "-" .. result
+        end
+        return result
+    end
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -271,7 +324,7 @@ do
         self.texHeight = 64
         self.mapWidth = 24
         self.mapHeight = 24
-        self.fileData = mineos.loadFileManual("mineos", "programs/boom/png_data").fileData
+        self.textures = mineos.loadFile("programs/boom/png_data").fileData
         self.worldMap = {
             {
                 4,
@@ -912,6 +965,15 @@ do
             desktop,
             windowSize
         )
+        for ____, arr in ipairs(self.textures) do
+            print("Length: " .. tostring(#arr))
+            print("GOAL: " .. tostring(self.texHeight * self.texWidth * CHANNELS))
+            assert(#arr == self.texHeight * self.texWidth * CHANNELS)
+        end
+        error(
+            __TS__New(Error, "poop"),
+            0
+        )
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
         do
             local x = 0
@@ -981,6 +1043,17 @@ do
         currentBuffer[index + 1 + 1] = char(floor(g))
         currentBuffer[index + 2 + 1] = char(floor(b))
         currentBuffer[index + 3 + 1] = char(floor(255))
+    end
+    function Boom.prototype.drawPixelUint_16(self, x, y, val)
+        x = floor(x)
+        y = floor(y)
+        local bufferX = floor(x / self.BUFFER_SIZE_Y)
+        local bufferY = floor(y / self.BUFFER_SIZE_Y)
+        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
+        local inBufferX = x % self.BUFFER_SIZE_Y
+        local inBufferY = y % self.BUFFER_SIZE_Y
+        local index = (inBufferX % self.BUFFER_SIZE_Y + inBufferY * self.BUFFER_SIZE_Y) * CHANNELS
+        local hex = __TS__NumberToString(val, 16)
     end
     function Boom.prototype.flushBuffers(self)
         self.frameAccum = self.frameAccum + 1
@@ -1186,26 +1259,40 @@ do
                 if drawEnd >= h then
                     drawEnd = h - 1
                 end
+                local wallX
+                if side == 0 then
+                    wallX = posY + perpWallDist * rayDirY
+                else
+                    wallX = posX + perpWallDist * rayDirX
+                end
+                wallX = wallX - floor(wallX)
+                local texX = floor(wallX * self.texWidth)
+                if side == 0 and rayDirX > 0 then
+                    texX = self.texWidth - texX - 1
+                end
+                if side == 1 and rayDirY < 0 then
+                    texX = self.texWidth - texX - 1
+                end
                 local color = v3f()
                 repeat
-                    local ____switch58 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond58 = ____switch58 == 1
-                    if ____cond58 then
+                    local ____switch65 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond65 = ____switch65 == 1
+                    if ____cond65 then
                         color = v3f(255, 0, 0)
                         break
                     end
-                    ____cond58 = ____cond58 or ____switch58 == 2
-                    if ____cond58 then
+                    ____cond65 = ____cond65 or ____switch65 == 2
+                    if ____cond65 then
                         color = v3f(0, 255, 0)
                         break
                     end
-                    ____cond58 = ____cond58 or ____switch58 == 3
-                    if ____cond58 then
+                    ____cond65 = ____cond65 or ____switch65 == 3
+                    if ____cond65 then
                         color = v3f(0, 0, 255)
                         break
                     end
-                    ____cond58 = ____cond58 or ____switch58 == 4
-                    if ____cond58 then
+                    ____cond65 = ____cond65 or ____switch65 == 4
+                    if ____cond65 then
                         color = v3f(255, 255, 255)
                         break
                     end
@@ -1214,20 +1301,33 @@ do
                         break
                     end
                 until true
-                if side == 1 then
-                    color.x = color.x / 2
-                    color.y = color.y / 2
-                    color.z = color.z / 2
+                local texNum = self.worldMap[mapX + 1][mapY + 1] - 1
+                print(texNum)
+                local step = 1 * self.texHeight / lineHeight
+                local texPos = (drawStart - h / 2 + lineHeight / 2) * step
+                do
+                    local y = drawStart
+                    while y < drawEnd do
+                        local texY = bit.band(
+                            floor(texPos),
+                            self.texHeight - 1
+                        )
+                        texPos = texPos + step
+                        local container = self.textures[texNum + 1]
+                        print(container)
+                        local index = self.texHeight * texY + texX
+                        local r = container[index + 1]
+                        print(r, r, r)
+                        self:drawPixel(
+                            x,
+                            y,
+                            r,
+                            r,
+                            r
+                        )
+                        y = y + 1
+                    end
                 end
-                self:drawLine(
-                    x,
-                    drawStart,
-                    x,
-                    drawEnd,
-                    color.x,
-                    color.y,
-                    color.z
-                )
                 x = x + 1
             end
         end

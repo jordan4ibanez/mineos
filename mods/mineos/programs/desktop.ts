@@ -400,7 +400,7 @@ namespace mineos {
     loadDesktop(): void {
       System.out.println("loading desktop environment")
 
-      this.audioController.playSound("osStartup", 0.9)
+      // this.audioController.playSound("osStartup", 0.9)
 
       // this.system.clearCallbacks()
       this.renderer.clearMemory()
