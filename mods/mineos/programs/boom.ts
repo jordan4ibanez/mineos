@@ -95,13 +95,6 @@ namespace mineos {
           error2 -= dx * 2
         }
       }
-
-
-      // for (let t = 0; t < 1; t += 0.01) {
-      //   const x = x0 + (x1 - x0) * t
-      //   const y = y0 + (y1 - y0) * t
-      //   this.drawPixelString(x,y, color)
-      // }
     }
 
     bufferKey(x: number, y: number): number {
