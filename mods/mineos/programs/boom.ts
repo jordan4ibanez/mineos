@@ -303,6 +303,13 @@ namespace mineos {
           color.z /= 2;
         }
 
+        this.drawLine(
+          x, drawStart,
+          x, drawEnd,
+          color.x,
+          color.y,
+          color.z
+        )
 
       }
     }

@@ -223,6 +223,7 @@ do
     local create = vector.create2d
     local color = colors.color
     local floor = math.floor
+    local abs = math.abs
     local char = string.char
     local concat = table.concat
     local encode_png = minetest.encode_png
@@ -257,6 +258,8 @@ do
         self.frameAccum = 0
         self.buffering = 0
         self.buffers = {}
+        self.mapWidth = 24
+        self.mapHeight = 24
         self.worldMap = {
             {
                 1,
@@ -883,7 +886,6 @@ do
                 1
             }
         }
-        self.offset = 0
         if windowSize.x ~= 500 or windowSize.y ~= 500 then
             error(
                 __TS__New(Error, "BOOM MUST RUN IN 500 X 500!"),
@@ -997,29 +999,170 @@ do
             end
         end
     end
-    function Boom.prototype.render(self, delta)
-        self:clear()
-        self.offset = self.offset + delta * 100
+    function Boom.prototype.drawLine(self, x0, y0, x1, y1, r, b, g)
+        local steep = false
+        if math.abs(x0 - x1) < math.abs(y0 - y1) then
+            x0, y0 = unpack(swap(x0, y0))
+            x1, y1 = unpack(swap(x1, y1))
+            steep = true
+        end
+        if x0 > x1 then
+            x0, x1 = unpack(swap(x0, x1))
+            y0, y1 = unpack(swap(y0, y1))
+        end
+        local dx = x1 - x0
+        local dy = y1 - y0
+        local derror2 = math.abs(dy) * 2
+        local error2 = 0
+        local y = y0
         do
-            local x = 0
-            while x < self.windowSize.x do
-                do
-                    local y = 0
-                    while y < self.windowSize.y do
-                        local calc = (x + self.offset) % self.windowSize.x / self.windowSize.x
-                        self:drawPixel(
-                            x,
-                            y,
-                            calc * 100,
-                            1,
-                            y / self.windowSize.y * 100
-                        )
-                        y = y + 1
-                    end
+            local x = x0
+            while x <= x1 do
+                if steep then
+                    self:drawPixel(
+                        y,
+                        x,
+                        r,
+                        g,
+                        b
+                    )
+                else
+                    self:drawPixel(
+                        x,
+                        y,
+                        r,
+                        g,
+                        b
+                    )
+                end
+                error2 = error2 + derror2
+                if error2 > dx then
+                    y = y + (y1 > y0 and 1 or -1)
+                    error2 = error2 - dx * 2
                 end
                 x = x + 1
             end
         end
+    end
+    function Boom.prototype.rayCast(self)
+        local posX = 22
+        local posY = 12
+        local dirX = -1
+        local dirY = 0
+        local planeX = 0
+        local planeY = 0.66
+        local time = 0
+        local oldTime = 0
+        local w = self.windowSize.x
+        local h = self.windowSize.y
+        do
+            local x = 0
+            while x < w do
+                local cameraX = 2 * x / w - 1
+                local rayDirX = dirX + planeX * cameraX
+                local rayDirY = dirY + planeY * cameraX
+                local mapX = floor(posX)
+                local mapY = floor(posY)
+                local sideDistX = 0
+                local sideDistY = 0
+                local deltaDistX = rayDirX == 0 and 1e+30 or abs(1 / rayDirX)
+                local deltaDistY = rayDirY == 0 and 1e+30 or abs(1 / rayDirY)
+                local perpWallDist = 0
+                local stepX = 0
+                local stepY = 0
+                local hit = 0
+                local side = 0
+                if rayDirX < 0 then
+                    stepX = -1
+                    sideDistX = (posX - mapX) * deltaDistX
+                else
+                    stepX = 1
+                    sideDistX = (mapX + 1 - posX) * deltaDistX
+                end
+                if rayDirY < 0 then
+                    stepY = -1
+                    sideDistY = (posY - mapY) * deltaDistY
+                else
+                    stepY = 1
+                    sideDistY = (mapY + 1 - posY) * deltaDistY
+                end
+                while hit == 0 do
+                    if sideDistX < sideDistY then
+                        sideDistX = sideDistX + deltaDistX
+                        mapX = mapX + stepX
+                        side = 0
+                    else
+                        sideDistY = sideDistY + deltaDistY
+                        mapY = mapY + stepY
+                        side = 1
+                    end
+                    if self.worldMap[mapX + 1][mapY + 1] > 0 then
+                        hit = 1
+                    end
+                end
+                if side == 0 then
+                    perpWallDist = sideDistX - deltaDistX
+                else
+                    perpWallDist = sideDistY - deltaDistY
+                end
+                local lineHeight = floor(h / perpWallDist)
+                local drawStart = -lineHeight / 2 + h / 2
+                if drawStart < 0 then
+                    drawStart = 0
+                end
+                local drawEnd = lineHeight / 2 + h / 2
+                if drawEnd >= h then
+                    drawEnd = h - 1
+                end
+                local color = v3f()
+                repeat
+                    local ____switch41 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond41 = ____switch41 == 1
+                    if ____cond41 then
+                        color = v3f(255, 0, 0)
+                        break
+                    end
+                    ____cond41 = ____cond41 or ____switch41 == 2
+                    if ____cond41 then
+                        color = v3f(0, 255, 0)
+                        break
+                    end
+                    ____cond41 = ____cond41 or ____switch41 == 3
+                    if ____cond41 then
+                        color = v3f(0, 0, 255)
+                        break
+                    end
+                    ____cond41 = ____cond41 or ____switch41 == 4
+                    if ____cond41 then
+                        color = v3f(255, 255, 255)
+                        break
+                    end
+                    do
+                        color = v3f(255, 255, 0)
+                        break
+                    end
+                until true
+                if side == 1 then
+                    color.x = color.x / 2
+                    color.y = color.y / 2
+                    color.z = color.z / 2
+                end
+                self:drawLine(
+                    x,
+                    drawStart,
+                    x,
+                    drawEnd,
+                    color.x,
+                    color.y,
+                    color.z
+                )
+                x = x + 1
+            end
+        end
+    end
+    function Boom.prototype.render(self, delta)
+        self:clear()
+        self:rayCast()
         self:flushBuffers()
     end
     function Boom.prototype.load(self)
