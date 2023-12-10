@@ -62,8 +62,31 @@ namespace mineos {
       }
     }
 
+    model: Vec3[] = [
+      v3f(-1,-1,0),
+      v3f(1,-1,0),
+      v3f(0,1,0)
+    ]
+    drawModel(): void {
+      const width = 200
+      const height = 200
+      const offset = v2f(100,100)
+
+      for (let i = 0; i < 3; i++) {
+        const v0 = this.model[i]
+        // Wraps around to 0
+        const v1 = this.model[(i + 1) % 3]
+
+        const x0 = (v0.x + 1) * width / 2
+        const y0 = ((v0.y * -1) + 1) * height / 2
+        const x1 = (v1.x + 1) * width / 2
+        const y1 = ((v1.y * -1) + 1) * height / 2
+        this.drawLine(x0, y0, x1, y1, "black")
+      }
+    }
+
     // https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt
-    drawLine(x0: number, y0: number, x1: number, y1: number, color: string) {
+    drawLine(x0: number, y0: number, x1: number, y1: number, color: string): void {
 
       let steep = false
 
@@ -157,7 +180,8 @@ namespace mineos {
       //   }
       // }
 
-      this.drawLine(0,0, 100,200, "red");
+      // this.drawLine(0,0, 100,200, "red");
+      this.drawModel();
 
       this.flushBuffers()
     }

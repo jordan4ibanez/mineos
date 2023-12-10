@@ -241,6 +241,11 @@ do
         self.zIndex = 0
         self.cache = create(0, 0)
         self.buffers = {}
+        self.model = {
+            v3f(-1, -1, 0),
+            v3f(1, -1, 0),
+            v3f(0, 1, 0)
+        }
         self.offset = 0
         if windowSize.x ~= 500 or windowSize.y ~= 500 then
             error(
@@ -285,6 +290,30 @@ do
                     end
                 end
                 x = x + 1
+            end
+        end
+    end
+    function Boom.prototype.drawModel(self)
+        local width = 200
+        local height = 200
+        local offset = v2f(100, 100)
+        do
+            local i = 0
+            while i < 3 do
+                local v0 = self.model[i + 1]
+                local v1 = self.model[(i + 1) % 3 + 1]
+                local x0 = (v0.x + 1) * width / 2
+                local y0 = (v0.y * -1 + 1) * height / 2
+                local x1 = (v1.x + 1) * width / 2
+                local y1 = (v1.y * -1 + 1) * height / 2
+                self:drawLine(
+                    x0,
+                    y0,
+                    x1,
+                    y1,
+                    "black"
+                )
+                i = i + 1
             end
         end
     end
@@ -384,13 +413,7 @@ do
     end
     function Boom.prototype.render(self, delta)
         self:clear()
-        self:drawLine(
-            0,
-            0,
-            100,
-            200,
-            "red"
-        )
+        self:drawModel()
         self:flushBuffers()
     end
     function Boom.prototype.load(self)
