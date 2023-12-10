@@ -222,6 +222,11 @@ do
     local v2f = vector.create2d
     local create = vector.create2d
     local color = colors.color
+    local floor = math.floor
+    local char = string.char
+    local concat = table.concat
+    local encode_png = minetest.encode_png
+    local encode_base64 = minetest.encode_base64
     local CHANNELS = 4
     local function swap(i, z)
         local oldI = i
@@ -244,7 +249,7 @@ do
         self.BUFFERS_ARRAY_WIDTH = 5
         self.loaded = false
         self.currentPixelCount = 0
-        self.clearColor = v3f(0, 70, 0)
+        self.clearColor = v3f(0, 0, 0)
         self.pixelMemory = {}
         self.zIndex = 0
         self.cache = create(0, 0)
@@ -900,7 +905,7 @@ do
                         local ____self_buffers_0 = self.buffers
                         ____self_buffers_0[#____self_buffers_0 + 1] = __TS__ArrayFrom(
                             {length = size},
-                            function(____, _, i) return (i + 1) % 4 == 0 and string.char(255) or string.char(0) end
+                            function(____, _, i) return (i + 1) % 4 == 0 and char(255) or char(0) end
                         )
                         self.renderer:addElement(
                             (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
@@ -947,18 +952,18 @@ do
         end
     end
     function Boom.prototype.drawPixel(self, x, y, r, g, b)
-        x = math.round(x)
-        y = math.round(y)
-        local bufferX = math.floor(x / self.BUFFER_SIZE_Y)
-        local bufferY = math.floor(y / self.BUFFER_SIZE_Y)
+        x = floor(x)
+        y = floor(y)
+        local bufferX = floor(x / self.BUFFER_SIZE_Y)
+        local bufferY = floor(y / self.BUFFER_SIZE_Y)
         local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
         local inBufferX = x % self.BUFFER_SIZE_Y
         local inBufferY = y % self.BUFFER_SIZE_Y
         local index = (inBufferX % self.BUFFER_SIZE_Y + inBufferY * self.BUFFER_SIZE_Y) * CHANNELS
-        currentBuffer[index + 1] = string.char(math.floor(r))
-        currentBuffer[index + 1 + 1] = string.char(math.floor(g))
-        currentBuffer[index + 2 + 1] = string.char(math.floor(b))
-        currentBuffer[index + 3 + 1] = string.char(math.floor(255))
+        currentBuffer[index + 1] = char(floor(r))
+        currentBuffer[index + 1 + 1] = char(floor(g))
+        currentBuffer[index + 2 + 1] = char(floor(b))
+        currentBuffer[index + 3 + 1] = char(floor(255))
     end
     function Boom.prototype.flushBuffers(self)
         do
@@ -968,9 +973,9 @@ do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_WIDTH do
                         local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
-                        local stringThing = table.concat(currentBuffer)
-                        local rawPNG = minetest.encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
-                        local rawData = minetest.encode_base64(rawPNG)
+                        local stringThing = concat(currentBuffer)
+                        local rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
+                        local rawData = encode_base64(rawPNG)
                         self.renderer:setElementComponentValue(
                             (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
                             "text",
