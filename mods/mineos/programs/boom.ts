@@ -11,6 +11,9 @@ namespace mineos {
   const encode_png = minetest.encode_png;
   const encode_base64 = minetest.encode_base64;
   const random = math.random;
+  const cos = math.cos;
+  const sin = math.sin;
+
 
 
   // RGBA
@@ -214,16 +217,63 @@ namespace mineos {
     playerDir = create(-1, 0)
     time = 0
     oldTime = 0
+    planeX = 0
+    planeY = 0.66
 
-    
+
+
+
+    playerControls(delta: number) {
+
+      const moveSpeed = delta * 5.0
+      const rotSpeed = delta * 3.0
+
+      if (this.system.isKeyDown("up")) {
+        if(this.worldMap[floor(this.playerPos.x + this.playerDir.x * moveSpeed)][floor(this.playerPos.y)] == 0) {
+          this.playerPos.x += this.playerDir.x * moveSpeed;
+        }
+        if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y + this.playerDir.y * moveSpeed)] == 0) {
+          this.playerPos.y += this.playerDir.y * moveSpeed;
+        }
+      }
+      if (this.system.isKeyDown("down")) {
+        if(this.worldMap[floor(this.playerPos.x - this.playerDir.x * moveSpeed)][floor(this.playerPos.y)] == 0) {
+          this.playerPos.x -= this.playerDir.x * moveSpeed;
+        }
+        if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y - this.playerDir.y * moveSpeed)] == 0){
+          this.playerPos.y -= this.playerDir.y * moveSpeed;
+        }
+      }
+      // //rotate to the right
+      if (this.system.isKeyDown("right")) {
+        //both camera direction and camera plane must be rotated
+        let oldDirX = this.playerDir.x;
+        this.playerDir.x = this.playerDir.x * cos(-rotSpeed) - this.playerDir.y * sin(-rotSpeed);
+        this.playerDir.y = oldDirX * sin(-rotSpeed) + this.playerDir.y * cos(-rotSpeed);
+        let oldPlaneX = this.planeX;
+        this.planeX = this.planeX * cos(-rotSpeed) - this.planeY * sin(-rotSpeed);
+        this.planeY = oldPlaneX * sin(-rotSpeed) + this.planeY * cos(-rotSpeed);
+      }
+      //rotate to the left
+      if (this.system.isKeyDown("left")) {
+        //both camera direction and camera plane must be rotated
+        let oldDirX = this.playerDir.x;
+        this.playerDir.x = this.playerDir.x * cos(rotSpeed) - this.playerDir.y * sin(rotSpeed);
+        this.playerDir.y = oldDirX * sin(rotSpeed) + this.playerDir.y * cos(rotSpeed);
+        let oldPlaneX = this.planeX;
+        this.planeX = this.planeX * cos(rotSpeed) - this.planeY * sin(rotSpeed);
+        this.planeY = oldPlaneX * sin(rotSpeed) + this.planeY * cos(rotSpeed);
+      }
+    }
+
 
     rayCast() {
       const posX = this.playerPos.x
       const posY = this.playerPos.y
       const dirX = this.playerDir.x
       const dirY = this.playerDir.y
-      const planeX = 0
-      const planeY = 0.66
+      const planeX = this.planeX
+      const planeY = this.planeY
 
       const w = this.windowSize.x
       const h = this.windowSize.y
@@ -348,6 +398,7 @@ namespace mineos {
 
     main(delta: number): void {
       if (!this.loaded) this.load()
+      this.playerControls(delta)
       this.render(delta)
     }
 

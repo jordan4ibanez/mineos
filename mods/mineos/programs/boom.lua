@@ -229,6 +229,8 @@ do
     local encode_png = minetest.encode_png
     local encode_base64 = minetest.encode_base64
     local random = math.random
+    local cos = math.cos
+    local sin = math.sin
     local CHANNELS = 4
     local function swap(i, z)
         local oldI = i
@@ -886,6 +888,12 @@ do
                 1
             }
         }
+        self.playerPos = create(22, 12)
+        self.playerDir = create(-1, 0)
+        self.time = 0
+        self.oldTime = 0
+        self.planeX = 0
+        self.planeY = 0.66
         if windowSize.x ~= 500 or windowSize.y ~= 500 then
             error(
                 __TS__New(Error, "BOOM MUST RUN IN 500 X 500!"),
@@ -1044,15 +1052,53 @@ do
             end
         end
     end
+    function Boom.prototype.playerControls(self, delta)
+        local moveSpeed = delta * 5
+        local rotSpeed = delta * 3
+        if self.system:isKeyDown("up") then
+            if self.worldMap[floor(self.playerPos.x + self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
+                local ____self_playerPos_1, ____x_2 = self.playerPos, "x"
+                ____self_playerPos_1[____x_2] = ____self_playerPos_1[____x_2] + self.playerDir.x * moveSpeed
+            end
+            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + self.playerDir.y * moveSpeed) + 1] == 0 then
+                local ____self_playerPos_3, ____y_4 = self.playerPos, "y"
+                ____self_playerPos_3[____y_4] = ____self_playerPos_3[____y_4] + self.playerDir.y * moveSpeed
+            end
+        end
+        if self.system:isKeyDown("down") then
+            if self.worldMap[floor(self.playerPos.x - self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
+                local ____self_playerPos_5, ____x_6 = self.playerPos, "x"
+                ____self_playerPos_5[____x_6] = ____self_playerPos_5[____x_6] - self.playerDir.x * moveSpeed
+            end
+            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y - self.playerDir.y * moveSpeed) + 1] == 0 then
+                local ____self_playerPos_7, ____y_8 = self.playerPos, "y"
+                ____self_playerPos_7[____y_8] = ____self_playerPos_7[____y_8] - self.playerDir.y * moveSpeed
+            end
+        end
+        if self.system:isKeyDown("right") then
+            local oldDirX = self.playerDir.x
+            self.playerDir.x = self.playerDir.x * cos(-rotSpeed) - self.playerDir.y * sin(-rotSpeed)
+            self.playerDir.y = oldDirX * sin(-rotSpeed) + self.playerDir.y * cos(-rotSpeed)
+            local oldPlaneX = self.planeX
+            self.planeX = self.planeX * cos(-rotSpeed) - self.planeY * sin(-rotSpeed)
+            self.planeY = oldPlaneX * sin(-rotSpeed) + self.planeY * cos(-rotSpeed)
+        end
+        if self.system:isKeyDown("left") then
+            local oldDirX = self.playerDir.x
+            self.playerDir.x = self.playerDir.x * cos(rotSpeed) - self.playerDir.y * sin(rotSpeed)
+            self.playerDir.y = oldDirX * sin(rotSpeed) + self.playerDir.y * cos(rotSpeed)
+            local oldPlaneX = self.planeX
+            self.planeX = self.planeX * cos(rotSpeed) - self.planeY * sin(rotSpeed)
+            self.planeY = oldPlaneX * sin(rotSpeed) + self.planeY * cos(rotSpeed)
+        end
+    end
     function Boom.prototype.rayCast(self)
-        local posX = 22 + math.random()
-        local posY = 12
-        local dirX = -1
-        local dirY = 0
-        local planeX = 0
-        local planeY = 0.66
-        local time = 0
-        local oldTime = 0
+        local posX = self.playerPos.x
+        local posY = self.playerPos.y
+        local dirX = self.playerDir.x
+        local dirY = self.playerDir.y
+        local planeX = self.planeX
+        local planeY = self.planeY
         local w = self.windowSize.x
         local h = self.windowSize.y
         do
@@ -1116,24 +1162,24 @@ do
                 end
                 local color = v3f()
                 repeat
-                    local ____switch41 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond41 = ____switch41 == 1
-                    if ____cond41 then
+                    local ____switch50 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond50 = ____switch50 == 1
+                    if ____cond50 then
                         color = v3f(255, 0, 0)
                         break
                     end
-                    ____cond41 = ____cond41 or ____switch41 == 2
-                    if ____cond41 then
+                    ____cond50 = ____cond50 or ____switch50 == 2
+                    if ____cond50 then
                         color = v3f(0, 255, 0)
                         break
                     end
-                    ____cond41 = ____cond41 or ____switch41 == 3
-                    if ____cond41 then
+                    ____cond50 = ____cond50 or ____switch50 == 3
+                    if ____cond50 then
                         color = v3f(0, 0, 255)
                         break
                     end
-                    ____cond41 = ____cond41 or ____switch41 == 4
-                    if ____cond41 then
+                    ____cond50 = ____cond50 or ____switch50 == 4
+                    if ____cond50 then
                         color = v3f(255, 255, 255)
                         break
                     end
@@ -1171,6 +1217,7 @@ do
         if not self.loaded then
             self:load()
         end
+        self:playerControls(delta)
         self:render(delta)
     end
     mineos.DesktopEnvironment:registerProgram(Boom)
