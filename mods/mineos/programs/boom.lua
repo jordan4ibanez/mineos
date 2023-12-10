@@ -228,6 +228,35 @@ do
         z = oldI
         return {i, z}
     end
+    local function v2swap(i, z)
+        local oldI = i
+        i = z
+        z = oldI
+        return {i, z}
+    end
+    local function v2add(a, b)
+        return v2f(a.x + b.x, a.y + b.y)
+    end
+    local function v2sub(a, b)
+        return v2f(a.x - b.x, a.y - b.y)
+    end
+    local function v2mul(a, scalar)
+        return v2f(a.x * scalar, a.y * scalar)
+    end
+    local function v3pow(a, b)
+        return v3f(
+            bit.bxor(a.x, b.x),
+            bit.bxor(a.y, b.y),
+            bit.bxor(a.z, b.z)
+        )
+    end
+    local function v3fxor(a, b)
+        return v3f(
+            bit.bxor(a.x, b.x),
+            bit.bxor(a.y, b.y),
+            bit.bxor(a.z, b.z)
+        )
+    end
     local Boom = __TS__Class()
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
@@ -242,9 +271,9 @@ do
         self.cache = create(0, 0)
         self.buffers = {}
         self.model = {
-            v3f(-1, -1, 0),
-            v3f(1, -1, 0),
-            v3f(0, 1, 0)
+            v2f(10, 10),
+            v2f(100, 30),
+            v2f(190, 160)
         }
         self.offset = 0
         if windowSize.x ~= 500 or windowSize.y ~= 500 then
@@ -297,23 +326,63 @@ do
         local width = 200
         local height = 200
         local offset = v2f(100, 100)
+        self:triangle(self.model, "red")
+    end
+    function Boom.prototype.barycentric(self, pts, P)
+        local u = v3fxor(
+            v3f(pts[3].x - pts[1].x, pts[2].x - pts[1].x, pts[1].x - P.x),
+            v3f(pts[3].y - pts[1].y, pts[2].y - pts[1].y, pts[1].y - P.y)
+        )
+        if math.abs(u.z) < 1 then
+            return v3f(-1, 1, 1)
+        end
+        return v3f(1 - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z)
+    end
+    function Boom.prototype.triangle(self, pts, color)
+        local bboxmin = v2f(199, 199)
+        local bboxmax = v2f(0, 0)
+        local clamp = v2f(199, 199)
         do
             local i = 0
             while i < 3 do
-                local v0 = self.model[i + 1]
-                local v1 = self.model[(i + 1) % 3 + 1]
-                local x0 = (v0.x + 1) * width / 2
-                local y0 = (v0.y * -1 + 1) * height / 2
-                local x1 = (v1.x + 1) * width / 2
-                local y1 = (v1.y * -1 + 1) * height / 2
-                self:drawLine(
-                    x0,
-                    y0,
-                    x1,
-                    y1,
-                    "black"
+                bboxmin.x = math.max(
+                    0,
+                    math.floor(math.min(bboxmin.x, pts[i + 1].x))
+                )
+                bboxmin.y = math.max(
+                    0,
+                    math.floor(math.min(bboxmin.y, pts[i + 1].y))
+                )
+                bboxmax.x = math.min(
+                    clamp.x,
+                    math.floor(math.max(bboxmax.x, pts[i + 1].x))
+                )
+                bboxmax.y = math.min(
+                    clamp.y,
+                    math.floor(math.max(bboxmax.y, pts[i + 1].y))
                 )
                 i = i + 1
+            end
+        end
+        local P = v2f(0, 0)
+        do
+            P.x = bboxmin.x
+            while P.x <= bboxmax.x do
+                do
+                    P.y = bboxmin.y
+                    while P.y <= bboxmax.y do
+                        do
+                            local bc_screen = self:barycentric(pts, P)
+                            if bc_screen.x < 0 or bc_screen.y < 0 or bc_screen.z < 0 then
+                                goto __continue21
+                            end
+                            self:drawPixelString(P.x, P.y, color)
+                        end
+                        ::__continue21::
+                        P.y = P.y + 1
+                    end
+                end
+                P.x = P.x + 1
             end
         end
     end
