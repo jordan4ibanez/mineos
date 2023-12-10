@@ -195,9 +195,9 @@ namespace mineos {
 
 
     model: Vertex[] = [
-      vert(10,10,   0, 1.0, 0.0, 0.0),
-      vert(100,30,  0, 0.0, 1.0, 0.0),
-      vert(190,160, 0, 0.0, 0.0, 1.0)
+      vert(0,200,   0, 1.0, 0.0, 0.0),
+      vert(150,0, 0, 0.0, 0.0, 1.0),
+      vert(300,200,  0, 0.0, 1.0, 0.0)
     ]
     drawModel(): void {
       const width = 200
@@ -231,8 +231,8 @@ namespace mineos {
       //! manually guessed
       let m_minX = 0
       let m_minY = 0
-      let m_maxX = 200
-      let m_maxY = 200
+      let m_maxX = 300
+      let m_maxY = 300
 
       // Clip to scissor rect.
       minX = math.max(minX, m_minX);

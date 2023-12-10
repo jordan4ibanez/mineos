@@ -364,28 +364,28 @@ do
         self.buffers = {}
         self.model = {
             vert(
-                10,
-                10,
+                0,
+                200,
                 0,
                 1,
                 0,
                 0
             ),
             vert(
-                100,
-                30,
+                150,
                 0,
-                0,
-                1,
-                0
-            ),
-            vert(
-                190,
-                160,
                 0,
                 0,
                 0,
                 1
+            ),
+            vert(
+                300,
+                200,
+                0,
+                0,
+                1,
+                0
             )
         }
         self.offset = 0
@@ -460,8 +460,8 @@ do
         )
         local m_minX = 0
         local m_minY = 0
-        local m_maxX = 200
-        local m_maxY = 200
+        local m_maxX = 300
+        local m_maxY = 300
         minX = math.max(minX, m_minX)
         maxX = math.min(maxX, m_maxX)
         minY = math.max(minY, m_minY)
