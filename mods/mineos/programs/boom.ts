@@ -54,9 +54,14 @@ namespace mineos {
     // readonly basePos = create(100,100)
     cache = create(0,0)
 
-    // Think of this as "double buffering".
-    // Also this gets inverted, so keep it as true.
-    skipFrame = true
+    // Think of this as opengl buffering.
+    // 0 - vsync off
+    // 1 - vsync
+    // 2 - double buffering
+    // 3 - triple buffering
+    // You can technically do values like 10 for really low FPS/crazy buffering. The world is your oyster.
+    frameAccum = 0
+    buffering = 0
     
     buffers: string[][] = []
 
@@ -153,8 +158,13 @@ namespace mineos {
     }
 
     flushBuffers() {
-      this.skipFrame = !this.skipFrame
-      if (this.skipFrame) return;
+      this.frameAccum++
+      if (this.frameAccum > this.buffering) {
+        this.frameAccum = 0
+      } else {
+        // print ("skipped " + this.frameAccum)
+        return
+      }
 
       for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {

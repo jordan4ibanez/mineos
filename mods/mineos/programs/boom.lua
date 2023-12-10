@@ -254,7 +254,8 @@ do
         self.pixelMemory = {}
         self.zIndex = 0
         self.cache = create(0, 0)
-        self.skipFrame = false
+        self.frameAccum = 0
+        self.buffering = 0
         self.buffers = {}
         self.worldMap = {
             {
@@ -968,8 +969,10 @@ do
         currentBuffer[index + 3 + 1] = char(floor(255))
     end
     function Boom.prototype.flushBuffers(self)
-        self.skipFrame = not self.skipFrame
-        if self.skipFrame then
+        self.frameAccum = self.frameAccum + 1
+        if self.frameAccum > self.buffering then
+            self.frameAccum = 0
+        else
             return
         end
         do
