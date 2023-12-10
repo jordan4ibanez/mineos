@@ -1203,6 +1203,7 @@ do
         self:flushBuffers()
     end
     function Boom.prototype.load(self)
+        self.desktop:lockMouse()
     end
     function Boom.prototype.main(self, delta)
         if not self.loaded then

@@ -399,6 +399,7 @@ do
         self.focused = true
         self.programBlueprints = {}
         self.runningPrograms = {}
+        self.mouseLocked = false
         self.acceleration = 250
         self.icons = __TS__New(
             DesktopIcons,
@@ -419,6 +420,12 @@ do
             local progBlueprint = ____value[2]
             self.programBlueprints[name] = progBlueprint
         end
+    end
+    function DesktopEnvironment.prototype.lockMouse(self)
+        self.mouseLocked = true
+    end
+    function DesktopEnvironment.prototype.unlockMouse(self)
+        self.mouseLocked = false
     end
     function DesktopEnvironment.registerProgram(self, progBlueprint)
         programQueue[progBlueprint.name] = progBlueprint
@@ -577,6 +584,10 @@ do
             self.icons:corral()
         end
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
+        if self.mouseLocked then
+            self.mousePosition.x = 1000
+            self.mousePosition.y = 1000
+        end
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
         if self.system:isMouseClicked() then
             for ____, element in ipairs(self.components) do

@@ -397,6 +397,8 @@ namespace mineos {
     }
 
     load(): void {
+
+      this.desktop.lockMouse()
       
     }
 

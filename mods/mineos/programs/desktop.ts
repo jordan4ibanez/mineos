@@ -328,6 +328,8 @@ namespace mineos {
     programBlueprints: {[id: string] : typeof WindowProgram} = {}
     runningPrograms: WindowProgram[] = []
 
+    mouseLocked = false
+
 
     constructor(system: System, renderer: Renderer, audio: AudioController) {
       super(system, renderer, audio);
@@ -338,6 +340,13 @@ namespace mineos {
         // print("added program " + name + " to desktop!")
         this.programBlueprints[name] = progBlueprint
       }
+    }
+
+    lockMouse() {
+      this.mouseLocked = true
+    }
+    unlockMouse() {
+      this.mouseLocked = false
     }
 
     static registerProgram(progBlueprint: typeof WindowProgram): void {
@@ -509,6 +518,12 @@ namespace mineos {
         this.mousePosition.x - 1,
         this.mousePosition.y - 1
       )
+
+      // Now we can simply dump the mouse off the screen if it's "locked"
+      if (this.mouseLocked) {
+        this.mousePosition.x = 1000
+        this.mousePosition.y = 1000
+      }
   
       // Mouse always positions based on the top left.
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
