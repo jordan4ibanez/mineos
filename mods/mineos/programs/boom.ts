@@ -14,6 +14,39 @@ namespace mineos {
     return [i,z]
   }
 
+  function v2swap(i: Vec2, z: Vec2): [Vec2, Vec2] {
+    const oldI = i
+    i = z
+    z = oldI
+    return [i, z]
+  }
+
+  function v2add(a: Vec2, b: Vec2): Vec2 {
+    return v2f(
+      a.x + b.x,
+      a.y + b.y
+    )
+  }
+  function v2sub(a: Vec2, b: Vec2): Vec2 {
+    return v2f(
+      a.x - b.x,
+      a.y - b.y
+    )
+  }
+  function v2mul(a: Vec2, scalar: number): Vec2 {
+    return v2f(
+      a.x * scalar,
+      a.y * scalar
+    )
+  }
+  function v3pow(a: Vec3, b: Vec3): Vec3 {
+    return v3f(
+      a.x ^ b.x,
+      a.y ^ b.y,
+      a.z ^ b.z
+    )
+  }
+
   class Boom extends WindowProgram {
 
     readonly BUFFER_SIZE = 100
@@ -62,6 +95,8 @@ namespace mineos {
       }
     }
 
+
+
     model: Vec3[] = [
       v3f(-1,-1,0),
       v3f(1,-1,0),
@@ -72,18 +107,48 @@ namespace mineos {
       const height = 200
       const offset = v2f(100,100)
 
-      for (let i = 0; i < 3; i++) {
-        const v0 = this.model[i]
-        // Wraps around to 0
-        const v1 = this.model[(i + 1) % 3]
+      // this.triangle(v2f(x0, y0), v2f)
 
-        const x0 = (v0.x + 1) * width / 2
-        const y0 = ((v0.y * -1) + 1) * height / 2
-        const x1 = (v1.x + 1) * width / 2
-        const y1 = ((v1.y * -1) + 1) * height / 2
-        this.drawLine(x0, y0, x1, y1, "black")
-      }
+      // for (let i = 0; i < 3; i++) {
+      //   const v0 = this.model[i]
+      //   // Wraps around to 0
+      //   const v1 = this.model[(i + 1) % 3]
+
+      //   const x0 = (v0.x + 1) * width / 2
+      //   const y0 = ((v0.y * -1) + 1) * height / 2
+      //   const x1 = (v1.x + 1) * width / 2
+      //   const y1 = ((v1.y * -1) + 1) * height / 2
+      //   this.drawLine(x0, y0, x1, y1, "black")
+      // }
     }
+
+    barycentric(pts: Vec2[], P: Vec2): Vec3 { 
+      let u: Vec3 = v3pow( v3f( pts[2].x - pts[0].x, pts[1].x - pts[0].x, pts[0].x - P.x), v3f(pts[2].y - pts[0].y, pts[1].y - pts[0].y, pts[0].y - P.y));
+      if (math.abs(u.z) < 1) return v3f(-1,1,1);
+      return v3f(1 - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z); 
+    } 
+   
+    void triangle(Vec2i *pts, TGAImage &image, TGAColor color) { 
+    Vec2i bboxmin(image.get_width()-1,  image.get_height()-1); 
+    Vec2i bboxmax(0, 0); 
+    Vec2i clamp(image.get_width()-1, image.get_height()-1); 
+    for (int i=0; i<3; i++) { 
+    bboxmin.x = std::max(0, std::min(bboxmin.x, pts[i].x));
+    bboxmin.y = std::max(0, std::min(bboxmin.y, pts[i].y));
+
+    bboxmax.x = std::min(clamp.x, std::max(bboxmax.x, pts[i].x));
+    bboxmax.y = std::min(clamp.y, std::max(bboxmax.y, pts[i].y));
+    } 
+    Vec2i P; 
+    for (P.x=bboxmin.x; P.x<=bboxmax.x; P.x++) { 
+    for (P.y=bboxmin.y; P.y<=bboxmax.y; P.y++) { 
+    Vec3f bc_screen  = barycentric(pts, P); 
+    if (bc_screen.x<0 || bc_screen.y<0 || bc_screen.z<0) continue; 
+    image.set(P.x, P.y, color); 
+    } 
+    } 
+    } 
+   
 
     // https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm#timings-fifth-and-final-attempt
     drawLine(x0: number, y0: number, x1: number, y1: number, color: string): void {
