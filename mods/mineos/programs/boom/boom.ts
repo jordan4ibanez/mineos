@@ -35,10 +35,13 @@ namespace mineos {
     return [i, z]
   }
 
+  // This program does not have a dynamic buffer because it was enough trouble following a tutorial on a software raycaster.
+  // Locked into 5/4 resolution at 800 x 640.
   class Boom extends WindowProgram {
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
-    readonly BUFFERS_ARRAY_WIDTH = 5
+    readonly BUFFERS_ARRAY_SIZE_X = 8
+    readonly BUFFERS_ARRAY_SIZE_Y = 7
 
     loaded = false
     currentPixelCount = 0
@@ -105,10 +108,16 @@ namespace mineos {
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
 
       // Boom is special, it runs in 500x500 resolution because this is for a gamejam
-      if (windowSize.x != 500 || windowSize.y != 500) {
-        throw new Error("BOOM MUST RUN IN 500 X 500!")
-      }
+      // if (windowSize.x != 500 || windowSize.y != 500) {
+      //   throw new Error("BOOM MUST RUN IN 500 X 500!")
+      // }
+
       super(system, renderer, audio, desktop, windowSize)
+
+      this.windowSize = create(
+          this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X,
+          (this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X) * (4 / 5)
+        )
 
       for (const arr of this.textures) {
         // print("Length: " + arr.length)
@@ -119,10 +128,10 @@ namespace mineos {
 
       const size = this.BUFFER_SIZE_X * this.BUFFER_SIZE_Y
 
-      for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
-        for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
+      for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
+        for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
           
-          this.buffers.push(Array.from({length: size}, (_,i) => ((i + 1) % 4 == 0) ? char(255) : char(0)))
+          this.buffers.push(Array.from({length: size}, (_,i) => ((i + 1) % 4 == 0) ? char(0) : char(0)))
 
           this.renderer.addElement("boomBuffer" + x + " " + y, {
             name: "boomBuffer" + x + " " + y,
@@ -143,7 +152,7 @@ namespace mineos {
     }
   
     bufferKey(x: number, y: number): number {
-      return (x % this.BUFFERS_ARRAY_WIDTH) + (y * this.BUFFERS_ARRAY_WIDTH)
+      return (x % this.BUFFERS_ARRAY_SIZE_X) + (y * this.BUFFERS_ARRAY_SIZE_X)
     }
 
     clear(): void {
@@ -206,8 +215,8 @@ namespace mineos {
         return
       }
 
-      for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
-        for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
+      for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
+        for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
 
           const currentBuffer = this.buffers[this.bufferKey(x,y)]
 

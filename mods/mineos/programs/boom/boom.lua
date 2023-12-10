@@ -31,102 +31,6 @@ local function __TS__ClassExtends(target, base)
     end
 end
 
-local function __TS__StringIncludes(self, searchString, position)
-    if not position then
-        position = 1
-    else
-        position = position + 1
-    end
-    local index = string.find(self, searchString, position, true)
-    return index ~= nil
-end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
-end
-
-local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
-do
-    local function getErrorStack(self, constructor)
-        if debug == nil then
-            return nil
-        end
-        local level = 1
-        while true do
-            local info = debug.getinfo(level, "f")
-            level = level + 1
-            if not info then
-                level = 1
-                break
-            elseif info.func == constructor then
-                break
-            end
-        end
-        if __TS__StringIncludes(_VERSION, "Lua 5.0") then
-            return debug.traceback(("[Level " .. tostring(level)) .. "]")
-        else
-            return debug.traceback(nil, level)
-        end
-    end
-    local function wrapErrorToString(self, getDescription)
-        return function(self)
-            local description = getDescription(self)
-            local caller = debug.getinfo(3, "f")
-            local isClassicLua = __TS__StringIncludes(_VERSION, "Lua 5.0") or _VERSION == "Lua 5.1"
-            if isClassicLua or caller and caller.func ~= error then
-                return description
-            else
-                return (description .. "\n") .. tostring(self.stack)
-            end
-        end
-    end
-    local function initErrorClass(self, Type, name)
-        Type.name = name
-        return setmetatable(
-            Type,
-            {__call = function(____, _self, message) return __TS__New(Type, message) end}
-        )
-    end
-    local ____initErrorClass_1 = initErrorClass
-    local ____class_0 = __TS__Class()
-    ____class_0.name = ""
-    function ____class_0.prototype.____constructor(self, message)
-        if message == nil then
-            message = ""
-        end
-        self.message = message
-        self.name = "Error"
-        self.stack = getErrorStack(nil, self.constructor.new)
-        local metatable = getmetatable(self)
-        if metatable and not metatable.__errorToStringPatched then
-            metatable.__errorToStringPatched = true
-            metatable.__tostring = wrapErrorToString(nil, metatable.__tostring)
-        end
-    end
-    function ____class_0.prototype.__tostring(self)
-        return self.message ~= "" and (self.name .. ": ") .. self.message or self.name
-    end
-    Error = ____initErrorClass_1(nil, ____class_0, "Error")
-    local function createErrorClass(self, name)
-        local ____initErrorClass_3 = initErrorClass
-        local ____class_2 = __TS__Class()
-        ____class_2.name = ____class_2.name
-        __TS__ClassExtends(____class_2, Error)
-        function ____class_2.prototype.____constructor(self, ...)
-            ____class_2.____super.prototype.____constructor(self, ...)
-            self.name = name
-        end
-        return ____initErrorClass_3(nil, ____class_2, name)
-    end
-    RangeError = createErrorClass(nil, "RangeError")
-    ReferenceError = createErrorClass(nil, "ReferenceError")
-    SyntaxError = createErrorClass(nil, "SyntaxError")
-    TypeError = createErrorClass(nil, "TypeError")
-    URIError = createErrorClass(nil, "URIError")
-end
-
 local __TS__Symbol, Symbol
 do
     local symbolMetatable = {__tostring = function(self)
@@ -301,9 +205,18 @@ do
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
     function Boom.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
+        Boom.____super.prototype.____constructor(
+            self,
+            system,
+            renderer,
+            audio,
+            desktop,
+            windowSize
+        )
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
-        self.BUFFERS_ARRAY_WIDTH = 5
+        self.BUFFERS_ARRAY_SIZE_X = 8
+        self.BUFFERS_ARRAY_SIZE_Y = 7
         self.loaded = false
         self.currentPixelCount = 0
         self.clearColor = v3f(0, 0, 0)
@@ -951,34 +864,21 @@ do
                 3
             }
         }
-        if windowSize.x ~= 500 or windowSize.y ~= 500 then
-            error(
-                __TS__New(Error, "BOOM MUST RUN IN 500 X 500!"),
-                0
-            )
-        end
-        Boom.____super.prototype.____constructor(
-            self,
-            system,
-            renderer,
-            audio,
-            desktop,
-            windowSize
-        )
+        self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
         for ____, arr in ipairs(self.textures) do
             assert(#arr == self.texHeight * self.texWidth * CHANNELS)
         end
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
         do
             local x = 0
-            while x < self.BUFFERS_ARRAY_WIDTH do
+            while x < self.BUFFERS_ARRAY_SIZE_X do
                 do
                     local y = 0
-                    while y < self.BUFFERS_ARRAY_WIDTH do
+                    while y < self.BUFFERS_ARRAY_SIZE_Y do
                         local ____self_buffers_0 = self.buffers
                         ____self_buffers_0[#____self_buffers_0 + 1] = __TS__ArrayFrom(
                             {length = size},
-                            function(____, _, i) return (i + 1) % 4 == 0 and char(255) or char(0) end
+                            function(____, _, i) return (i + 1) % 4 == 0 and char(0) or char(0) end
                         )
                         self.renderer:addElement(
                             (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
@@ -1001,7 +901,7 @@ do
         end
     end
     function Boom.prototype.bufferKey(self, x, y)
-        return x % self.BUFFERS_ARRAY_WIDTH + y * self.BUFFERS_ARRAY_WIDTH
+        return x % self.BUFFERS_ARRAY_SIZE_X + y * self.BUFFERS_ARRAY_SIZE_X
     end
     function Boom.prototype.clear(self)
         do
@@ -1058,10 +958,10 @@ do
         end
         do
             local x = 0
-            while x < self.BUFFERS_ARRAY_WIDTH do
+            while x < self.BUFFERS_ARRAY_SIZE_X do
                 do
                     local y = 0
-                    while y < self.BUFFERS_ARRAY_WIDTH do
+                    while y < self.BUFFERS_ARRAY_SIZE_Y do
                         local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
                         local stringThing = concat(currentBuffer)
                         local rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
@@ -1269,24 +1169,24 @@ do
                 end
                 local color = v3f()
                 repeat
-                    local ____switch65 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond65 = ____switch65 == 1
-                    if ____cond65 then
+                    local ____switch64 = self.worldMap[mapX + 1][mapY + 1]
+                    local ____cond64 = ____switch64 == 1
+                    if ____cond64 then
                         color = v3f(255, 0, 0)
                         break
                     end
-                    ____cond65 = ____cond65 or ____switch65 == 2
-                    if ____cond65 then
+                    ____cond64 = ____cond64 or ____switch64 == 2
+                    if ____cond64 then
                         color = v3f(0, 255, 0)
                         break
                     end
-                    ____cond65 = ____cond65 or ____switch65 == 3
-                    if ____cond65 then
+                    ____cond64 = ____cond64 or ____switch64 == 3
+                    if ____cond64 then
                         color = v3f(0, 0, 255)
                         break
                     end
-                    ____cond65 = ____cond65 or ____switch65 == 4
-                    if ____cond65 then
+                    ____cond64 = ____cond64 or ____switch64 == 4
+                    if ____cond64 then
                         color = v3f(255, 255, 255)
                         break
                     end
