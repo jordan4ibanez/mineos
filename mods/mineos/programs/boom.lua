@@ -282,6 +282,17 @@ do
             end
         end
     end
+    function Boom.prototype.drawLine(self, x0, y0, x1, y1, color)
+        do
+            local t = 0
+            while t < 1 do
+                local x = x0 + (x1 - x0) * t
+                local y = y0 + (y1 - y0) * t
+                self:drawPixelString(x, y, color)
+                t = t + 0.01
+            end
+        end
+    end
     function Boom.prototype.bufferKey(self, x, y)
         return x % self.BUFFERS_ARRAY_WIDTH + y * self.BUFFERS_ARRAY_WIDTH
     end
@@ -302,6 +313,8 @@ do
         end
     end
     function Boom.prototype.drawPixelString(self, x, y, ____string)
+        x = math.round(x)
+        y = math.round(y)
         local bufferX = math.floor(x / self.BUFFER_SIZE)
         local bufferY = math.floor(y / self.BUFFER_SIZE)
         local inBufferX = x % self.BUFFER_SIZE
@@ -310,6 +323,8 @@ do
         currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = ____string
     end
     function Boom.prototype.drawPixel(self, x, y, r, g, b)
+        x = math.round(x)
+        y = math.round(y)
         local bufferX = math.floor(x / self.BUFFER_SIZE)
         local bufferY = math.floor(y / self.BUFFER_SIZE)
         local inBufferX = x % self.BUFFER_SIZE
@@ -341,6 +356,13 @@ do
     end
     function Boom.prototype.render(self, delta)
         self:clear()
+        self:drawLine(
+            0,
+            0,
+            100,
+            200,
+            "red"
+        )
         self:flushBuffers()
     end
     function Boom.prototype.load(self)

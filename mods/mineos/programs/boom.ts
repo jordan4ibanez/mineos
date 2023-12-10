@@ -55,6 +55,14 @@ namespace mineos {
       }
     }
 
+    drawLine(x0: number, y0: number, x1: number, y1: number, color: string) {
+      for (let t = 0; t < 1; t += 0.01) {
+        const x = x0 + (x1 - x0) * t
+        const y = y0 + (y1 - y0) * t
+        this.drawPixelString(x,y, color)
+      }
+    }
+
     bufferKey(x: number, y: number): number {
       return (x % this.BUFFERS_ARRAY_WIDTH) + (y * this.BUFFERS_ARRAY_WIDTH)
     }
@@ -69,6 +77,8 @@ namespace mineos {
     }
 
     drawPixelString(x: number, y: number, string: string) {
+      x = math.round(x)
+      y = math.round(y)
       const bufferX = math.floor(x / this.BUFFER_SIZE)
       const bufferY = math.floor(y / this.BUFFER_SIZE)
       const inBufferX = (x % this.BUFFER_SIZE)
@@ -78,6 +88,8 @@ namespace mineos {
     }
 
     drawPixel(x: number, y: number, r: number, g: number, b: number): void {
+      x = math.round(x)
+      y = math.round(y)
       const bufferX = math.floor(x / this.BUFFER_SIZE)
       const bufferY = math.floor(y / this.BUFFER_SIZE)
       const inBufferX = (x % this.BUFFER_SIZE)
@@ -110,6 +122,8 @@ namespace mineos {
       //       calc * 100, 1, (y / this.windowSize.y) * 100)
       //   }
       // }
+
+      this.drawLine(0,0, 100,200, "red");
 
       this.flushBuffers()
     }
