@@ -529,8 +529,8 @@ namespace mineos {
 
       // Now we can simply dump the mouse off the screen if it's "locked"
       if (this.mouseLocked) {
-        this.mousePosition.x = 1000
-        this.mousePosition.y = 1000
+        this.mousePosition.x = 9000
+        this.mousePosition.y = 9000
       }
   
       // Mouse always positions based on the top left.

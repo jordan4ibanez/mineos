@@ -263,28 +263,22 @@ namespace mineos {
       }
 
       if (this.system.isKeyDown("right")) {
-        const yaw = minetest.dir_to_yaw(vector.create(this.playerDir.x, 0, this.playerDir.y))
-        const shiftedDirX = sin(yaw + (math.pi / 2))
-        const shiftedDirY = cos(yaw - (math.pi / 2))
 
-        if(this.worldMap[floor(this.playerPos.x + shiftedDirX * moveSpeed)][floor(this.playerPos.y)] == 0) {
-          this.playerPos.x += shiftedDirX * moveSpeed;
+        if(this.worldMap[floor(this.playerPos.x + this.planeX * moveSpeed)][floor(this.playerPos.y)] == 0) {
+          this.playerPos.x += this.planeX * moveSpeed;
         }
-        if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y + shiftedDirY * moveSpeed)] == 0) {
-          this.playerPos.y += shiftedDirY * moveSpeed;
+        if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y + this.planeY * moveSpeed)] == 0) {
+          this.playerPos.y += this.planeY * moveSpeed;
         }
       }
 
       if (this.system.isKeyDown("left")) {
-        const yaw = minetest.dir_to_yaw(vector.create(this.playerDir.x, 0, this.playerDir.y))
-        const shiftedDirX = sin(yaw - (math.pi / 2))
-        const shiftedDirY = cos(yaw + (math.pi / 2))
 
-        if(this.worldMap[floor(this.playerPos.x + shiftedDirX * moveSpeed)][floor(this.playerPos.y)] == 0) {
-          this.playerPos.x += shiftedDirX * moveSpeed;
+        if(this.worldMap[floor(this.playerPos.x - this.planeX * moveSpeed)][floor(this.playerPos.y)] == 0) {
+          this.playerPos.x -= this.planeX * moveSpeed;
         }
-        if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y + shiftedDirY * moveSpeed)] == 0) {
-          this.playerPos.y += shiftedDirY * moveSpeed;
+        if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y - this.planeY * moveSpeed)] == 0) {
+          this.playerPos.y -= this.planeY * moveSpeed;
         }
       }
 

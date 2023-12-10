@@ -1088,29 +1088,23 @@ do
             end
         end
         if self.system:isKeyDown("right") then
-            local yaw = minetest.dir_to_yaw(vector.create(self.playerDir.x, 0, self.playerDir.y))
-            local shiftedDirX = sin(yaw + math.pi / 2)
-            local shiftedDirY = cos(yaw - math.pi / 2)
-            if self.worldMap[floor(self.playerPos.x + shiftedDirX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
+            if self.worldMap[floor(self.playerPos.x + self.planeX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
                 local ____self_playerPos_9, ____x_10 = self.playerPos, "x"
-                ____self_playerPos_9[____x_10] = ____self_playerPos_9[____x_10] + shiftedDirX * moveSpeed
+                ____self_playerPos_9[____x_10] = ____self_playerPos_9[____x_10] + self.planeX * moveSpeed
             end
-            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + shiftedDirY * moveSpeed) + 1] == 0 then
+            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + self.planeY * moveSpeed) + 1] == 0 then
                 local ____self_playerPos_11, ____y_12 = self.playerPos, "y"
-                ____self_playerPos_11[____y_12] = ____self_playerPos_11[____y_12] + shiftedDirY * moveSpeed
+                ____self_playerPos_11[____y_12] = ____self_playerPos_11[____y_12] + self.planeY * moveSpeed
             end
         end
         if self.system:isKeyDown("left") then
-            local yaw = minetest.dir_to_yaw(vector.create(self.playerDir.x, 0, self.playerDir.y))
-            local shiftedDirX = sin(yaw - math.pi / 2)
-            local shiftedDirY = cos(yaw + math.pi / 2)
-            if self.worldMap[floor(self.playerPos.x + shiftedDirX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
+            if self.worldMap[floor(self.playerPos.x - self.planeX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
                 local ____self_playerPos_13, ____x_14 = self.playerPos, "x"
-                ____self_playerPos_13[____x_14] = ____self_playerPos_13[____x_14] + shiftedDirX * moveSpeed
+                ____self_playerPos_13[____x_14] = ____self_playerPos_13[____x_14] - self.planeX * moveSpeed
             end
-            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + shiftedDirY * moveSpeed) + 1] == 0 then
+            if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y - self.planeY * moveSpeed) + 1] == 0 then
                 local ____self_playerPos_15, ____y_16 = self.playerPos, "y"
-                ____self_playerPos_15[____y_16] = ____self_playerPos_15[____y_16] + shiftedDirY * moveSpeed
+                ____self_playerPos_15[____y_16] = ____self_playerPos_15[____y_16] - self.planeY * moveSpeed
             end
         end
         local rotSpeed = self.system:getMouseDelta().x

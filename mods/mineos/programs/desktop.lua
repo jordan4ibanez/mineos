@@ -590,8 +590,8 @@ do
         end
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         if self.mouseLocked then
-            self.mousePosition.x = 1000
-            self.mousePosition.y = 1000
+            self.mousePosition.x = 9000
+            self.mousePosition.y = 9000
         end
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
         if self.system:isMouseClicked() then
