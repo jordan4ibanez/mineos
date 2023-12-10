@@ -8,6 +8,7 @@ namespace mineos {
   const char = string.char;
   const concat = table.concat
   const encode_png = minetest.encode_png;
+  const encode_base64 = minetest.encode_base64;
 
   // RGBA
   const CHANNELS = 4
@@ -155,7 +156,7 @@ namespace mineos {
           let stringThing = concat(currentBuffer)
 
           const rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
-          const rawData = minetest.encode_base64(rawPNG)
+          const rawData = encode_base64(rawPNG)
 
           this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
         }
