@@ -9,6 +9,7 @@ namespace mineos {
   const concat = table.concat
   const encode_png = minetest.encode_png;
   const encode_base64 = minetest.encode_base64;
+  const random = math.random;
 
   // RGBA
   const CHANNELS = 4
@@ -52,6 +53,10 @@ namespace mineos {
     zIndex = 0
     // readonly basePos = create(100,100)
     cache = create(0,0)
+
+    // Think of this as "double buffering".
+    // Also this gets inverted, so keep it as true.
+    skipFrame = true
     
     buffers: string[][] = []
 
@@ -148,6 +153,9 @@ namespace mineos {
     }
 
     flushBuffers() {
+      this.skipFrame = !this.skipFrame
+      if (this.skipFrame) return;
+
       for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
 
@@ -175,7 +183,7 @@ namespace mineos {
           //! cool colors:
           //this.drawPixel(x,y, calc * 100, 1, (y / this.windowSize.y) * 100)
 
-          // this.drawPixel(x,y, floor(math.random() * 255), 1, floor(math.random() * 255))
+          this.drawPixel(x,y, floor(random() * 255), floor(random() * 255), floor(random() * 255))
         }
       }
 

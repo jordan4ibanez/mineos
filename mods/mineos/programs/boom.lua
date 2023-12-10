@@ -227,6 +227,7 @@ do
     local concat = table.concat
     local encode_png = minetest.encode_png
     local encode_base64 = minetest.encode_base64
+    local random = math.random
     local CHANNELS = 4
     local function swap(i, z)
         local oldI = i
@@ -253,6 +254,7 @@ do
         self.pixelMemory = {}
         self.zIndex = 0
         self.cache = create(0, 0)
+        self.skipFrame = false
         self.buffers = {}
         self.worldMap = {
             {
@@ -966,6 +968,10 @@ do
         currentBuffer[index + 3 + 1] = char(floor(255))
     end
     function Boom.prototype.flushBuffers(self)
+        self.skipFrame = not self.skipFrame
+        if self.skipFrame then
+            return
+        end
         do
             local x = 0
             while x < self.BUFFERS_ARRAY_WIDTH do
@@ -996,6 +1002,13 @@ do
                 do
                     local y = 0
                     while y < self.windowSize.y do
+                        self:drawPixel(
+                            x,
+                            y,
+                            floor(random() * 255),
+                            floor(random() * 255),
+                            floor(random() * 255)
+                        )
                         y = y + 1
                     end
                 end
