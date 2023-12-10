@@ -1,9 +1,12 @@
 namespace mineos {
 
   const create = vector.create2d;
-  const color = colors.colorHEX;
+  const color = colors.color;
 
   class Boom extends WindowProgram {
+
+    readonly BUFFER_SIZE = 100
+    readonly BUFFERS_ARRAY_WIDTH = 5
 
     loaded = false
     currentPixelCount = 0
@@ -13,76 +16,96 @@ namespace mineos {
     // readonly basePos = create(100,100)
     cache = create(0,0)
     
-    buffer: string[]
-    
+    buffers: {[id: string] : string[]} = {}
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
+
+      // Boom is special, it runs in 500x500 resolution because this is for a gamejam
+      if (windowSize.x != 500 || windowSize.y != 500) {
+        throw new Error("BOOM MUST RUN IN 500 X 500!")
+      }
       super(system, renderer, audio, desktop, windowSize)
-      const size = windowSize.x * windowSize.y
-      this.buffer = Array.from({length: size}, (_,i) => "red")
-      this.renderer.addElement("boomBuffer", {
-        name: "boomBuffer",
-        hud_elem_type: HudElementType.image,
-        position: create(0,0),
-        text: "pixel.png",
-        // number: this.currentColor,
-        scale: create(1,1),
-        alignment: create(1,1),
-        offset: this.windowPosition,
-        z_index: this.zIndex        
-      })
+      const size = this.BUFFER_SIZE * this.BUFFER_SIZE
+
+      for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
+        for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
+
+          this.buffers[this.bufferKey(x,y)] = Array.from({length: size}, (_,i) => "red")
+
+          this.renderer.addElement("boomBuffer" + x + " " + y, {
+            name: "boomBuffer" + x + " " + y,
+            hud_elem_type: HudElementType.image,
+            position: create(0,0),
+            text: "pixel.png",
+            // number: this.currentColor,
+            scale: create(1,1),
+            alignment: create(1,1),
+            offset: create(
+              this.windowPosition.x + (this.BUFFER_SIZE * x),
+              this.windowPosition.y + (this.BUFFER_SIZE * y),
+            ),
+            z_index: this.zIndex        
+          })
+
+        }
+      }
     }
 
-    test() {
-      // minetest.encode_png
-      // minetest.encode_base64
-      
+    bufferKey(x: number, y: number): string {
+      return x + " " + y
     }
 
     clear(): void {
-      // print(this.pixelMemory.length)
-      // for (let i = 0; i < this.pixelMemory.length; i++) {
-      //   this.renderer.rawDelete(this.pixelMemory[i])
-      // }
-      // this.pixelMemory = []
     }
 
-    drawPixel(x: number, y: number): void {
-      // this.cache.x = x + this.basePos.x
-      // this.cache.y = y + this.basePos.y
-      // // print(pixelID)
-      // const pixelID = this.renderer.rawDraw({
-      //   name: "",
-      //   hud_elem_type: HudElementType.image,
-      //   position: create(0,0),
-      //   text: "pixel.png",
-      //   // number: this.currentColor,
-      //   scale: create(1,1),
-      //   alignment: create(1,1),
-      //   offset: this.cache,
-      //   z_index: this.zIndex
-      // })
-      // this.pixelMemory.push(pixelID)
-      // this.zIndex++
+    drawPixel(x: number, y: number, r: number, g: number, b: number): void {
+      const bufferX = math.floor(x / this.BUFFER_SIZE)
+      const bufferY = math.floor(y / this.BUFFER_SIZE)
+      const inBufferX = (x % this.BUFFER_SIZE)
+      const inBufferY = (y % this.BUFFER_SIZE)
+
+      // print(x + " " + bufferX + " | " + inBufferX)
+      const currentBuffer = this.buffers[this.bufferKey(bufferX, bufferY)]
+      currentBuffer[(inBufferX % this.BUFFER_SIZE) + (inBufferY * this.BUFFER_SIZE)] = color(r,g,b)
     }
 
     flushBuffer(): void {
       
     }
 
-    render(): void {
+    offset = 0
+
+    render(delta: number): void {
       this.clear()
+
+      this.offset += delta * 100
 
       for (let x = 0; x < this.windowSize.x; x++) {
         for (let y = 0; y < this.windowSize.y; y++) {
-          if (x % 8 == 0 && y % 8 == 0) {
-            this.drawPixel(x,y) 
-          }
+          // if (x % 8 == 0 && y % 8 == 0) {
+            // print((x / this.windowSize.x) * 100)
+            const calc = (((x + this.offset) % this.windowSize.x) / this.windowSize.x)
+            // print(calc)
+            this.drawPixel(x,y, 
+              calc * 100, 1, (y / this.windowSize.y) * 100)//y) 
+          // }
         }
       }
 
-      const rawData = minetest.encode_base64(minetest.encode_png(this.windowSize.x, this.windowSize.y, this.buffer, 9))
-      this.renderer.setElementComponentValue("boomBuffer", "text", "[png:" + rawData)
+      for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
+        for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
+          const currentBuffer = this.buffers[this.bufferKey(x,y)]
+          const rawData = minetest.encode_base64(minetest.encode_png(this.BUFFER_SIZE, this.BUFFER_SIZE, currentBuffer, 9))
+          this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
+        }
+      }
+
+      // for (let i = 0; i < this.buffer.length; i++) {
+      //   this.buffer[i] = color(math.random() * 100, math.random() * 100, math.random() * 100)
+      // }
+
+      // 
+      // this.renderer.setElementComponentValue("boomBuffer", "text", "[png:" + rawData)
       // print(rawData)
     }
 
@@ -93,7 +116,7 @@ namespace mineos {
     main(delta: number): void {
       if (!this.loaded) this.load()
       // print("BOOM BABY")
-      this.render()
+      this.render(delta)
     }
 
   }

@@ -543,7 +543,7 @@ do
         )
         self:launchProgram(
             "Boom",
-            create(540, 480)
+            create(500, 500)
         )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")

@@ -463,7 +463,7 @@ namespace mineos {
       ))
 
       //!!!! DEBUGGING BOOM !!!!!!!
-      this.launchProgram("Boom", create(540, 480))
+      this.launchProgram("Boom", create(500, 500))
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")

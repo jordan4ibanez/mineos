@@ -120,13 +120,15 @@ namespace colors {
     return hexValues[clamped]
   }
 
+
+  let newColor = ""
   export function color(r: number, g: number, b: number, a?: number): string {
-    let newColor = "#"
-    for (const channel of [r,g,b,a]) {
-      if (channel) {
-        newColor += hexValues[lockChannel(channel)]
-      }
-    }
+    newColor = "#"
+    newColor += hexValues[lockChannel(r)]
+    newColor += hexValues[lockChannel(g)]
+    newColor += hexValues[lockChannel(b)]
+
+    if (a) newColor += hexValues[lockChannel(a)]
     return newColor
   }
 

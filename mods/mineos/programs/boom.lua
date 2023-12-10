@@ -31,6 +31,102 @@ local function __TS__ClassExtends(target, base)
     end
 end
 
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
+
+local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
+do
+    local function getErrorStack(self, constructor)
+        if debug == nil then
+            return nil
+        end
+        local level = 1
+        while true do
+            local info = debug.getinfo(level, "f")
+            level = level + 1
+            if not info then
+                level = 1
+                break
+            elseif info.func == constructor then
+                break
+            end
+        end
+        if __TS__StringIncludes(_VERSION, "Lua 5.0") then
+            return debug.traceback(("[Level " .. tostring(level)) .. "]")
+        else
+            return debug.traceback(nil, level)
+        end
+    end
+    local function wrapErrorToString(self, getDescription)
+        return function(self)
+            local description = getDescription(self)
+            local caller = debug.getinfo(3, "f")
+            local isClassicLua = __TS__StringIncludes(_VERSION, "Lua 5.0") or _VERSION == "Lua 5.1"
+            if isClassicLua or caller and caller.func ~= error then
+                return description
+            else
+                return (description .. "\n") .. tostring(self.stack)
+            end
+        end
+    end
+    local function initErrorClass(self, Type, name)
+        Type.name = name
+        return setmetatable(
+            Type,
+            {__call = function(____, _self, message) return __TS__New(Type, message) end}
+        )
+    end
+    local ____initErrorClass_1 = initErrorClass
+    local ____class_0 = __TS__Class()
+    ____class_0.name = ""
+    function ____class_0.prototype.____constructor(self, message)
+        if message == nil then
+            message = ""
+        end
+        self.message = message
+        self.name = "Error"
+        self.stack = getErrorStack(nil, self.constructor.new)
+        local metatable = getmetatable(self)
+        if metatable and not metatable.__errorToStringPatched then
+            metatable.__errorToStringPatched = true
+            metatable.__tostring = wrapErrorToString(nil, metatable.__tostring)
+        end
+    end
+    function ____class_0.prototype.__tostring(self)
+        return self.message ~= "" and (self.name .. ": ") .. self.message or self.name
+    end
+    Error = ____initErrorClass_1(nil, ____class_0, "Error")
+    local function createErrorClass(self, name)
+        local ____initErrorClass_3 = initErrorClass
+        local ____class_2 = __TS__Class()
+        ____class_2.name = ____class_2.name
+        __TS__ClassExtends(____class_2, Error)
+        function ____class_2.prototype.____constructor(self, ...)
+            ____class_2.____super.prototype.____constructor(self, ...)
+            self.name = name
+        end
+        return ____initErrorClass_3(nil, ____class_2, name)
+    end
+    RangeError = createErrorClass(nil, "RangeError")
+    ReferenceError = createErrorClass(nil, "ReferenceError")
+    SyntaxError = createErrorClass(nil, "SyntaxError")
+    TypeError = createErrorClass(nil, "TypeError")
+    URIError = createErrorClass(nil, "URIError")
+end
+
 local __TS__Symbol, Symbol
 do
     local symbolMetatable = {__tostring = function(self)
@@ -123,11 +219,27 @@ end
 mineos = mineos or ({})
 do
     local create = vector.create2d
-    local color = colors.colorHEX
+    local color = colors.color
     local Boom = __TS__Class()
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
     function Boom.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
+        self.BUFFER_SIZE = 100
+        self.BUFFERS_ARRAY_WIDTH = 5
+        self.loaded = false
+        self.currentPixelCount = 0
+        self.currentColor = color(0, 0, 0)
+        self.pixelMemory = {}
+        self.zIndex = 0
+        self.cache = create(0, 0)
+        self.buffers = {}
+        self.offset = 0
+        if windowSize.x ~= 500 or windowSize.y ~= 500 then
+            error(
+                __TS__New(Error, "BOOM MUST RUN IN 500 X 500!"),
+                0
+            )
+        end
         Boom.____super.prototype.____constructor(
             self,
             system,
@@ -136,58 +248,94 @@ do
             desktop,
             windowSize
         )
-        self.loaded = false
-        self.currentPixelCount = 0
-        self.currentColor = color(0, 0, 0)
-        self.pixelMemory = {}
-        self.zIndex = 0
-        self.cache = create(0, 0)
-        local size = windowSize.x * windowSize.y
-        self.buffer = __TS__ArrayFrom(
-            {length = size},
-            function(____, _, i) return "red" end
-        )
-        self.renderer:addElement(
-            "boomBuffer",
-            {
-                name = "boomBuffer",
-                hud_elem_type = HudElementType.image,
-                position = create(0, 0),
-                text = "pixel.png",
-                scale = create(1, 1),
-                alignment = create(1, 1),
-                offset = self.windowPosition,
-                z_index = self.zIndex
-            }
-        )
-    end
-    function Boom.prototype.test(self)
-    end
-    function Boom.prototype.clear(self)
-    end
-    function Boom.prototype.drawPixel(self, x, y)
-    end
-    function Boom.prototype.flushBuffer(self)
-    end
-    function Boom.prototype.render(self)
-        self:clear()
+        local size = self.BUFFER_SIZE * self.BUFFER_SIZE
         do
             local x = 0
-            while x < self.windowSize.x do
+            while x < self.BUFFERS_ARRAY_WIDTH do
                 do
                     local y = 0
-                    while y < self.windowSize.y do
-                        if x % 8 == 0 and y % 8 == 0 then
-                            self:drawPixel(x, y)
-                        end
+                    while y < self.BUFFERS_ARRAY_WIDTH do
+                        self.buffers[self:bufferKey(x, y)] = __TS__ArrayFrom(
+                            {length = size},
+                            function(____, _, i) return "red" end
+                        )
+                        self.renderer:addElement(
+                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            {
+                                name = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                                hud_elem_type = HudElementType.image,
+                                position = create(0, 0),
+                                text = "pixel.png",
+                                scale = create(1, 1),
+                                alignment = create(1, 1),
+                                offset = create(self.windowPosition.x + self.BUFFER_SIZE * x, self.windowPosition.y + self.BUFFER_SIZE * y),
+                                z_index = self.zIndex
+                            }
+                        )
                         y = y + 1
                     end
                 end
                 x = x + 1
             end
         end
-        local rawData = minetest.encode_base64(minetest.encode_png(self.windowSize.x, self.windowSize.y, self.buffer, 9))
-        self.renderer:setElementComponentValue("boomBuffer", "text", "[png:" .. rawData)
+    end
+    function Boom.prototype.bufferKey(self, x, y)
+        return (tostring(x) .. " ") .. tostring(y)
+    end
+    function Boom.prototype.clear(self)
+    end
+    function Boom.prototype.drawPixel(self, x, y, r, g, b)
+        local bufferX = math.floor(x / self.BUFFER_SIZE)
+        local bufferY = math.floor(y / self.BUFFER_SIZE)
+        local inBufferX = x % self.BUFFER_SIZE
+        local inBufferY = y % self.BUFFER_SIZE
+        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY)]
+        currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = color(r, g, b)
+    end
+    function Boom.prototype.flushBuffer(self)
+    end
+    function Boom.prototype.render(self, delta)
+        self:clear()
+        self.offset = self.offset + delta * 100
+        do
+            local x = 0
+            while x < self.windowSize.x do
+                do
+                    local y = 0
+                    while y < self.windowSize.y do
+                        local calc = (x + self.offset) % self.windowSize.x / self.windowSize.x
+                        self:drawPixel(
+                            x,
+                            y,
+                            calc * 100,
+                            1,
+                            y / self.windowSize.y * 100
+                        )
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
+        do
+            local x = 0
+            while x < self.BUFFERS_ARRAY_WIDTH do
+                do
+                    local y = 0
+                    while y < self.BUFFERS_ARRAY_WIDTH do
+                        local currentBuffer = self.buffers[self:bufferKey(x, y)]
+                        local rawData = minetest.encode_base64(minetest.encode_png(self.BUFFER_SIZE, self.BUFFER_SIZE, currentBuffer, 9))
+                        self.renderer:setElementComponentValue(
+                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            "text",
+                            "[png:" .. rawData
+                        )
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
     end
     function Boom.prototype.load(self)
     end
@@ -195,7 +343,7 @@ do
         if not self.loaded then
             self:load()
         end
-        self:render()
+        self:render(delta)
     end
     mineos.DesktopEnvironment:registerProgram(Boom)
 end

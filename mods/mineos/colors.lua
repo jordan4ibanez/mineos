@@ -243,12 +243,14 @@ do
         local clamped = lockChannel(input)
         return hexValues[clamped]
     end
+    local newColor = ""
     function colors.color(r, g, b, a)
-        local newColor = "#"
-        for ____, channel in ipairs({r, g, b, a}) do
-            if channel then
-                newColor = newColor .. hexValues[lockChannel(channel)]
-            end
+        newColor = "#"
+        newColor = newColor .. hexValues[lockChannel(r)]
+        newColor = newColor .. hexValues[lockChannel(g)]
+        newColor = newColor .. hexValues[lockChannel(b)]
+        if a then
+            newColor = newColor .. hexValues[lockChannel(a)]
         end
         return newColor
     end
