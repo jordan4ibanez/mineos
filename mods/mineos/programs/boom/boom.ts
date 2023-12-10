@@ -78,32 +78,32 @@ namespace mineos {
 
     readonly textures: number[][] = loadFile("programs/boom/png_data").fileData;
 
-    readonly worldMap: number[][] = [
-      [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7],
-      [4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
-      [4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
-      [4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
-      [4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
-      [4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7],
-      [4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1],
-      [4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8],
-      [4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1],
-      [4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8],
-      [4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1],
-      [4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1],
-      [6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6],
-      [8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],
-      [6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6],
-      [4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3],
-      [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
-      [4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2],
-      [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2],
-      [4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2],
-      [4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2],
-      [4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2],
-      [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
-      [4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3]
-    ]
+    readonly worldMap: number[][]= [
+      [8,8,8,8,8,8,8,8,8,8,8,4,4,6,4,4,6,4,6,4,4,4,6,4],
+      [8,0,0,0,0,0,0,0,0,0,8,4,0,0,0,0,0,0,0,0,0,0,0,4],
+      [8,0,3,3,0,0,0,0,0,8,8,4,0,0,0,0,0,0,0,0,0,0,0,6],
+      [8,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+      [8,0,3,3,0,0,0,0,0,8,8,4,0,0,0,0,0,0,0,0,0,0,0,4],
+      [8,0,0,0,0,0,0,0,0,0,8,4,0,0,0,0,0,6,6,6,0,6,4,6],
+      [8,8,8,8,0,8,8,8,8,8,8,4,4,4,4,4,4,6,0,0,0,0,0,6],
+      [7,7,7,7,0,7,7,7,7,0,8,0,8,0,8,0,8,4,0,4,0,6,0,6],
+      [7,7,0,0,0,0,0,0,7,8,0,8,0,8,0,8,8,6,0,0,0,0,0,6],
+      [7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,6,0,0,0,0,0,4],
+      [7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,6,0,6,0,6,0,6],
+      [7,7,0,0,0,0,0,0,7,8,0,8,0,8,0,8,8,6,4,6,0,6,6,6],
+      [7,7,7,7,0,7,7,7,7,8,8,4,0,6,8,4,8,3,3,3,0,3,3,3],
+      [2,2,2,2,0,2,2,2,2,4,6,4,0,0,6,0,6,3,0,0,0,0,0,3],
+      [2,2,0,0,0,0,0,2,2,4,0,0,0,0,0,0,4,3,0,0,0,0,0,3],
+      [2,0,0,0,0,0,0,0,2,4,0,0,0,0,0,0,4,3,0,0,0,0,0,3],
+      [1,0,0,0,0,0,0,0,1,4,4,4,4,4,6,0,6,3,3,0,0,0,3,3],
+      [2,0,0,0,0,0,0,0,2,2,2,1,2,2,2,6,6,0,0,5,0,5,0,5],
+      [2,2,0,0,0,0,0,2,2,2,0,0,0,2,2,0,5,0,5,0,0,0,5,5],
+      [2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,5,0,5,0,5,0,5,0,5],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5],
+      [2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,5,0,5,0,5,0,5,0,5],
+      [2,2,0,0,0,0,0,2,2,2,0,0,0,2,2,0,5,0,5,0,0,0,5,5],
+      [2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,5,5,5,5,5,5,5,5,5]
+    ];
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
 
@@ -181,29 +181,6 @@ namespace mineos {
       currentBuffer[index + 1] = char(floor(g))
       currentBuffer[index + 2] = char(floor(b))
       currentBuffer[index + 3] = char(floor(255))
-    }
-
-    drawPixelUint_16(x: number, y: number, val: number): void {
-      x = floor(x)
-      y = floor(y)
-
-      const bufferX = floor(x / this.BUFFER_SIZE_Y)
-      const bufferY = floor(y / this.BUFFER_SIZE_Y)
-
-      const currentBuffer = this.buffers[this.bufferKey(bufferX, bufferY)]
-
-      const inBufferX = (x % this.BUFFER_SIZE_Y)
-      const inBufferY = (y % this.BUFFER_SIZE_Y)
-
-      const index = ((inBufferX % this.BUFFER_SIZE_Y) + (inBufferY * this.BUFFER_SIZE_Y)) * CHANNELS
-
-      let hex = val.toString(16)
-
-
-      // currentBuffer[index] = char(floor(r))
-      // currentBuffer[index + 1] = char(floor(g))
-      // currentBuffer[index + 2] = char(floor(b))
-      // currentBuffer[index + 3] = char(floor(255))
     }
 
     flushBuffers() {
@@ -347,7 +324,69 @@ namespace mineos {
 
       const w = this.windowSize.x
       const h = this.windowSize.y
+      const screenHeight = h
+      const screenWidth = w
 
+      // Floorcasting
+      for(let y = 0; y < h; y++) {
+        let rayDirX0 = dirX - planeX;
+        let rayDirY0 = dirY - planeY;
+        let rayDirX1 = dirX + planeX;
+        let rayDirY1 = dirY + planeY;
+        let p = y - screenHeight / 2;
+        let posZ = 0.5 * screenHeight;
+
+        let rowDistance = posZ / p;
+        let floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth;
+        let floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth;
+
+        let floorX = posX + rowDistance * rayDirX0;
+        let floorY = posY + rowDistance * rayDirY0;
+
+        for(let x = 0; x < screenWidth; ++x) {
+          let cellX = floor(floorX);
+          let cellY = floor(floorY);
+
+          // get the texture coordinate from the fractional part
+          let tx = floor(bit.band(this.texWidth * (floorX - cellX), (this.texWidth - 1)));
+          let ty = floor(bit.band(this.texHeight * (floorY - cellY), (this.texHeight - 1)));
+
+          floorX += floorStepX;
+          floorY += floorStepY;
+
+          // choose texture and draw the pixel
+          let floorTexture = 3;
+          let ceilingTexture = 6;
+          // Uint32 color;
+
+          const container = this.textures[floorTexture]
+          const index = (this.texWidth * ty + tx) * CHANNELS
+          let r: number = container[index]
+          let g: number = container[index + 1]
+          let b: number = container[index + 2]
+
+          // floor
+
+          // color = (color >> 1) & 8355711; // make a bit darker
+
+
+          this.drawPixel(x,y, r, g, b)
+          // buffer[y][x] = color;
+
+
+          //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
+          // color = texture[ceilingTexture][texWidth * ty + tx];
+          // make a bit darker
+          r = bit.band(bit.rshift(r, 1), 8355711)
+          g = bit.band(bit.rshift(g, 1), 8355711)
+          b = bit.band(bit.rshift(b, 1), 8355711)
+
+          this.drawPixel(x,y, r, g, b)
+          // buffer[screenHeight - y - 1][x] = color;
+        }
+      }
+
+      // Wallcasting
       for (let x = 0; x < w; x++) {
         let cameraX = 2 * x / w - 1
         let rayDirX = dirX + planeX * cameraX
@@ -428,18 +467,7 @@ namespace mineos {
           texX = this.texWidth - texX - 1;
         }
 
-        // Optimize this part
-        let color: Vec3 = v3f();
-        switch(this.worldMap[mapX][mapY]) {
-          case 1:  color = v3f(255,0,0);    break; //red
-          case 2:  color = v3f(0,255,0);  break; //green
-          case 3:  color = v3f(0,0,255);   break; //blue
-          case 4:  color = v3f(255,255,255);  break; //white
-          default: color = v3f(255,255,0); break; //yellow
-        }
-
-        // textured
-
+        // Textured
         const texNum = this.worldMap[mapX][mapY] - 1;
 
         // How much to increase the texture coordinate per screen pixel
@@ -450,22 +478,31 @@ namespace mineos {
           // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
           let texY = bit.band(floor(texPos), (this.texHeight - 1));
           texPos += step;
-
           const container = this.textures[texNum]
-          // print(container)
           const index = (this.texHeight * texY + texX) * CHANNELS
-
           let r: number = container[index]
           let g: number = container[index + 1]
           let b: number = container[index + 2]
-          // print(r,r,r)
           //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
-          // if(side == 1) color = bit.band(bit.rshift(color, 1), 8355711);
+          if(side == 1) {
+            r = bit.band(bit.rshift(r, 1), 8355711)
+            g = bit.band(bit.rshift(g, 1), 8355711)
+            b = bit.band(bit.rshift(b, 1), 8355711)
+          };
           this.drawPixel(x,y, r, g, b)
-          // buffer[y][x] = color;
         }
         
         // Untextured
+
+        // Optimize this part
+        // let color: Vec3 = v3f();
+        // switch(this.worldMap[mapX][mapY]) {
+        //   case 1:  color = v3f(255,0,0);    break; //red
+        //   case 2:  color = v3f(0,255,0);  break; //green
+        //   case 3:  color = v3f(0,0,255);   break; //blue
+        //   case 4:  color = v3f(255,255,255);  break; //white
+        //   default: color = v3f(255,255,0); break; //yellow
+        // }
         //give x and y sides different brightness
         // if(side == 1) {
         //   color.x /= 2;

@@ -119,59 +119,6 @@ do
         return result
     end
 end
-
-local function __TS__StringAccess(self, index)
-    if index >= 0 and index < #self then
-        return string.sub(self, index + 1, index + 1)
-    end
-end
-
-local __TS__MathModf = math.modf
-
-local __TS__NumberToString
-do
-    local radixChars = "0123456789abcdefghijklmnopqrstuvwxyz"
-    function __TS__NumberToString(self, radix)
-        if radix == nil or radix == 10 or self == math.huge or self == -math.huge or self ~= self then
-            return tostring(self)
-        end
-        radix = math.floor(radix)
-        if radix < 2 or radix > 36 then
-            error("toString() radix argument must be between 2 and 36", 0)
-        end
-        local integer, fraction = __TS__MathModf(math.abs(self))
-        local result = ""
-        if radix == 8 then
-            result = string.format("%o", integer)
-        elseif radix == 16 then
-            result = string.format("%x", integer)
-        else
-            repeat
-                do
-                    result = __TS__StringAccess(radixChars, integer % radix) .. result
-                    integer = math.floor(integer / radix)
-                end
-            until not (integer ~= 0)
-        end
-        if fraction ~= 0 then
-            result = result .. "."
-            local delta = 1e-16
-            repeat
-                do
-                    fraction = fraction * radix
-                    delta = delta * radix
-                    local digit = math.floor(fraction)
-                    result = result .. __TS__StringAccess(radixChars, digit)
-                    fraction = fraction - digit
-                end
-            until not (fraction >= delta)
-        end
-        if self < 0 then
-            result = "-" .. result
-        end
-        return result
-    end
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -240,342 +187,30 @@ do
         self.textures = mineos.loadFile("programs/boom/png_data").fileData
         self.worldMap = {
             {
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                7,
-                7,
-                7,
-                7,
-                7,
-                7,
-                7,
-                7
-            },
-            {
-                4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7
-            },
-            {
-                4,
-                0,
-                1,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7
-            },
-            {
-                4,
-                0,
-                2,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7
-            },
-            {
-                4,
-                0,
-                3,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7
-            },
-            {
-                4,
-                0,
-                4,
-                0,
-                0,
-                0,
-                0,
-                5,
-                5,
-                5,
-                5,
-                5,
-                5,
-                5,
-                5,
-                5,
-                7,
-                7,
-                0,
-                7,
-                7,
-                7,
-                7,
-                7
-            },
-            {
-                4,
-                0,
-                5,
-                0,
-                0,
-                0,
-                0,
-                5,
-                0,
-                5,
-                0,
-                5,
-                0,
-                5,
-                0,
-                5,
-                7,
-                0,
-                0,
-                0,
-                7,
-                7,
-                7,
-                1
-            },
-            {
-                4,
-                0,
-                6,
-                0,
-                0,
-                0,
-                0,
-                5,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                5,
-                7,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                8
-            },
-            {
-                4,
-                0,
-                7,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                7,
-                7,
-                7,
-                1
-            },
-            {
-                4,
-                0,
                 8,
-                0,
-                0,
-                0,
-                0,
-                5,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                5,
-                7,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                8
-            },
-            {
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
                 4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                5,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                5,
-                7,
-                0,
-                0,
-                0,
-                7,
-                7,
-                7,
-                1
-            },
-            {
                 4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                5,
-                5,
-                5,
-                5,
-                0,
-                5,
-                5,
-                5,
-                5,
-                7,
-                7,
-                7,
-                7,
-                7,
-                7,
-                7,
-                1
-            },
-            {
                 6,
+                4,
+                4,
                 6,
+                4,
                 6,
+                4,
+                4,
+                4,
                 6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                0,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6,
-                6
+                4
             },
             {
                 8,
@@ -588,8 +223,8 @@ do
                 0,
                 0,
                 0,
-                0,
-                0,
+                8,
+                4,
                 0,
                 0,
                 0,
@@ -604,124 +239,399 @@ do
                 4
             },
             {
-                6,
-                6,
-                6,
+                8,
+                0,
+                3,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                8,
+                8,
+                4,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                6
+            },
+            {
+                8,
+                0,
+                0,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                6
+            },
+            {
+                8,
+                0,
+                3,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                8,
+                8,
+                4,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                4
+            },
+            {
+                8,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                8,
+                4,
+                0,
+                0,
+                0,
+                0,
+                0,
                 6,
                 6,
                 6,
                 0,
                 6,
+                4,
+                6
+            },
+            {
+                8,
+                8,
+                8,
+                8,
+                0,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
                 6,
+                0,
+                0,
+                0,
+                0,
+                0,
+                6
+            },
+            {
+                7,
+                7,
+                7,
+                7,
+                0,
+                7,
+                7,
+                7,
+                7,
+                0,
+                8,
+                0,
+                8,
+                0,
+                8,
+                0,
+                8,
+                4,
+                0,
+                4,
+                0,
                 6,
+                0,
+                6
+            },
+            {
+                7,
+                7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                7,
+                8,
+                0,
+                8,
+                0,
+                8,
+                0,
+                8,
+                8,
+                6,
+                0,
+                0,
+                0,
+                0,
+                0,
+                6
+            },
+            {
+                7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                8,
+                6,
+                0,
+                0,
+                0,
+                0,
+                0,
+                4
+            },
+            {
+                7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                8,
                 6,
                 0,
                 6,
+                0,
                 6,
+                0,
+                6
+            },
+            {
+                7,
+                7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                7,
+                8,
+                0,
+                8,
+                0,
+                8,
+                0,
+                8,
+                8,
                 6,
+                4,
                 6,
-                6,
-                6,
-                6,
-                6,
-                6,
+                0,
                 6,
                 6,
                 6
             },
             {
-                4,
-                4,
-                4,
-                4,
-                4,
+                7,
+                7,
+                7,
+                7,
+                0,
+                7,
+                7,
+                7,
+                7,
+                8,
+                8,
                 4,
                 0,
+                6,
+                8,
+                4,
+                8,
+                3,
+                3,
+                3,
+                0,
+                3,
+                3,
+                3
+            },
+            {
+                2,
+                2,
+                2,
+                2,
+                0,
+                2,
+                2,
+                2,
+                2,
+                4,
+                6,
+                4,
+                0,
+                0,
+                6,
+                0,
+                6,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                3
+            },
+            {
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                2,
+                4,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                4,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                3
+            },
+            {
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                4,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                4,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                3
+            },
+            {
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                4,
+                4,
                 4,
                 4,
                 4,
                 6,
                 0,
                 6,
-                2,
-                2,
-                2,
-                2,
-                2,
-                2,
-                2,
                 3,
                 3,
+                0,
+                0,
+                0,
                 3,
                 3
             },
             {
-                4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                4,
-                6,
-                0,
-                6,
                 2,
                 0,
                 0,
-                0,
-                0,
-                0,
-                2,
-                0,
-                0,
-                0,
-                2
-            },
-            {
-                4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                6,
-                2,
-                0,
-                0,
-                5,
-                0,
-                0,
-                2,
-                0,
-                0,
-                0,
-                2
-            },
-            {
-                4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                4,
-                6,
-                0,
-                6,
-                2,
                 0,
                 0,
                 0,
@@ -729,127 +639,156 @@ do
                 0,
                 2,
                 2,
-                0,
                 2,
-                2
-            },
-            {
-                4,
-                0,
-                6,
-                0,
-                6,
-                0,
-                0,
-                0,
-                0,
-                4,
-                6,
-                0,
-                0,
-                0,
-                0,
-                0,
-                5,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                2
-            },
-            {
-                4,
-                0,
-                0,
-                5,
-                0,
-                0,
-                0,
-                0,
-                0,
-                4,
-                6,
-                0,
-                6,
-                2,
-                0,
-                0,
-                0,
-                0,
-                0,
-                2,
-                2,
-                0,
-                2,
-                2
-            },
-            {
-                4,
-                0,
-                6,
-                0,
-                6,
-                0,
-                0,
-                0,
-                0,
-                4,
-                6,
-                0,
-                6,
-                2,
-                0,
-                0,
-                5,
-                0,
-                0,
-                2,
-                0,
-                0,
-                0,
-                2
-            },
-            {
-                4,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                4,
-                6,
-                0,
-                6,
-                2,
-                0,
-                0,
-                0,
-                0,
-                0,
-                2,
-                0,
-                0,
-                0,
-                2
-            },
-            {
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
-                4,
                 1,
+                2,
+                2,
+                2,
+                6,
+                6,
+                0,
+                0,
+                5,
+                0,
+                5,
+                0,
+                5
+            },
+            {
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                2,
+                2,
+                0,
+                0,
+                0,
+                2,
+                2,
+                0,
+                5,
+                0,
+                5,
+                0,
+                0,
+                0,
+                5,
+                5
+            },
+            {
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                5,
+                0,
+                5,
+                0,
+                5,
+                0,
+                5,
+                0,
+                5
+            },
+            {
                 1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                5
+            },
+            {
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                5,
+                0,
+                5,
+                0,
+                5,
+                0,
+                5,
+                0,
+                5
+            },
+            {
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                2,
+                2,
+                0,
+                0,
+                0,
+                2,
+                2,
+                0,
+                5,
+                0,
+                5,
+                0,
+                0,
+                0,
+                5,
+                5
+            },
+            {
+                2,
+                2,
+                2,
+                2,
                 1,
                 2,
                 2,
@@ -857,11 +796,19 @@ do
                 2,
                 2,
                 2,
-                3,
-                3,
-                3,
-                3,
-                3
+                1,
+                2,
+                2,
+                2,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5
             }
         }
         self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
@@ -937,17 +884,6 @@ do
         currentBuffer[index + 1 + 1] = char(floor(g))
         currentBuffer[index + 2 + 1] = char(floor(b))
         currentBuffer[index + 3 + 1] = char(floor(255))
-    end
-    function Boom.prototype.drawPixelUint_16(self, x, y, val)
-        x = floor(x)
-        y = floor(y)
-        local bufferX = floor(x / self.BUFFER_SIZE_Y)
-        local bufferY = floor(y / self.BUFFER_SIZE_Y)
-        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
-        local inBufferX = x % self.BUFFER_SIZE_Y
-        local inBufferY = y % self.BUFFER_SIZE_Y
-        local index = (inBufferX % self.BUFFER_SIZE_Y + inBufferY * self.BUFFER_SIZE_Y) * CHANNELS
-        local hex = __TS__NumberToString(val, 16)
     end
     function Boom.prototype.flushBuffers(self)
         self.frameAccum = self.frameAccum + 1
@@ -1094,6 +1030,70 @@ do
         local planeY = self.planeY
         local w = self.windowSize.x
         local h = self.windowSize.y
+        local screenHeight = h
+        local screenWidth = w
+        do
+            local y = 0
+            while y < h do
+                local rayDirX0 = dirX - planeX
+                local rayDirY0 = dirY - planeY
+                local rayDirX1 = dirX + planeX
+                local rayDirY1 = dirY + planeY
+                local p = y - screenHeight / 2
+                local posZ = 0.5 * screenHeight
+                local rowDistance = posZ / p
+                local floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth
+                local floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth
+                local floorX = posX + rowDistance * rayDirX0
+                local floorY = posY + rowDistance * rayDirY0
+                do
+                    local x = 0
+                    while x < screenWidth do
+                        local cellX = floor(floorX)
+                        local cellY = floor(floorY)
+                        local tx = floor(bit.band(self.texWidth * (floorX - cellX), self.texWidth - 1))
+                        local ty = floor(bit.band(self.texHeight * (floorY - cellY), self.texHeight - 1))
+                        floorX = floorX + floorStepX
+                        floorY = floorY + floorStepY
+                        local floorTexture = 3
+                        local ceilingTexture = 6
+                        local container = self.textures[floorTexture + 1]
+                        local index = (self.texWidth * ty + tx) * CHANNELS
+                        local r = container[index + 1]
+                        local g = container[index + 1 + 1]
+                        local b = container[index + 2 + 1]
+                        self:drawPixel(
+                            x,
+                            y,
+                            r,
+                            g,
+                            b
+                        )
+                        r = bit.band(
+                            bit.rshift(r, 1),
+                            8355711
+                        )
+                        g = bit.band(
+                            bit.rshift(g, 1),
+                            8355711
+                        )
+                        b = bit.band(
+                            bit.rshift(b, 1),
+                            8355711
+                        )
+                        self:drawPixel(
+                            x,
+                            y,
+                            r,
+                            g,
+                            b
+                        )
+                        x = x + 1
+                    end
+                end
+                y = y + 1
+            end
+        end
         do
             local x = 0
             while x < w do
@@ -1167,34 +1167,6 @@ do
                 if side == 1 and rayDirY < 0 then
                     texX = self.texWidth - texX - 1
                 end
-                local color = v3f()
-                repeat
-                    local ____switch64 = self.worldMap[mapX + 1][mapY + 1]
-                    local ____cond64 = ____switch64 == 1
-                    if ____cond64 then
-                        color = v3f(255, 0, 0)
-                        break
-                    end
-                    ____cond64 = ____cond64 or ____switch64 == 2
-                    if ____cond64 then
-                        color = v3f(0, 255, 0)
-                        break
-                    end
-                    ____cond64 = ____cond64 or ____switch64 == 3
-                    if ____cond64 then
-                        color = v3f(0, 0, 255)
-                        break
-                    end
-                    ____cond64 = ____cond64 or ____switch64 == 4
-                    if ____cond64 then
-                        color = v3f(255, 255, 255)
-                        break
-                    end
-                    do
-                        color = v3f(255, 255, 0)
-                        break
-                    end
-                until true
                 local texNum = self.worldMap[mapX + 1][mapY + 1] - 1
                 local step = 1 * self.texHeight / lineHeight
                 local texPos = (drawStart - h / 2 + lineHeight / 2) * step
@@ -1211,6 +1183,20 @@ do
                         local r = container[index + 1]
                         local g = container[index + 1 + 1]
                         local b = container[index + 2 + 1]
+                        if side == 1 then
+                            r = bit.band(
+                                bit.rshift(r, 1),
+                                8355711
+                            )
+                            g = bit.band(
+                                bit.rshift(g, 1),
+                                8355711
+                            )
+                            b = bit.band(
+                                bit.rshift(b, 1),
+                                8355711
+                            )
+                        end
                         self:drawPixel(
                             x,
                             y,
