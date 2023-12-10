@@ -44,6 +44,115 @@ namespace mineos {
     return new Vertex(x,y,z,r,g,b)
   } 
 
+  class TriangleEquations {
+    area: number;
+  
+    e0: EdgeEquation;
+    e1: EdgeEquation;
+    e2: EdgeEquation;
+  
+    r: ParameterEquation;
+    g: ParameterEquation;
+    b: ParameterEquation;
+
+    drawn = true
+  
+    constructor(v0: Vertex, v1: Vertex, v2: Vertex) {
+      this.e0 = new EdgeEquation(v0, v1);
+      this.e1 = new EdgeEquation(v1, v2);
+      this.e2 = new EdgeEquation(v2, v0);
+  
+      this.area = 0.5 * (this.e0.c + this.e1.c + this.e2.c);
+  
+      // Cull backfacing triangles.
+      if (this.area < 0) {
+        this.drawn = false;
+      } else {
+        this.drawn = true
+      }
+  
+      this.r = new ParameterEquation(v0.r, v1.r, v2.r, this.e0, this.e1, this.e2, this.area);
+      this.g = new ParameterEquation(v0.g, v1.g, v2.g, this.e0, this.e1, this.e2, this.area);
+      this.b = new ParameterEquation(v0.b, v1.b, v2.b, this.e0, this.e1, this.e2, this.area);
+    }
+  }
+
+  class PixelData {
+    r: number = 0;
+    g: number = 0;
+    b: number = 0;
+  
+    /// Initialize pixel data for the given pixel coordinates.
+    init(eqn: TriangleEquations, x: number, y: number): void {
+      this.r = eqn.r.evaluate(x, y);
+      this.g = eqn.g.evaluate(x, y);
+      this.b = eqn.b.evaluate(x, y);
+    }
+  
+    /// Step all the pixel data in the x direction.
+    stepX(eqn: TriangleEquations): void {
+      this.r = eqn.r.stepX(this.r);
+      this.g = eqn.g.stepX(this.g);
+      this.b = eqn.b.stepX(this.b);
+    }
+  
+    /// Step all the pixel data in the y direction.
+    stepY(eqn: TriangleEquations): void {
+      this.r = eqn.r.stepY(this.r);
+      this.g = eqn.g.stepY(this.g);
+      this.b = eqn.b.stepY(this.b);
+    }
+  };
+  
+  class EdgeData {
+    ev0: number = 0;
+    ev1: number = 0;
+    ev2: number = 0;
+  
+    /// Initialize the edge data values.
+    init(eqn: TriangleEquations, x: number, y: number): void {
+      this.ev0 = eqn.e0.evaluate(x, y);
+      this.ev1 = eqn.e1.evaluate(x, y);
+      this.ev2 = eqn.e2.evaluate(x, y);
+    }
+  
+    /// Step the edge values in the x direction.
+    /// Step the edge values in the x direction.
+    stepX(eqn: TriangleEquations, stepSize?: number): void {
+      if (stepSize) {
+        this.ev0 = eqn.e0.stepX(this.ev0, stepSize);
+        this.ev1 = eqn.e1.stepX(this.ev1, stepSize);
+        this.ev2 = eqn.e2.stepX(this.ev2, stepSize);
+      } else {
+        this.ev0 = eqn.e0.stepX(this.ev0);
+        this.ev1 = eqn.e1.stepX(this.ev1);
+        this.ev2 = eqn.e2.stepX(this.ev2);
+      }
+    }
+
+    /// Step the edge values in the y direction.
+    /// Step the edge values in the y direction.
+    stepY(eqn: TriangleEquations, stepSize?: number): void {
+      if (stepSize) {
+        this.ev0 = eqn.e0.stepY(this.ev0, stepSize);
+        this.ev1 = eqn.e1.stepY(this.ev1, stepSize);
+        this.ev2 = eqn.e2.stepY(this.ev2, stepSize);
+      } else {
+        this.ev0 = eqn.e0.stepY(this.ev0);
+        this.ev1 = eqn.e1.stepY(this.ev1);
+        this.ev2 = eqn.e2.stepY(this.ev2);
+      }
+    }
+  
+  
+    /// Test for triangle containment.
+    test(eqn: TriangleEquations): boolean {
+      return eqn.e0.test(this.ev0) && eqn.e1.test(this.ev1) && eqn.e2.test(this.ev2);
+    }
+  };
+  
+  
+
   class EdgeEquation {
     a: number;
     b: number;
@@ -71,6 +180,26 @@ namespace mineos {
         return (x > 0 || x == 0 && this.tie);
       }
     }
+
+    /// Step the equation value v to the x direction.
+    /// Step the equation value v to the x direction.
+    stepX(v: number, stepSize?: number): number {
+      if (stepSize) {
+        return v + this.a * stepSize;
+      } else {
+        return v + this.a;
+      }
+    }
+
+    /// Step the equation value v to the y direction.
+    /// Step the equation value vto the y direction.
+    stepY(v: number, stepSize?: number): number {
+      if (stepSize) {
+        return v + this.b * stepSize;
+      } else {
+        return v + this.b;
+      }
+    }
   }
 
   class ParameterEquation {
@@ -89,6 +218,26 @@ namespace mineos {
     /// Evaluate the parameter equation for the given point.
     evaluate(x: number, y: number): number {
       return this.a * x + this.b * y + this.c;
+    }
+
+    /// Step the equation value v to the x direction.
+    /// Step the equation value v to the x direction.
+    stepX(v: number, stepSize?: number): number {
+      if (stepSize) {
+        return v + this.a * stepSize;
+      } else {
+        return v + this.a;
+      }
+    }
+
+    /// Step the equation value v to the y direction.
+    /// Step the equation value vto the y direction.
+    stepY(v: number, stepSize?: number): number {
+      if (stepSize) {
+        return v + this.b * stepSize;
+      } else {
+        return v + this.b;
+      }
     }
   };
   

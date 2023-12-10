@@ -279,363 +279,449 @@ do
             b
         )
     end
-    local EdgeEquation = __TS__Class()
-    EdgeEquation.name = "EdgeEquation"
-    function EdgeEquation.prototype.____constructor(self, v0, v1)
-        self.a = v0.y - v1.y
-        self.b = v1.x - v0.x
-        self.c = -(self.a * (v0.x + v1.x) + self.b * (v0.y + v1.y)) / 2
-        local ____temp_0
-        if self.a ~= 0 then
-            ____temp_0 = self.a > 0
+    local TriangleEquations = __TS__Class()
+    TriangleEquations.name = "TriangleEquations"
+    function TriangleEquations.prototype.____constructor(self, v0, v1, v2)
+        self.drawn = true
+        self.e0 = __TS__New(EdgeEquation, v0, v1)
+        self.e1 = __TS__New(EdgeEquation, v1, v2)
+        self.e2 = __TS__New(EdgeEquation, v2, v0)
+        self.area = 0.5 * (self.e0.c + self.e1.c + self.e2.c)
+        if self.area < 0 then
+            self.drawn = false
         else
-            ____temp_0 = self.b > 0
+            self.drawn = true
         end
-        self.tie = ____temp_0
-    end
-    function EdgeEquation.prototype.evaluate(self, x, y)
-        return self.a * x + self.b * y + self.c
-    end
-    function EdgeEquation.prototype.test(self, x, y)
-        if y then
-            return self:test(self:evaluate(x, y))
-        else
-            return x > 0 or x == 0 and self.tie
-        end
-    end
-    local ParameterEquation = __TS__Class()
-    ParameterEquation.name = "ParameterEquation"
-    function ParameterEquation.prototype.____constructor(self, p0, p1, p2, e0, e1, e2, area)
-        local factor = 1 / (2 * area)
-        self.a = factor * (p0 * e0.a + p1 * e1.a + p2 * e2.a)
-        self.b = factor * (p0 * e0.b + p1 * e1.b + p2 * e2.b)
-        self.c = factor * (p0 * e0.c + p1 * e1.c + p2 * e2.c)
-    end
-    function ParameterEquation.prototype.evaluate(self, x, y)
-        return self.a * x + self.b * y + self.c
-    end
-    local function swap(i, z)
-        local oldI = i
-        i = z
-        z = oldI
-        return {i, z}
-    end
-    local function v2swap(i, z)
-        local oldI = i
-        i = z
-        z = oldI
-        return {i, z}
-    end
-    local function v2add(a, b)
-        return v2f(a.x + b.x, a.y + b.y)
-    end
-    local function v2sub(a, b)
-        return v2f(a.x - b.x, a.y - b.y)
-    end
-    local function v2mul(a, scalar)
-        return v2f(a.x * scalar, a.y * scalar)
-    end
-    local function v3pow(a, b)
-        return v3f(
-            bit.bxor(a.x, b.x),
-            bit.bxor(a.y, b.y),
-            bit.bxor(a.z, b.z)
-        )
-    end
-    local function v3fxor(a, b)
-        return v3f(
-            bit.bxor(a.x, b.x),
-            bit.bxor(a.y, b.y),
-            bit.bxor(a.z, b.z)
-        )
-    end
-    local Boom = __TS__Class()
-    Boom.name = "Boom"
-    __TS__ClassExtends(Boom, mineos.WindowProgram)
-    function Boom.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
-        self.BUFFER_SIZE = 100
-        self.BUFFERS_ARRAY_WIDTH = 5
-        self.loaded = false
-        self.currentPixelCount = 0
-        self.clearColor = v3f(100, 100, 100)
-        self.pixelMemory = {}
-        self.zIndex = 0
-        self.cache = create(0, 0)
-        self.buffers = {}
-        self.model = {
-            vert(
-                0,
-                200,
-                0,
-                1,
-                0,
-                0
-            ),
-            vert(
-                150,
-                0,
-                0,
-                0,
-                0,
-                1
-            ),
-            vert(
-                300,
-                200,
-                0,
-                0,
-                1,
-                0
-            )
-        }
-        self.offset = 0
-        if windowSize.x ~= 500 or windowSize.y ~= 500 then
-            error(
-                __TS__New(Error, "BOOM MUST RUN IN 500 X 500!"),
-                0
-            )
-        end
-        Boom.____super.prototype.____constructor(
-            self,
-            system,
-            renderer,
-            audio,
-            desktop,
-            windowSize
-        )
-        local size = self.BUFFER_SIZE * self.BUFFER_SIZE
-        do
-            local x = 0
-            while x < self.BUFFERS_ARRAY_WIDTH do
-                do
-                    local y = 0
-                    while y < self.BUFFERS_ARRAY_WIDTH do
-                        local ____self_buffers_1 = self.buffers
-                        ____self_buffers_1[#____self_buffers_1 + 1] = __TS__ArrayFrom(
-                            {length = size},
-                            function(____, _, i) return "red" end
-                        )
-                        self.renderer:addElement(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
-                            {
-                                name = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
-                                hud_elem_type = HudElementType.image,
-                                position = create(0, 0),
-                                text = "pixel.png",
-                                scale = create(1, 1),
-                                alignment = create(1, 1),
-                                offset = create(self.windowPosition.x + self.BUFFER_SIZE * x, self.windowPosition.y + self.BUFFER_SIZE * y),
-                                z_index = self.zIndex
-                            }
-                        )
-                        y = y + 1
-                    end
-                end
-                x = x + 1
-            end
-        end
-    end
-    function Boom.prototype.drawModel(self)
-        local width = 200
-        local height = 200
-        local offset = v2f(100, 100)
-        self:drawTriangle(self.model[1], self.model[2], self.model[3], "red")
-    end
-    function Boom.prototype.drawTriangle(self, v0, v1, v2, color)
-        local minX = math.min(
-            math.min(v0.x, v1.x),
-            v2.x
-        )
-        local maxX = math.max(
-            math.max(v0.x, v1.x),
-            v2.x
-        )
-        local minY = math.min(
-            math.min(v0.y, v1.y),
-            v2.y
-        )
-        local maxY = math.max(
-            math.max(v0.y, v1.y),
-            v2.y
-        )
-        local m_minX = 0
-        local m_minY = 0
-        local m_maxX = 300
-        local m_maxY = 300
-        minX = math.max(minX, m_minX)
-        maxX = math.min(maxX, m_maxX)
-        minY = math.max(minY, m_minY)
-        maxY = math.min(maxY, m_maxY)
-        local e0 = __TS__New(EdgeEquation, v1, v2)
-        local e1 = __TS__New(EdgeEquation, v2, v0)
-        local e2 = __TS__New(EdgeEquation, v0, v1)
-        local area = 0.5 * (e0.c + e1.c + e2.c)
-        if area < 0 then
-            return
-        end
-        local r = __TS__New(
+        self.r = __TS__New(
             ParameterEquation,
             v0.r,
             v1.r,
             v2.r,
-            e0,
-            e1,
-            e2,
-            area
+            self.e0,
+            self.e1,
+            self.e2,
+            self.area
         )
-        local g = __TS__New(
+        self.g = __TS__New(
             ParameterEquation,
             v0.g,
             v1.g,
             v2.g,
-            e0,
-            e1,
-            e2,
-            area
+            self.e0,
+            self.e1,
+            self.e2,
+            self.area
         )
-        local b = __TS__New(
+        self.b = __TS__New(
             ParameterEquation,
             v0.b,
             v1.b,
             v2.b,
-            e0,
-            e1,
-            e2,
-            area
+            self.e0,
+            self.e1,
+            self.e2,
+            self.area
         )
-        do
-            local x = minX + 0.5
-            local xm = maxX + 0.5
-            while x <= xm do
-                do
-                    local y = minY + 0.5
-                    local ym = maxY + 0.5
-                    while y <= ym do
-                        if e0:test(x, y) and e1:test(x, y) and e2:test(x, y) then
-                            local rint = r:evaluate(x, y) * 100
-                            local gint = g:evaluate(x, y) * 100
-                            local bint = b:evaluate(x, y) * 100
-                            self:drawPixel(
-                                x,
-                                y,
-                                rint,
-                                gint,
-                                bint
-                            )
-                        end
-                        y = y + 1
-                    end
-                end
-                x = x + 1
-            end
-        end
     end
-    function Boom.prototype.drawLine(self, x0, y0, x1, y1, color)
-        local steep = false
-        if math.abs(x0 - x1) < math.abs(y0 - y1) then
-            x0, y0 = unpack(swap(x0, y0))
-            x1, y1 = unpack(swap(x1, y1))
-            steep = true
-        end
-        if x0 > x1 then
-            x0, x1 = unpack(swap(x0, x1))
-            y0, y1 = unpack(swap(y0, y1))
-        end
-        local dx = x1 - x0
-        local dy = y1 - y0
-        local derror2 = math.abs(dy) * 2
-        local error2 = 0
-        local y = y0
-        do
-            local x = x0
-            while x <= x1 do
-                if steep then
-                    self:drawPixelString(y, x, color)
-                else
-                    self:drawPixelString(x, y, color)
-                end
-                error2 = error2 + derror2
-                if error2 > dx then
-                    y = y + (y1 > y0 and 1 or -1)
-                    error2 = error2 - dx * 2
-                end
-                x = x + 1
-            end
-        end
+    local PixelData = __TS__Class()
+    PixelData.name = "PixelData"
+    function PixelData.prototype.____constructor(self)
+        self.r = 0
+        self.g = 0
+        self.b = 0
     end
-    function Boom.prototype.bufferKey(self, x, y)
-        return x % self.BUFFERS_ARRAY_WIDTH + y * self.BUFFERS_ARRAY_WIDTH
+    function PixelData.prototype.init(self, eqn, x, y)
+        self.r = eqn.r:evaluate(x, y)
+        self.g = eqn.g:evaluate(x, y)
+        self.b = eqn.b:evaluate(x, y)
     end
-    function Boom.prototype.clear(self)
-        local clearString = color(self.clearColor.x, self.clearColor.y, self.clearColor.z)
-        do
-            local x = 0
-            while x < self.windowSize.x do
-                do
-                    local y = 0
-                    while y < self.windowSize.y do
-                        self:drawPixelString(x, y, clearString)
-                        y = y + 1
-                    end
-                end
-                x = x + 1
-            end
-        end
+    stepX()
+    local TriangleEquations
+    bit.band(____, eqn)
+    do
+        r = eqn.r.stepX(r)
+        g = eqn.g.stepX(g)
+        b = eqn.b.stepX(b)
     end
-    function Boom.prototype.drawPixelString(self, x, y, ____string)
-        x = math.round(x)
-        y = math.round(y)
-        local bufferX = math.floor(x / self.BUFFER_SIZE)
-        local bufferY = math.floor(y / self.BUFFER_SIZE)
-        local inBufferX = x % self.BUFFER_SIZE
-        local inBufferY = y % self.BUFFER_SIZE
-        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
-        currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = ____string
+    stepY()
+    local TriangleEquations
+    bit.band(____, eqn)
+    do
+        r = eqn.r.stepY(r)
+        g = eqn.g.stepY(g)
+        b = eqn.b.stepY(b)
     end
-    function Boom.prototype.drawPixel(self, x, y, r, g, b)
-        x = math.round(x)
-        y = math.round(y)
-        local bufferX = math.floor(x / self.BUFFER_SIZE)
-        local bufferY = math.floor(y / self.BUFFER_SIZE)
-        local inBufferX = x % self.BUFFER_SIZE
-        local inBufferY = y % self.BUFFER_SIZE
-        local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
-        currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = color(r, g, b)
-    end
-    function Boom.prototype.flushBuffers(self)
-        do
-            local x = 0
-            while x < self.BUFFERS_ARRAY_WIDTH do
-                do
-                    local y = 0
-                    while y < self.BUFFERS_ARRAY_WIDTH do
-                        local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
-                        local rawPNG = minetest.encode_png(self.BUFFER_SIZE, self.BUFFER_SIZE, currentBuffer, 9)
-                        local rawData = minetest.encode_base64(rawPNG)
-                        self.renderer:setElementComponentValue(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
-                            "text",
-                            "[png:" .. rawData
-                        )
-                        y = y + 1
-                    end
-                end
-                x = x + 1
-            end
-        end
-    end
-    function Boom.prototype.render(self, delta)
-        self:clear()
-        self:drawModel()
-        self:flushBuffers()
-    end
-    function Boom.prototype.load(self)
-    end
-    function Boom.prototype.main(self, delta)
-        if not self.loaded then
-            self:load()
-        end
-        self:render(delta)
-    end
-    mineos.DesktopEnvironment:registerProgram(Boom)
 end
+EdgeEquation = __TS__Class()
+EdgeEquation.name = "EdgeEquation"
+function EdgeEquation.prototype.____constructor(self, v0, v1)
+    self.a = v0.y - v1.y
+    self.b = v1.x - v0.x
+    self.c = -(self.a * (v0.x + v1.x) + self.b * (v0.y + v1.y)) / 2
+    local ____temp_0
+    if self.a ~= 0 then
+        ____temp_0 = self.a > 0
+    else
+        ____temp_0 = self.b > 0
+    end
+    self.tie = ____temp_0
+end
+function EdgeEquation.prototype.evaluate(self, x, y)
+    return self.a * x + self.b * y + self.c
+end
+function EdgeEquation.prototype.test(self, x, y)
+    if y then
+        return self:test(self:evaluate(x, y))
+    else
+        return x > 0 or x == 0 and self.tie
+    end
+end
+function EdgeEquation.prototype.stepX(self, v, stepSize)
+    if stepSize then
+        return v + self.a * stepSize
+    else
+        return v + self.a
+    end
+end
+function EdgeEquation.prototype.stepY(self, v, stepSize)
+    if stepSize then
+        return v + self.b * stepSize
+    else
+        return v + self.b
+    end
+end
+ParameterEquation = __TS__Class()
+ParameterEquation.name = "ParameterEquation"
+function ParameterEquation.prototype.____constructor(self, p0, p1, p2, e0, e1, e2, area)
+    local factor = 1 / (2 * area)
+    self.a = factor * (p0 * e0.a + p1 * e1.a + p2 * e2.a)
+    self.b = factor * (p0 * e0.b + p1 * e1.b + p2 * e2.b)
+    self.c = factor * (p0 * e0.c + p1 * e1.c + p2 * e2.c)
+end
+function ParameterEquation.prototype.evaluate(self, x, y)
+    return self.a * x + self.b * y + self.c
+end
+function swap(i, z)
+    local oldI = i
+    i = z
+    z = oldI
+    return {i, z}
+end
+function v2swap(i, z)
+    local oldI = i
+    i = z
+    z = oldI
+    return {i, z}
+end
+function v2add(a, b)
+    return v2f(a.x + b.x, a.y + b.y)
+end
+function v2sub(a, b)
+    return v2f(a.x - b.x, a.y - b.y)
+end
+function v2mul(a, scalar)
+    return v2f(a.x * scalar, a.y * scalar)
+end
+function v3pow(a, b)
+    return v3f(
+        bit.bxor(a.x, b.x),
+        bit.bxor(a.y, b.y),
+        bit.bxor(a.z, b.z)
+    )
+end
+function v3fxor(a, b)
+    return v3f(
+        bit.bxor(a.x, b.x),
+        bit.bxor(a.y, b.y),
+        bit.bxor(a.z, b.z)
+    )
+end
+Boom = __TS__Class()
+Boom.name = "Boom"
+__TS__ClassExtends(Boom, WindowProgram)
+function Boom.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
+    self.BUFFER_SIZE = 100
+    self.BUFFERS_ARRAY_WIDTH = 5
+    self.loaded = false
+    self.currentPixelCount = 0
+    self.clearColor = v3f(100, 100, 100)
+    self.pixelMemory = {}
+    self.zIndex = 0
+    self.cache = create(0, 0)
+    self.buffers = {}
+    self.model = {
+        vert(
+            0,
+            200,
+            0,
+            1,
+            0,
+            0
+        ),
+        vert(
+            150,
+            0,
+            0,
+            0,
+            0,
+            1
+        ),
+        vert(
+            300,
+            200,
+            0,
+            0,
+            1,
+            0
+        )
+    }
+    self.offset = 0
+    if windowSize.x ~= 500 or windowSize.y ~= 500 then
+        error(
+            __TS__New(Error, "BOOM MUST RUN IN 500 X 500!"),
+            0
+        )
+    end
+    Boom.____super.prototype.____constructor(
+        self,
+        system,
+        renderer,
+        audio,
+        desktop,
+        windowSize
+    )
+    local size = self.BUFFER_SIZE * self.BUFFER_SIZE
+    do
+        local x = 0
+        while x < self.BUFFERS_ARRAY_WIDTH do
+            do
+                local y = 0
+                while y < self.BUFFERS_ARRAY_WIDTH do
+                    local ____self_buffers_1 = self.buffers
+                    ____self_buffers_1[#____self_buffers_1 + 1] = __TS__ArrayFrom(
+                        {length = size},
+                        function(____, _, i) return "red" end
+                    )
+                    self.renderer.addElement(
+                        (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                        {
+                            name = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            hud_elem_type = HudElementType.image,
+                            position = create(0, 0),
+                            text = "pixel.png",
+                            scale = create(1, 1),
+                            alignment = create(1, 1),
+                            offset = create(self.windowPosition.x + self.BUFFER_SIZE * x, self.windowPosition.y + self.BUFFER_SIZE * y),
+                            z_index = self.zIndex
+                        }
+                    )
+                    y = y + 1
+                end
+            end
+            x = x + 1
+        end
+    end
+end
+function Boom.prototype.drawModel(self)
+    local width = 200
+    local height = 200
+    local offset = v2f(100, 100)
+    self:drawTriangle(self.model[1], self.model[2], self.model[3], "red")
+end
+function Boom.prototype.drawTriangle(self, v0, v1, v2, color)
+    local minX = math.min(
+        math.min(v0.x, v1.x),
+        v2.x
+    )
+    local maxX = math.max(
+        math.max(v0.x, v1.x),
+        v2.x
+    )
+    local minY = math.min(
+        math.min(v0.y, v1.y),
+        v2.y
+    )
+    local maxY = math.max(
+        math.max(v0.y, v1.y),
+        v2.y
+    )
+    local m_minX = 0
+    local m_minY = 0
+    local m_maxX = 300
+    local m_maxY = 300
+    minX = math.max(minX, m_minX)
+    maxX = math.min(maxX, m_maxX)
+    minY = math.max(minY, m_minY)
+    maxY = math.min(maxY, m_maxY)
+    local e0 = __TS__New(EdgeEquation, v1, v2)
+    local e1 = __TS__New(EdgeEquation, v2, v0)
+    local e2 = __TS__New(EdgeEquation, v0, v1)
+    local area = 0.5 * (e0.c + e1.c + e2.c)
+    if area < 0 then
+        return
+    end
+    local r = __TS__New(
+        ParameterEquation,
+        v0.r,
+        v1.r,
+        v2.r,
+        e0,
+        e1,
+        e2,
+        area
+    )
+    local g = __TS__New(
+        ParameterEquation,
+        v0.g,
+        v1.g,
+        v2.g,
+        e0,
+        e1,
+        e2,
+        area
+    )
+    local b = __TS__New(
+        ParameterEquation,
+        v0.b,
+        v1.b,
+        v2.b,
+        e0,
+        e1,
+        e2,
+        area
+    )
+    do
+        local x = minX + 0.5
+        local xm = maxX + 0.5
+        while x <= xm do
+            do
+                local y = minY + 0.5
+                local ym = maxY + 0.5
+                while y <= ym do
+                    if e0:test(x, y) and e1:test(x, y) and e2:test(x, y) then
+                        local rint = r:evaluate(x, y) * 100
+                        local gint = g:evaluate(x, y) * 100
+                        local bint = b:evaluate(x, y) * 100
+                        self:drawPixel(
+                            x,
+                            y,
+                            rint,
+                            gint,
+                            bint
+                        )
+                    end
+                    y = y + 1
+                end
+            end
+            x = x + 1
+        end
+    end
+end
+function Boom.prototype.drawLine(self, x0, y0, x1, y1, color)
+    local steep = false
+    if math.abs(x0 - x1) < math.abs(y0 - y1) then
+        x0, y0 = unpack(swap(x0, y0))
+        x1, y1 = unpack(swap(x1, y1))
+        steep = true
+    end
+    if x0 > x1 then
+        x0, x1 = unpack(swap(x0, x1))
+        y0, y1 = unpack(swap(y0, y1))
+    end
+    local dx = x1 - x0
+    local dy = y1 - y0
+    local derror2 = math.abs(dy) * 2
+    local error2 = 0
+    local y = y0
+    do
+        local x = x0
+        while x <= x1 do
+            if steep then
+                self:drawPixelString(y, x, color)
+            else
+                self:drawPixelString(x, y, color)
+            end
+            error2 = error2 + derror2
+            if error2 > dx then
+                y = y + (y1 > y0 and 1 or -1)
+                error2 = error2 - dx * 2
+            end
+            x = x + 1
+        end
+    end
+end
+function Boom.prototype.bufferKey(self, x, y)
+    return x % self.BUFFERS_ARRAY_WIDTH + y * self.BUFFERS_ARRAY_WIDTH
+end
+function Boom.prototype.clear(self)
+    local clearString = color(self.clearColor.x, self.clearColor.y, self.clearColor.z)
+    do
+        local x = 0
+        while x < self.windowSize.x do
+            do
+                local y = 0
+                while y < self.windowSize.y do
+                    self:drawPixelString(x, y, clearString)
+                    y = y + 1
+                end
+            end
+            x = x + 1
+        end
+    end
+end
+function Boom.prototype.drawPixelString(self, x, y, ____string)
+    x = math.round(x)
+    y = math.round(y)
+    local bufferX = math.floor(x / self.BUFFER_SIZE)
+    local bufferY = math.floor(y / self.BUFFER_SIZE)
+    local inBufferX = x % self.BUFFER_SIZE
+    local inBufferY = y % self.BUFFER_SIZE
+    local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
+    currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = ____string
+end
+function Boom.prototype.drawPixel(self, x, y, r, g, b)
+    x = math.round(x)
+    y = math.round(y)
+    local bufferX = math.floor(x / self.BUFFER_SIZE)
+    local bufferY = math.floor(y / self.BUFFER_SIZE)
+    local inBufferX = x % self.BUFFER_SIZE
+    local inBufferY = y % self.BUFFER_SIZE
+    local currentBuffer = self.buffers[self:bufferKey(bufferX, bufferY) + 1]
+    currentBuffer[inBufferX % self.BUFFER_SIZE + inBufferY * self.BUFFER_SIZE + 1] = color(r, g, b)
+end
+function Boom.prototype.flushBuffers(self)
+    do
+        local x = 0
+        while x < self.BUFFERS_ARRAY_WIDTH do
+            do
+                local y = 0
+                while y < self.BUFFERS_ARRAY_WIDTH do
+                    local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
+                    local rawPNG = minetest.encode_png(self.BUFFER_SIZE, self.BUFFER_SIZE, currentBuffer, 9)
+                    local rawData = minetest.encode_base64(rawPNG)
+                    self.renderer.setElementComponentValue(
+                        (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                        "text",
+                        "[png:" .. rawData
+                    )
+                    y = y + 1
+                end
+            end
+            x = x + 1
+        end
+    end
+end
+function Boom.prototype.render(self, delta)
+    self:clear()
+    self:drawModel()
+    self:flushBuffers()
+end
+function Boom.prototype.load(self)
+end
+function Boom.prototype.main(self, delta)
+    if not self.loaded then
+        self:load()
+    end
+    self:render(delta)
+end
+DesktopEnvironment.registerProgram(Boom)
