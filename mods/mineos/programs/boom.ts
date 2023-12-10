@@ -221,60 +221,60 @@ namespace mineos {
     }
   
 
-    drawTriangle(v0: Vertex, v1: Vertex, v2: Vertex, color: string): void {
-      // Compute triangle bounding box.
-      let minX = math.min(math.min(v0.x, v1.x), v2.x);
-      let maxX = math.max(math.max(v0.x, v1.x), v2.x);
-      let minY = math.min(math.min(v0.y, v1.y), v2.y);
-      let maxY = math.max(math.max(v0.y, v1.y), v2.y);
+    // drawTriangle(v0: Vertex, v1: Vertex, v2: Vertex, color: string): void {
+    //   // Compute triangle bounding box.
+    //   let minX = math.min(math.min(v0.x, v1.x), v2.x);
+    //   let maxX = math.max(math.max(v0.x, v1.x), v2.x);
+    //   let minY = math.min(math.min(v0.y, v1.y), v2.y);
+    //   let maxY = math.max(math.max(v0.y, v1.y), v2.y);
 
-      //! manually guessed
-      let m_minX = 0
-      let m_minY = 0
-      let m_maxX = 300
-      let m_maxY = 300
+    //   //! manually guessed
+    //   let m_minX = 0
+    //   let m_minY = 0
+    //   let m_maxX = 300
+    //   let m_maxY = 300
 
-      // Clip to scissor rect.
-      minX = math.max(minX, m_minX);
-      maxX = math.min(maxX, m_maxX);
-      minY = math.max(minY, m_minY);
-      maxY = math.min(maxY, m_maxY);
+    //   // Clip to scissor rect.
+    //   minX = math.max(minX, m_minX);
+    //   maxX = math.min(maxX, m_maxX);
+    //   minY = math.max(minY, m_minY);
+    //   maxY = math.min(maxY, m_maxY);
 
-      // Compute edge equations.
-      let e0 = new EdgeEquation(v1, v2);
-      let e1 = new EdgeEquation(v2, v0);
-      let e2 = new EdgeEquation(v0, v1);
+    //   // Compute edge equations.
+    //   let e0 = new EdgeEquation(v1, v2);
+    //   let e1 = new EdgeEquation(v2, v0);
+    //   let e2 = new EdgeEquation(v0, v1);
 
-      let area = 0.5 * (e0.c + e1.c + e2.c);
+    //   let area = 0.5 * (e0.c + e1.c + e2.c);
       
-      // Check if triangle is backfacing.
-      if (area < 0)
-        return;
+    //   // Check if triangle is backfacing.
+    //   if (area < 0)
+    //     return;
 
-      // const red = 1.0
-      // const green = 0
-      // const blue = 0
+    //   // const red = 1.0
+    //   // const green = 0
+    //   // const blue = 0
 
-      let r = new ParameterEquation(v0.r, v1.r, v2.r, e0, e1, e2, area);
-      let g = new ParameterEquation(v0.g, v1.g, v2.g, e0, e1, e2, area);
-      let b = new ParameterEquation(v0.b, v1.b, v2.b, e0, e1, e2, area);
+    //   let r = new ParameterEquation(v0.r, v1.r, v2.r, e0, e1, e2, area);
+    //   let g = new ParameterEquation(v0.g, v1.g, v2.g, e0, e1, e2, area);
+    //   let b = new ParameterEquation(v0.b, v1.b, v2.b, e0, e1, e2, area);
 
-      // Add 0.5 to sample at pixel centers.
-      for (let x = minX + 0.5, xm = maxX + 0.5; x <= xm; x += 1.0)
-      for (let y = minY + 0.5, ym = maxY + 0.5; y <= ym; y += 1.0)
-      {
-        if (e0.test(x, y) && e1.test(x, y) && e2.test(x, y))
-        {
-          const rint = r.evaluate(x, y) * 100;
-          const gint = g.evaluate(x, y) * 100;
-          const bint = b.evaluate(x, y) * 100;
-          // print(rint)
-          this.drawPixel(x, y, rint, gint, bint)
-          // Uint32 color = SDL_MapRGB(m_surface->format, rint, gint, bint);
-          // putpixel(m_surface, x, y, color);
-        }
-      }
-    }
+    //   // Add 0.5 to sample at pixel centers.
+    //   for (let x = minX + 0.5, xm = maxX + 0.5; x <= xm; x += 1.0)
+    //   for (let y = minY + 0.5, ym = maxY + 0.5; y <= ym; y += 1.0)
+    //   {
+    //     if (e0.test(x, y) && e1.test(x, y) && e2.test(x, y))
+    //     {
+    //       const rint = r.evaluate(x, y) * 100;
+    //       const gint = g.evaluate(x, y) * 100;
+    //       const bint = b.evaluate(x, y) * 100;
+    //       // print(rint)
+    //       this.drawPixel(x, y, rint, gint, bint)
+    //       // Uint32 color = SDL_MapRGB(m_surface->format, rint, gint, bint);
+    //       // putpixel(m_surface, x, y, color);
+    //     }
+    //   }
+    // }
 
 
    
