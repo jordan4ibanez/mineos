@@ -26,7 +26,7 @@ export interface minetest {
   sha1(data: any, raw: boolean): string
   colorspec_to_colorstring(colorSpec: ColorSpec): string
   colorspec_to_bytes(colorSpec: ColorSpec): string
-  encode_png(width: number, height: number, data: ColorSpec[] | string, compression: number): string
+  encode_png(width: number, height: number, data: DynamicColorSpec[] | string, compression: number): string
   urlencode(url: string): string
   debug(anything: string): void
   log(level: LogLevel, text: string): void
