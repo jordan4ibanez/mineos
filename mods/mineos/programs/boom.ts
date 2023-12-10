@@ -95,7 +95,8 @@ namespace mineos {
       for (let x = 0; x < this.BUFFERS_ARRAY_WIDTH; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_WIDTH; y++) {
           const currentBuffer = this.buffers[this.bufferKey(x,y)]
-          const rawData = minetest.encode_base64(minetest.encode_png(this.BUFFER_SIZE, this.BUFFER_SIZE, currentBuffer, 9))
+          const rawPNG = minetest.encode_png(this.BUFFER_SIZE, this.BUFFER_SIZE, currentBuffer, 9)
+          const rawData = minetest.encode_base64(rawPNG)
           this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
         }
       }
