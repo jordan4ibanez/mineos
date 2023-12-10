@@ -26,7 +26,7 @@ do
         "programs/os_loader",
         "programs/desktop",
         "programs/bitsBattle",
-        "programs/boom"
+        "programs/boom/boom"
     })
     mineos.System.out:println("programs loaded!")
 end

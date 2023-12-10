@@ -32,7 +32,7 @@ namespace mineos {
     "programs/os_loader",
     "programs/desktop",
     "programs/bitsBattle",
-    "programs/boom"
+    "programs/boom/boom"
   ])
 
   System.out.println("programs loaded!");
