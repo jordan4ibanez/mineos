@@ -73,7 +73,6 @@ namespace mineos {
     readonly mapWidth = 24
     readonly mapHeight = 24
 
-    //!!! DO NOT OPEN THIS IN VSCODE IT'LL BASICALLY CRASH AHHH !!!
     readonly fileData = loadFileManual("mineos","programs/boom/png_data").fileData;
 
     readonly worldMap: number[][] = [
