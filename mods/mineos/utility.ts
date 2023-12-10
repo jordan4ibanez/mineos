@@ -6,6 +6,17 @@ namespace mineos {
       dofile(currentDirectory + "/" + file + ".lua")
     }
   }
+  export function loadFile(file: string): any {
+    const currentMod = minetest.get_current_modname()
+    const currentDirectory = minetest.get_modpath(currentMod)
+    return dofile(currentDirectory + "/" + file + ".lua")
+  }
+
+  export function loadFileManual(modDir: string, file: string): any {
+    const currentDirectory = minetest.get_modpath(modDir)
+    return dofile(currentDirectory + "/" + file + ".lua")
+  }
+
   vector.create = function(x?: number, y?: number, z?: number): Vec3 {
     let temp = vector.zero()
     temp.x = x || 0

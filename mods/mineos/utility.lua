@@ -7,6 +7,15 @@ do
             dofile(((currentDirectory .. "/") .. file) .. ".lua")
         end
     end
+    function mineos.loadFile(file)
+        local currentMod = minetest.get_current_modname()
+        local currentDirectory = minetest.get_modpath(currentMod)
+        return dofile(((currentDirectory .. "/") .. file) .. ".lua")
+    end
+    function mineos.loadFileManual(modDir, file)
+        local currentDirectory = minetest.get_modpath(modDir)
+        return dofile(((currentDirectory .. "/") .. file) .. ".lua")
+    end
     vector.create = function(x, y, z)
         local temp = vector.zero()
         temp.x = x or 0

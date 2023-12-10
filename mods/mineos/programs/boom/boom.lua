@@ -271,6 +271,7 @@ do
         self.texHeight = 64
         self.mapWidth = 24
         self.mapHeight = 24
+        self.fileData = mineos.loadFileManual("mineos", "programs/boom/png_data").fileData
         self.worldMap = {
             {
                 4,
