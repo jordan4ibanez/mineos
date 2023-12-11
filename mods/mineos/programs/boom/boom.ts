@@ -13,6 +13,7 @@ namespace mineos {
   const random = math.random;
   const cos = math.cos;
   const sin = math.sin;
+  const round = math.round
 
 
   // RGBA
@@ -35,14 +36,28 @@ namespace mineos {
     return [i, z]
   }
 
+  class Sprite {
+    x: number
+    y: number
+    texture: number
+    constructor(x: number, y: number, texture: number) {
+      this.x = x
+      this.y = y
+      this.texture = texture
+    }
+  }
+  function s(x: number, y: number, texture: number): Sprite {
+    return new Sprite(x,y,texture)
+  }
+
   // This program does not have a dynamic buffer because it was enough trouble following a tutorial on a software raycaster.
   // Locked into 5/4 resolution at 800 x 640.
   class Boom extends WindowProgram {
 
-    performanceBuffer: boolean = false
+    performanceBuffer: boolean = true
     performanceMode: boolean = false
     //! If you enable performanceBuffer in 4k, make sure you enable this as well!
-    enable4kPerformanceMode = false
+    enable4kPerformanceMode = true
     
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
@@ -85,7 +100,7 @@ namespace mineos {
 
     readonly textures: number[][] = loadFile("programs/boom/png_data").fileData;
 
-    readonly worldMap: number[][]= [
+    readonly worldMap: number[][] = [
       [8,8,8,8,8,8,8,8,8,8,8,4,4,6,4,4,6,4,6,4,4,4,6,4],
       [8,0,0,0,0,0,0,0,0,0,8,4,0,0,0,0,0,0,0,0,0,0,0,4],
       [8,0,3,3,0,0,0,0,0,8,8,4,0,0,0,0,0,0,0,0,0,0,0,6],
@@ -110,7 +125,38 @@ namespace mineos {
       [2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,5,0,5,0,5,0,5,0,5],
       [2,2,0,0,0,0,0,2,2,2,0,0,0,2,2,0,5,0,5,0,0,0,5,5],
       [2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,5,5,5,5,5,5,5,5,5]
-    ];
+    ]
+
+    sprite: Sprite[] = [
+      s(20.5, 11.5, 10), //green light in front of playerstart
+      //green lights in every room
+      s(18.5,4.5, 10),
+      s(10.0,4.5, 10),
+      s(10.0,12.5,10),
+      s(3.5, 6.5, 10),
+      s(3.5, 20.5,10),
+      s(3.5, 14.5,10),
+      s(14.5,20.5,10),
+
+      //row of pillars in front of wall: fisheye test
+      s(18.5, 10.5, 9),
+      s(18.5, 11.5, 9),
+      s(18.5, 12.5, 9),
+
+      //some barrels around the map
+      s(21.5, 1.5, 8),
+      s(15.5, 1.5, 8),
+      s(16.0, 1.8, 8),
+      s(16.2, 1.2, 8),
+      s(3.5,  2.5, 8),
+      s(9.5, 15.5, 8),
+      s(10.0, 15.1,8),
+      s(10.5, 15.8,8),
+    ]
+
+    ZBuffer: number[]
+    spriteOrder: number[]
+    spriteDistance: number[]
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
 
@@ -130,7 +176,12 @@ namespace mineos {
         // print("Length: " + arr.length)
         // print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
         assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
+        print(this.texHeight * this.texWidth * CHANNELS)
       }
+
+      this.ZBuffer = Array.from({length: this.windowSize.x}, (_,i) => 0)
+      this.spriteOrder = Array.from({length: this.sprite.length}, (_,i) => 0)
+      this.spriteDistance = Array.from({length: this.sprite.length}, (_,i) => 0)
 
 
       const size = this.BUFFER_SIZE_X * this.BUFFER_SIZE_Y
@@ -323,8 +374,32 @@ namespace mineos {
       this.planeY = oldPlaneX * sin(-rotSpeed) + this.planeY * cos(-rotSpeed);
     }
 
+    sortSprites(): void {
+      const amount = this.sprite.length
 
-    rayCast() {
+      // was: std::vector<std::pair<double, int>> sprites(amount);
+      let sprites: [number, number][] = Array.from({length: amount}, (_,i) => [0,0])
+
+      // Was array pointer
+      let order = this.spriteOrder
+      let dist = this.spriteDistance
+
+      for(let i = 0; i < amount; i++) {
+        sprites[i][0] = dist[i];
+        sprites[i][1] = order[i];
+      }
+      
+      //  std::sort(sprites.begin(), sprites.end());
+      table.sort(sprites, (a: [number, number], b: [number, number]) => a[0] < b[0])
+      
+      // restore in reverse order to go from farthest to nearest
+      for(let i = 0; i < amount; i++) {
+        dist[i] = sprites[amount - i - 1][0];
+        order[i] = sprites[amount - i - 1][1];
+      }
+    }
+
+    rayCast(): void {
       const posX = this.playerPos.x
       const posY = this.playerPos.y
       const dirX = this.playerDir.x
@@ -523,6 +598,14 @@ namespace mineos {
           this.drawPixel(x,y, r, g, b)
         }
         
+        // Set the Depth Buffer
+        this.ZBuffer[x] = perpWallDist
+        if (this.ZBuffer[x] == null) {
+          throw new Error("oops")
+        } else {
+          // print(x, this.ZBuffer[x])
+        }
+
         // Untextured
 
         // Optimize this part
@@ -549,6 +632,61 @@ namespace mineos {
         //   color.z
         // )
 
+      }
+
+      // Spritecasting
+      // Sort the sprites from far to close
+      for(let i = 0; i < this.sprite.length; i++) {
+        this.spriteOrder[i] = i;
+        this.spriteDistance[i] = ((posX - this.sprite[i].x) * (posX - this.sprite[i].x) + (posY - this.sprite[i].y) * (posY - this.sprite[i].y)); //sqrt not taken, unneeded
+      }
+
+      this.sortSprites();
+
+      const numSprites = this.sprite.length
+
+      for(let i = 0; i < numSprites; i++) {
+        let spriteX = this.sprite[this.spriteOrder[i]].x - posX;
+        let spriteY = this.sprite[this.spriteOrder[i]].y - posY;
+        let invDet = 1.0 / (planeX * dirY - dirX * planeY);
+        let transformX = invDet * (dirY * spriteX - dirX * spriteY);
+        let transformY = invDet * (-planeY * spriteX + planeX * spriteY);
+        let spriteScreenX = floor((w / 2) * (1 + transformX / transformY));
+        let spriteHeight = abs(floor(h / (transformY)));
+        let drawStartY = floor(-spriteHeight / 2 + h / 2);
+        if(drawStartY < 0) drawStartY = 0;
+        let drawEndY = floor(spriteHeight / 2 + h / 2);
+        if(drawEndY >= h) drawEndY = h - 1;
+        //calculate width of the sprite
+        let spriteWidth = abs(floor(h / (transformY)));
+        let drawStartX = floor(-spriteWidth / 2 + spriteScreenX);
+        if(drawStartX < 0) drawStartX = 0;
+        let drawEndX = spriteWidth / 2 + spriteScreenX;
+        if(drawEndX >= w) drawEndX = w - 1;
+        //loop through every vertical stripe of the sprite on screen
+        for(let stripe = drawStartX; stripe < drawEndX; stripe++) {
+          let texX = floor((256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * this.texWidth / spriteWidth) / 256);
+          if(transformY > 0 && stripe > 0 && stripe < w && transformY < this.ZBuffer[stripe]) {
+            // for every pixel of the current stripe
+            for(let y = drawStartY; y < drawEndY; y++) {
+              let d = floor((y) * 256 - h * 128 + spriteHeight * 128); //256 and 128 factors to avoid floats
+              let texY = floor(((d * this.texHeight) / spriteHeight) / 256);
+
+              const selectedTexture = this.sprite[this.spriteOrder[i]].texture
+              const container = this.textures[selectedTexture]
+              const index = (this.texWidth * math.clamp(0,16379, texY) + math.clamp(0, 16379, texX)) * CHANNELS
+
+              let r: number = container[index]
+              let g: number = container[index + 1]
+              let b: number = container[index + 2]
+              let a: number = container[index + 3]
+
+              if (a > 0) {
+                this.drawPixel(stripe, y, r,g,b)
+              }
+            }
+          }
+        }
       }
     }
 

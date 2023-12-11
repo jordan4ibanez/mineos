@@ -6,6 +6,12 @@ local function __TS__Class(self)
     return c
 end
 
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
+
 local function __TS__ClassExtends(target, base)
     target.____super = base
     local staticMetatable = setmetatable({__index = base}, base)
@@ -119,6 +125,96 @@ do
         return result
     end
 end
+
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
+local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
+do
+    local function getErrorStack(self, constructor)
+        if debug == nil then
+            return nil
+        end
+        local level = 1
+        while true do
+            local info = debug.getinfo(level, "f")
+            level = level + 1
+            if not info then
+                level = 1
+                break
+            elseif info.func == constructor then
+                break
+            end
+        end
+        if __TS__StringIncludes(_VERSION, "Lua 5.0") then
+            return debug.traceback(("[Level " .. tostring(level)) .. "]")
+        else
+            return debug.traceback(nil, level)
+        end
+    end
+    local function wrapErrorToString(self, getDescription)
+        return function(self)
+            local description = getDescription(self)
+            local caller = debug.getinfo(3, "f")
+            local isClassicLua = __TS__StringIncludes(_VERSION, "Lua 5.0") or _VERSION == "Lua 5.1"
+            if isClassicLua or caller and caller.func ~= error then
+                return description
+            else
+                return (description .. "\n") .. tostring(self.stack)
+            end
+        end
+    end
+    local function initErrorClass(self, Type, name)
+        Type.name = name
+        return setmetatable(
+            Type,
+            {__call = function(____, _self, message) return __TS__New(Type, message) end}
+        )
+    end
+    local ____initErrorClass_1 = initErrorClass
+    local ____class_0 = __TS__Class()
+    ____class_0.name = ""
+    function ____class_0.prototype.____constructor(self, message)
+        if message == nil then
+            message = ""
+        end
+        self.message = message
+        self.name = "Error"
+        self.stack = getErrorStack(nil, self.constructor.new)
+        local metatable = getmetatable(self)
+        if metatable and not metatable.__errorToStringPatched then
+            metatable.__errorToStringPatched = true
+            metatable.__tostring = wrapErrorToString(nil, metatable.__tostring)
+        end
+    end
+    function ____class_0.prototype.__tostring(self)
+        return self.message ~= "" and (self.name .. ": ") .. self.message or self.name
+    end
+    Error = ____initErrorClass_1(nil, ____class_0, "Error")
+    local function createErrorClass(self, name)
+        local ____initErrorClass_3 = initErrorClass
+        local ____class_2 = __TS__Class()
+        ____class_2.name = ____class_2.name
+        __TS__ClassExtends(____class_2, Error)
+        function ____class_2.prototype.____constructor(self, ...)
+            ____class_2.____super.prototype.____constructor(self, ...)
+            self.name = name
+        end
+        return ____initErrorClass_3(nil, ____class_2, name)
+    end
+    RangeError = createErrorClass(nil, "RangeError")
+    ReferenceError = createErrorClass(nil, "ReferenceError")
+    SyntaxError = createErrorClass(nil, "SyntaxError")
+    TypeError = createErrorClass(nil, "TypeError")
+    URIError = createErrorClass(nil, "URIError")
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -135,6 +231,7 @@ do
     local random = math.random
     local cos = math.cos
     local sin = math.sin
+    local round = math.round
     local CHANNELS = 4
     local function swap(i, z)
         local oldI = i
@@ -148,6 +245,16 @@ do
         z = oldI
         return {i, z}
     end
+    local Sprite = __TS__Class()
+    Sprite.name = "Sprite"
+    function Sprite.prototype.____constructor(self, x, y, texture)
+        self.x = x
+        self.y = y
+        self.texture = texture
+    end
+    local function s(x, y, texture)
+        return __TS__New(Sprite, x, y, texture)
+    end
     local Boom = __TS__Class()
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
@@ -160,9 +267,9 @@ do
             desktop,
             windowSize
         )
-        self.performanceBuffer = false
+        self.performanceBuffer = true
         self.performanceMode = false
-        self.enable4kPerformanceMode = false
+        self.enable4kPerformanceMode = true
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
         self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
@@ -814,10 +921,44 @@ do
                 5
             }
         }
+        self.sprite = {
+            s(20.5, 11.5, 10),
+            s(18.5, 4.5, 10),
+            s(10, 4.5, 10),
+            s(10, 12.5, 10),
+            s(3.5, 6.5, 10),
+            s(3.5, 20.5, 10),
+            s(3.5, 14.5, 10),
+            s(14.5, 20.5, 10),
+            s(18.5, 10.5, 9),
+            s(18.5, 11.5, 9),
+            s(18.5, 12.5, 9),
+            s(21.5, 1.5, 8),
+            s(15.5, 1.5, 8),
+            s(16, 1.8, 8),
+            s(16.2, 1.2, 8),
+            s(3.5, 2.5, 8),
+            s(9.5, 15.5, 8),
+            s(10, 15.1, 8),
+            s(10.5, 15.8, 8)
+        }
         self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
         for ____, arr in ipairs(self.textures) do
             assert(#arr == self.texHeight * self.texWidth * CHANNELS)
+            print(self.texHeight * self.texWidth * CHANNELS)
         end
+        self.ZBuffer = __TS__ArrayFrom(
+            {length = self.windowSize.x},
+            function(____, _, i) return 0 end
+        )
+        self.spriteOrder = __TS__ArrayFrom(
+            {length = #self.sprite},
+            function(____, _, i) return 0 end
+        )
+        self.spriteDistance = __TS__ArrayFrom(
+            {length = #self.sprite},
+            function(____, _, i) return 0 end
+        )
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
         do
             local x = 0
@@ -1024,6 +1165,35 @@ do
         local oldPlaneX = self.planeX
         self.planeX = self.planeX * cos(-rotSpeed) - self.planeY * sin(-rotSpeed)
         self.planeY = oldPlaneX * sin(-rotSpeed) + self.planeY * cos(-rotSpeed)
+    end
+    function Boom.prototype.sortSprites(self)
+        local amount = #self.sprite
+        local sprites = __TS__ArrayFrom(
+            {length = amount},
+            function(____, _, i) return {0, 0} end
+        )
+        local order = self.spriteOrder
+        local dist = self.spriteDistance
+        do
+            local i = 0
+            while i < amount do
+                sprites[i + 1][1] = dist[i + 1]
+                sprites[i + 1][2] = order[i + 1]
+                i = i + 1
+            end
+        end
+        table.sort(
+            sprites,
+            function(a, b) return a[1] < b[1] end
+        )
+        do
+            local i = 0
+            while i < amount do
+                dist[i + 1] = sprites[amount - i][1]
+                order[i + 1] = sprites[amount - i][2]
+                i = i + 1
+            end
+        end
     end
     function Boom.prototype.rayCast(self)
         local posX = self.playerPos.x
@@ -1239,7 +1409,88 @@ do
                         y = y + 1
                     end
                 end
+                self.ZBuffer[x + 1] = perpWallDist
+                if self.ZBuffer[x + 1] == nil then
+                    error(
+                        __TS__New(Error, "oops"),
+                        0
+                    )
+                else
+                end
                 x = x + 1
+            end
+        end
+        do
+            local i = 0
+            while i < #self.sprite do
+                self.spriteOrder[i + 1] = i
+                self.spriteDistance[i + 1] = (posX - self.sprite[i + 1].x) * (posX - self.sprite[i + 1].x) + (posY - self.sprite[i + 1].y) * (posY - self.sprite[i + 1].y)
+                i = i + 1
+            end
+        end
+        self:sortSprites()
+        local numSprites = #self.sprite
+        do
+            local i = 0
+            while i < numSprites do
+                local spriteX = self.sprite[self.spriteOrder[i + 1] + 1].x - posX
+                local spriteY = self.sprite[self.spriteOrder[i + 1] + 1].y - posY
+                local invDet = 1 / (planeX * dirY - dirX * planeY)
+                local transformX = invDet * (dirY * spriteX - dirX * spriteY)
+                local transformY = invDet * (-planeY * spriteX + planeX * spriteY)
+                local spriteScreenX = floor(w / 2 * (1 + transformX / transformY))
+                local spriteHeight = abs(floor(h / transformY))
+                local drawStartY = floor(-spriteHeight / 2 + h / 2)
+                if drawStartY < 0 then
+                    drawStartY = 0
+                end
+                local drawEndY = floor(spriteHeight / 2 + h / 2)
+                if drawEndY >= h then
+                    drawEndY = h - 1
+                end
+                local spriteWidth = abs(floor(h / transformY))
+                local drawStartX = floor(-spriteWidth / 2 + spriteScreenX)
+                if drawStartX < 0 then
+                    drawStartX = 0
+                end
+                local drawEndX = spriteWidth / 2 + spriteScreenX
+                if drawEndX >= w then
+                    drawEndX = w - 1
+                end
+                do
+                    local stripe = drawStartX
+                    while stripe < drawEndX do
+                        local texX = floor(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * self.texWidth / spriteWidth / 256)
+                        if transformY > 0 and stripe > 0 and stripe < w and transformY < self.ZBuffer[stripe + 1] then
+                            do
+                                local y = drawStartY
+                                while y < drawEndY do
+                                    local d = floor(y * 256 - h * 128 + spriteHeight * 128)
+                                    local texY = floor(d * self.texHeight / spriteHeight / 256)
+                                    local selectedTexture = self.sprite[self.spriteOrder[i + 1] + 1].texture
+                                    local container = self.textures[selectedTexture + 1]
+                                    local index = (self.texWidth * math.clamp(0, 16379, texY) + math.clamp(0, 16379, texX)) * CHANNELS
+                                    local r = container[index + 1]
+                                    local g = container[index + 1 + 1]
+                                    local b = container[index + 2 + 1]
+                                    local a = container[index + 3 + 1]
+                                    if a > 0 then
+                                        self:drawPixel(
+                                            stripe,
+                                            y,
+                                            r,
+                                            g,
+                                            b
+                                        )
+                                    end
+                                    y = y + 1
+                                end
+                            end
+                        end
+                        stripe = stripe + 1
+                    end
+                end
+                i = i + 1
             end
         end
     end
