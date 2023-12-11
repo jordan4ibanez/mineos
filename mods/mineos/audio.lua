@@ -159,6 +159,7 @@ do
     Song.name = "Song"
     function Song.prototype.____constructor(self, name)
         self.tempo = 20
+        self.volume = 1
         self.data = {}
         self.finalizedArrayLength = -1
         self.name = name
@@ -242,7 +243,7 @@ do
             for ____, ____value in ipairs(__TS__ObjectEntries(self.currentSong.data)) do
                 local instrument = ____value[1]
                 local data = ____value[2]
-                self:playNote(instrument, data[self.currentNote + 1])
+                self:playNote(instrument, data[self.currentNote + 1], self.currentSong.volume)
             end
             self.currentNote = self.currentNote + 1
             if self.currentNote >= self.currentSong.finalizedArrayLength then
@@ -250,12 +251,15 @@ do
             end
         end
     end
-    function AudioController.prototype.playNote(self, instrument, pitch)
+    function AudioController.prototype.playNote(self, instrument, pitch, volume)
+        if volume == nil then
+            volume = 1
+        end
         if pitch == -1 then
             return
         end
         local fPitch = 1 + translationKey[pitch]
-        minetest.sound_play({name = instrument}, {to_player = "singleplayer", gain = 1, pitch = fPitch})
+        minetest.sound_play({name = instrument}, {to_player = "singleplayer", gain = volume, pitch = fPitch})
     end
     function AudioController.prototype.playSound(self, name, volume, fade)
         return minetest.sound_play({name = name}, {to_player = "singleplayer", gain = volume, fade = fade})

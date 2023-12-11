@@ -30,6 +30,7 @@ namespace mineos {
     math.randomseed(os.time())
     let song: Song = new Song("boom_theme")
     song.tempo = 8
+    song.volume = 0.5
     song.data["guitar"] = [
 
       0,0,0,0,6,0,0,5,

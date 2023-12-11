@@ -151,6 +151,7 @@ do
         math.randomseed(os.time())
         local song = __TS__New(mineos.Song, "boom_theme")
         song.tempo = 8
+        song.volume = 0.5
         song.data.guitar = {
             0,
             0,
