@@ -354,8 +354,8 @@ namespace mineos {
             scale: buffer_scale,
             alignment: create(1,1),
             offset: create(
-              this.windowPosition.x + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
-              this.windowPosition.y + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
+              this.getPosX() + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
+              this.getPosY() + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
             ),
             z_index: this.zIndex        
           })
@@ -415,8 +415,8 @@ namespace mineos {
                 id,
                 "offset", 
                 create(
-                  this.windowPosition.x + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
-                  this.windowPosition.y + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
+                  this.getPosX() + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
+                  this.getPosY() + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
                 )
               )
             }
@@ -1053,7 +1053,7 @@ namespace mineos {
             vecB.y = mob.y
 
             const dist = vector.distance(vecA, vecB)
-            if (dist < 0.2 && mob.alive) {
+            if (dist < 0.4 && mob.alive) {
               mob.alive = false
               this.sprite[mob.sprite].texture += 2
               hitMob = true;
