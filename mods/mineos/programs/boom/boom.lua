@@ -1057,37 +1057,46 @@ do
                         floorY = floorY + floorStepY
                         local floorTexture = 3
                         local ceilingTexture = 6
-                        local container = self.textures[floorTexture + 1]
-                        local index = (self.texWidth * ty + tx) * CHANNELS
-                        local r = container[index + 1]
-                        local g = container[index + 1 + 1]
-                        local b = container[index + 2 + 1]
-                        self:drawPixel(
-                            x,
-                            y,
-                            r,
-                            g,
-                            b
-                        )
-                        r = bit.band(
-                            bit.rshift(r, 1),
-                            8355711
-                        )
-                        g = bit.band(
-                            bit.rshift(g, 1),
-                            8355711
-                        )
-                        b = bit.band(
-                            bit.rshift(b, 1),
-                            8355711
-                        )
-                        self:drawPixel(
-                            x,
-                            y,
-                            r,
-                            g,
-                            b
-                        )
+                        do
+                            local container = self.textures[floorTexture + 1]
+                            local index = (self.texWidth * ty + tx) * CHANNELS
+                            local r = container[index + 1]
+                            local g = container[index + 1 + 1]
+                            local b = container[index + 2 + 1]
+                            self:drawPixel(
+                                x,
+                                y,
+                                r,
+                                g,
+                                b
+                            )
+                        end
+                        do
+                            local container = self.textures[ceilingTexture + 1]
+                            local index = (self.texWidth * ty + tx) * CHANNELS
+                            local r = container[index + 1]
+                            local g = container[index + 1 + 1]
+                            local b = container[index + 2 + 1]
+                            r = bit.band(
+                                bit.rshift(r, 1),
+                                8355711
+                            )
+                            g = bit.band(
+                                bit.rshift(g, 1),
+                                8355711
+                            )
+                            b = bit.band(
+                                bit.rshift(b, 1),
+                                8355711
+                            )
+                            self:drawPixel(
+                                x,
+                                screenHeight - y - 1,
+                                r,
+                                g,
+                                b
+                            )
+                        end
                         x = x + 1
                     end
                 end

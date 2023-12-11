@@ -348,8 +348,13 @@ namespace mineos {
           let cellY = floor(floorY);
 
           // get the texture coordinate from the fractional part
-          let tx = floor(bit.band(this.texWidth * (floorX - cellX), (this.texWidth - 1)));
+          let tx = floor(bit.band(this.texWidth * (floorX - cellX), (this.texWidth - 1))) ;
           let ty = floor(bit.band(this.texHeight * (floorY - cellY), (this.texHeight - 1)));
+
+          // Make the ceiling/floor look horrible to improve performance
+          // tx = floor(tx / 4)
+          // ty = floor(ty / 4)
+          
 
           floorX += floorStepX;
           floorY += floorStepY;
@@ -357,33 +362,33 @@ namespace mineos {
           // choose texture and draw the pixel
           let floorTexture = 3;
           let ceilingTexture = 6;
-          // Uint32 color;
 
-          const container = this.textures[floorTexture]
-          const index = (this.texWidth * ty + tx) * CHANNELS
-          let r: number = container[index]
-          let g: number = container[index + 1]
-          let b: number = container[index + 2]
+           {// floor
+            const container = this.textures[floorTexture]
+            const index = (this.texWidth * ty + tx) * CHANNELS
+            let r: number = container[index]
+            let g: number = container[index + 1]
+            let b: number = container[index + 2]
 
-          // floor
+            this.drawPixel(x,y, r, g, b)
+          }
+          {
+            const container = this.textures[ceilingTexture]
+            const index = (this.texWidth * ty + tx) * CHANNELS
+            let r: number = container[index]
+            let g: number = container[index + 1]
+            let b: number = container[index + 2]
 
-          // color = (color >> 1) & 8355711; // make a bit darker
+            //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
+            // make a bit darker
+            r = bit.band(bit.rshift(r, 1), 8355711)
+            g = bit.band(bit.rshift(g, 1), 8355711)
+            b = bit.band(bit.rshift(b, 1), 8355711)
 
-
-          this.drawPixel(x,y, r, g, b)
-          // buffer[y][x] = color;
-
-
-          //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
-          // color = texture[ceilingTexture][texWidth * ty + tx];
-          // make a bit darker
-          r = bit.band(bit.rshift(r, 1), 8355711)
-          g = bit.band(bit.rshift(g, 1), 8355711)
-          b = bit.band(bit.rshift(b, 1), 8355711)
-
-          this.drawPixel(x,y, r, g, b)
-          // buffer[screenHeight - y - 1][x] = color;
+            this.drawPixel(x,screenHeight - y - 1, r, g, b)
+          }
         }
+        
       }
 
       // Wallcasting
