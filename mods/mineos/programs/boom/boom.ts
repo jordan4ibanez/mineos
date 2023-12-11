@@ -64,7 +64,7 @@ namespace mineos {
     
     buffers: string[][] = []
 
-    performanceMode: boolean = true
+    performanceMode: boolean = false
 
     playerPos = create(22,12)
     playerDir = create(-1, 0)
