@@ -11,6 +11,9 @@ namespace mineos {
     }
     return currentSystem
   }
+  export function getSystemOrNull(): System | null {
+    return currentSystem
+  }
 
   class Printer {
     static println(...anything: any): void {

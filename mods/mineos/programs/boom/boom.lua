@@ -1,40 +1,8 @@
 -- Lua Library inline imports
-local function __TS__Class(self)
-    local c = {prototype = {}}
-    c.prototype.__index = c.prototype
-    c.prototype.constructor = c
-    return c
-end
-
 local function __TS__New(target, ...)
     local instance = setmetatable({}, target.prototype)
     instance:____constructor(...)
     return instance
-end
-
-local function __TS__ClassExtends(target, base)
-    target.____super = base
-    local staticMetatable = setmetatable({__index = base}, base)
-    setmetatable(target, staticMetatable)
-    local baseMetatable = getmetatable(base)
-    if baseMetatable then
-        if type(baseMetatable.__index) == "function" then
-            staticMetatable.__index = baseMetatable.__index
-        end
-        if type(baseMetatable.__newindex) == "function" then
-            staticMetatable.__newindex = baseMetatable.__newindex
-        end
-    end
-    setmetatable(target.prototype, base.prototype)
-    if type(base.prototype.__index) == "function" then
-        target.prototype.__index = base.prototype.__index
-    end
-    if type(base.prototype.__newindex) == "function" then
-        target.prototype.__newindex = base.prototype.__newindex
-    end
-    if type(base.prototype.__tostring) == "function" then
-        target.prototype.__tostring = base.prototype.__tostring
-    end
 end
 
 local __TS__Symbol, Symbol
@@ -123,6 +91,38 @@ do
             end
         end
         return result
+    end
+end
+
+local function __TS__Class(self)
+    local c = {prototype = {}}
+    c.prototype.__index = c.prototype
+    c.prototype.constructor = c
+    return c
+end
+
+local function __TS__ClassExtends(target, base)
+    target.____super = base
+    local staticMetatable = setmetatable({__index = base}, base)
+    setmetatable(target, staticMetatable)
+    local baseMetatable = getmetatable(base)
+    if baseMetatable then
+        if type(baseMetatable.__index) == "function" then
+            staticMetatable.__index = baseMetatable.__index
+        end
+        if type(baseMetatable.__newindex) == "function" then
+            staticMetatable.__newindex = baseMetatable.__newindex
+        end
+    end
+    setmetatable(target.prototype, base.prototype)
+    if type(base.prototype.__index) == "function" then
+        target.prototype.__index = base.prototype.__index
+    end
+    if type(base.prototype.__newindex) == "function" then
+        target.prototype.__newindex = base.prototype.__newindex
+    end
+    if type(base.prototype.__tostring) == "function" then
+        target.prototype.__tostring = base.prototype.__tostring
     end
 end
 
@@ -232,7 +232,27 @@ do
     local cos = math.cos
     local sin = math.sin
     local round = math.round
+    local yaw_to_dir = minetest.yaw_to_dir
     local CHANNELS = 4
+    do
+        local n = -1
+        math.randomseed(os.time())
+        local song = __TS__New(mineos.Song, "boom_theme")
+        song.tempo = 5
+        song.data.guitar = __TS__ArrayFrom(
+            {length = 256},
+            function(____, _, i) return math.random(-1, 11) end
+        )
+        song.data.trumpet = __TS__ArrayFrom(
+            {length = 256},
+            function(____, _, i) return math.random(-1, 11) end
+        )
+        song.data.bassTrumpet = __TS__ArrayFrom(
+            {length = 256},
+            function(____, _, i) return math.random(-1, 11) end
+        )
+        mineos.AudioController:registerSong(song)
+    end
     local function swap(i, z)
         local oldI = i
         i = z
@@ -254,6 +274,14 @@ do
     end
     local function s(x, y, texture)
         return __TS__New(Sprite, x, y, texture)
+    end
+    local Mob = __TS__Class()
+    Mob.name = "Mob"
+    function Mob.prototype.____constructor(self, x, y, sprite)
+        self.yaw = random() * (math.pi * 2)
+        self.x = x
+        self.y = y
+        self.sprite = sprite
     end
     local Boom = __TS__Class()
     Boom.name = "Boom"
@@ -921,8 +949,14 @@ do
                 5
             }
         }
+        self.mobs = {
+            __TS__New(Mob, 20.5, 12.5, 1),
+            __TS__New(Mob, 20.5, 12.5, 2)
+        }
         self.sprite = {
             s(20.5, 11.5, 10),
+            s(20.5, 12.5, 11),
+            s(20.5, 13.5, 12),
             s(18.5, 4.5, 10),
             s(10, 4.5, 10),
             s(10, 12.5, 10),
@@ -1501,12 +1535,38 @@ do
     end
     function Boom.prototype.load(self)
         self.desktop:lockMouse()
+        self.audioController:playSong("boom_theme")
         self.loaded = true
+    end
+    function Boom.prototype.mobsThink(self, delta)
+        local moveSpeed = delta * 5
+        for ____, mob in ipairs(self.mobs) do
+            local dir = yaw_to_dir(mob.yaw)
+            local hit = false
+            if self.worldMap[floor(mob.x + dir.x * moveSpeed) + 1][floor(mob.y) + 1] == 0 then
+                mob.x = mob.x + dir.x * moveSpeed
+            else
+                hit = true
+            end
+            if self.worldMap[floor(mob.x) + 1][floor(mob.y + dir.z * moveSpeed) + 1] == 0 then
+                mob.y = mob.y + dir.z * moveSpeed
+            else
+                hit = true
+            end
+            if hit then
+                mob.yaw = math.random() * (math.pi * 2)
+            end
+            local sp = self.sprite[mob.sprite + 1]
+            sp.x = mob.x
+            sp.y = mob.y
+        end
     end
     function Boom.prototype.main(self, delta)
         if not self.loaded then
             self:load()
         end
+        self.audioController:update(delta)
+        self:mobsThink(delta)
         self:playerControls(delta)
         self:render(delta)
     end

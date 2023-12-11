@@ -74,7 +74,7 @@ namespace mineos {
     }
 
     static registerSong(song: Song): void {
-      const system = getSystem()
+      const system = getSystemOrNull()
       song.finalize()
       if (system == null) {
         songRegistrationQueue.push(song)

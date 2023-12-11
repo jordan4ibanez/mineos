@@ -13,11 +13,25 @@ namespace mineos {
   const random = math.random;
   const cos = math.cos;
   const sin = math.sin;
-  const round = math.round
+  const round = math.round;
+  const yaw_to_dir = minetest.yaw_to_dir;
 
 
   // RGBA
   const CHANNELS = 4
+
+  {
+    const n = -1
+
+    math.randomseed(os.time())
+    // This song is literally randomly generated, good luck to your ears
+    let song: Song = new Song("boom_theme")
+    song.tempo = 5
+    song.data["guitar"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
+    song.data["trumpet"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
+    song.data["bassTrumpet"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
+    AudioController.registerSong(song)
+  }
 
 
   // Following a tutorial on how to do this: https://lodev.org/cgtutor/raycasting.html
@@ -48,6 +62,18 @@ namespace mineos {
   }
   function s(x: number, y: number, texture: number): Sprite {
     return new Sprite(x,y,texture)
+  }
+
+  class Mob {
+    x: number
+    y: number
+    yaw = random() * (math.pi * 2)
+    readonly sprite: number
+    constructor(x: number, y: number, sprite: number) {
+      this.x = x
+      this.y = y
+      this.sprite = sprite
+    }
   }
 
   // This program does not have a dynamic buffer because it was enough trouble following a tutorial on a software raycaster.
@@ -127,8 +153,23 @@ namespace mineos {
       [2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,5,5,5,5,5,5,5,5,5]
     ]
 
+    // Mobs point into the sprite array
+    mobs: Mob[] = [
+      new Mob(
+        20.5, 12.5, 1  
+      ),
+      new Mob(
+        20.5, 12.5, 2
+      )
+    ]
+
+
     sprite: Sprite[] = [
       s(20.5, 11.5, 10), //green light in front of playerstart
+      // Oerrki
+      s(20.5, 12.5, 11),
+      // Dungeon Master
+      s(20.5, 13.5, 12),
       //green lights in every room
       s(18.5,4.5, 10),
       s(10.0,4.5, 10),
@@ -692,36 +733,50 @@ namespace mineos {
 
     render(delta: number): void {
       this.clear()
-
       this.rayCast()
-
-      // for (let x = 0; x < this.windowSize.x; x++) {
-      //   for (let y = 0; y < this.windowSize.y; y++) {
-      //     const calc = (((x + this.offset) % this.windowSize.x) / this.windowSize.x)
-          //! cool colors:
-          // this.drawPixel(x,y, calc * 100, 1, (y / this.windowSize.y) * 100)
-
-          // this.drawPixel(x,y, floor(random() * 255), floor(random() * 255), floor(random() * 255))
-        // }
-      // }
-
-
-
-      // this.drawLine(0,0, 100,200, "red");
-      // this.drawModel();
-
       this.flushBuffers()
     }
 
     load(): void {
-
       this.desktop.lockMouse()
+      this.audioController.playSong("boom_theme")
+      this.loaded = true
+    }
 
-      this.loaded = true      
+    mobsThink(delta: number): void {
+      const moveSpeed = delta * 5.0
+
+      for (let mob of this.mobs) {
+        const dir = yaw_to_dir(mob.yaw)
+        let hit = false
+
+        if(this.worldMap[floor(mob.x + dir.x * moveSpeed)][floor(mob.y)] == 0) {
+          mob.x += dir.x * moveSpeed;
+        } else {
+          hit = true
+        }
+        if(this.worldMap[floor(mob.x)][floor(mob.y + dir.z * moveSpeed)] == 0) {
+          mob.y += dir.z * moveSpeed;
+        } else {
+          hit = true
+        }
+
+        if (hit) {
+          mob.yaw = math.random() * (math.pi * 2)
+        }
+
+        // Then update the sprite
+        const sp = this.sprite[mob.sprite]
+        sp.x = mob.x
+        sp.y = mob.y
+
+      }
     }
 
     main(delta: number): void {
       if (!this.loaded) this.load()
+      this.audioController.update(delta)
+      this.mobsThink(delta)
       this.playerControls(delta)
       this.render(delta)
     }

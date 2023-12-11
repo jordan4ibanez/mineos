@@ -140,6 +140,9 @@ do
         end
         return currentSystem
     end
+    function mineos.getSystemOrNull()
+        return currentSystem
+    end
     local Printer = __TS__Class()
     Printer.name = "Printer"
     function Printer.prototype.____constructor(self)

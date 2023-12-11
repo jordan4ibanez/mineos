@@ -211,7 +211,7 @@ do
         end
     end
     function AudioController.registerSong(self, song)
-        local system = mineos.getSystem()
+        local system = mineos.getSystemOrNull()
         song:finalize()
         if system == nil then
             songRegistrationQueue[#songRegistrationQueue + 1] = song
