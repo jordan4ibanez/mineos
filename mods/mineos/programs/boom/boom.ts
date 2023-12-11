@@ -355,8 +355,8 @@ namespace mineos {
 
           //? Make the ceiling/floor look horrible to improve performance
           if (this.performanceMode) {
-            tx = floor(tx / 4)
-            ty = floor(ty / 4)
+            tx = floor(tx / 4) * 4
+            ty = floor(ty / 4) * 4
           }
           
 
