@@ -192,6 +192,7 @@ do
     function Mob.prototype.____constructor(self, x, y, sprite)
         self.alive = true
         self.yaw = random() * (math.pi * 2)
+        self.footstepAccumulator = math.random()
         self.x = x
         self.y = y
         self.sprite = sprite
@@ -229,6 +230,7 @@ do
         self.pixelMemory = {}
         self.zIndex = 0
         self.cache = create(0, 0)
+        self.footstepAccumulator = 0
         self.auxWasPressed = false
         self.currentBullet = nil
         self.frameAccum = 0
@@ -1092,6 +1094,7 @@ do
             self.audioController:playSound("gunshot", 1)
         end
         local moveSpeed = delta * 5
+        local moving = false
         if self.system:isKeyDown("up") then
             if self.worldMap[floor(self.playerPos.x + self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
                 local ____self_playerPos_3, ____x_4 = self.playerPos, "x"
@@ -1101,6 +1104,7 @@ do
                 local ____self_playerPos_5, ____y_6 = self.playerPos, "y"
                 ____self_playerPos_5[____y_6] = ____self_playerPos_5[____y_6] + self.playerDir.y * moveSpeed
             end
+            moving = true
         end
         if self.system:isKeyDown("down") then
             if self.worldMap[floor(self.playerPos.x - self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
@@ -1111,6 +1115,7 @@ do
                 local ____self_playerPos_9, ____y_10 = self.playerPos, "y"
                 ____self_playerPos_9[____y_10] = ____self_playerPos_9[____y_10] - self.playerDir.y * moveSpeed
             end
+            moving = true
         end
         if self.system:isKeyDown("right") then
             if self.worldMap[floor(self.playerPos.x + self.planeX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
@@ -1121,6 +1126,7 @@ do
                 local ____self_playerPos_13, ____y_14 = self.playerPos, "y"
                 ____self_playerPos_13[____y_14] = ____self_playerPos_13[____y_14] + self.planeY * moveSpeed
             end
+            moving = true
         end
         if self.system:isKeyDown("left") then
             if self.worldMap[floor(self.playerPos.x - self.planeX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
@@ -1131,6 +1137,7 @@ do
                 local ____self_playerPos_17, ____y_18 = self.playerPos, "y"
                 ____self_playerPos_17[____y_18] = ____self_playerPos_17[____y_18] - self.planeY * moveSpeed
             end
+            moving = true
         end
         local rotSpeed = self.system:getMouseDelta().x
         local oldDirX = self.playerDir.x
@@ -1139,6 +1146,19 @@ do
         local oldPlaneX = self.planeX
         self.planeX = self.planeX * cos(-rotSpeed) - self.planeY * sin(-rotSpeed)
         self.planeY = oldPlaneX * sin(-rotSpeed) + self.planeY * cos(-rotSpeed)
+        if moving then
+            self.footstepAccumulator = self.footstepAccumulator + delta
+            if self.footstepAccumulator >= 0.5 then
+                self:playFootstep()
+                self.footstepAccumulator = 0
+            end
+        end
+    end
+    function Boom.prototype.playFootstep(self)
+        self.audioController:playNote(
+            "footstep",
+            math.random(0, 5)
+        )
     end
     function Boom.prototype.sortSprites(self)
         local amount = #self.sprite
@@ -1461,9 +1481,33 @@ do
             end
         end
     end
+    function Boom.prototype.drawCrosshair(self)
+        local centerX = floor(self.windowSize.x / 2)
+        local centerY = floor(self.windowSize.y / 2)
+        local crossHairWidth = 10
+        self:drawLine(
+            centerX - crossHairWidth,
+            centerY,
+            centerX + crossHairWidth,
+            centerY,
+            255,
+            255,
+            255
+        )
+        self:drawLine(
+            centerX,
+            centerY - crossHairWidth,
+            centerX,
+            centerY + crossHairWidth,
+            255,
+            255,
+            255
+        )
+    end
     function Boom.prototype.render(self, delta)
         self:clear()
         self:rayCast()
+        self:drawCrosshair()
         self:flushBuffers()
     end
     function Boom.prototype.load(self)
@@ -1475,7 +1519,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue105
+                    goto __continue109
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -1492,11 +1536,16 @@ do
                 if hit then
                     mob.yaw = math.random() * (math.pi * 2)
                 end
+                mob.footstepAccumulator = mob.footstepAccumulator + delta
+                if mob.footstepAccumulator > 0.5 + math.random() then
+                    mob.footstepAccumulator = 0
+                    self:playFootstep()
+                end
                 local sp = self.sprite[mob.sprite + 1]
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue105::
+            ::__continue109::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)
@@ -1515,6 +1564,7 @@ do
         local hitWall = false
         local hitMob = false
         local moveSpeed = 0.1
+        local firstIter = true
         while not hitWall and not hitMob do
             if self.worldMap[floor(bullet.x + bullet.dirX * moveSpeed) + 1][floor(bullet.y) + 1] == 0 then
                 bullet.x = bullet.x + bullet.dirX * moveSpeed
@@ -1530,21 +1580,24 @@ do
             end
             vecA.x = bullet.x
             vecA.y = bullet.y
-            for ____, mob in ipairs(self.mobs) do
-                vecB.x = mob.x
-                vecB.y = mob.y
-                local dist = vector.distance(vecA, vecB)
-                if dist < 1 and mob.alive then
-                    mob.alive = false
-                    local ____self_sprite_index_22, ____texture_23 = self.sprite[mob.sprite + 1], "texture"
-                    ____self_sprite_index_22[____texture_23] = ____self_sprite_index_22[____texture_23] + 2
-                    hitMob = true
+            if not firstIter then
+                for ____, mob in ipairs(self.mobs) do
+                    vecB.x = mob.x
+                    vecB.y = mob.y
+                    local dist = vector.distance(vecA, vecB)
+                    if dist < 0.2 and mob.alive then
+                        mob.alive = false
+                        local ____self_sprite_index_22, ____texture_23 = self.sprite[mob.sprite + 1], "texture"
+                        ____self_sprite_index_22[____texture_23] = ____self_sprite_index_22[____texture_23] + 2
+                        hitMob = true
+                        break
+                    end
+                end
+                if hitMob then
                     break
                 end
             end
-            if hitMob then
-                break
-            end
+            firstIter = false
         end
         if hitMob then
             self.audioController:playSoundDelay("mobExplode", 1, 0.15)

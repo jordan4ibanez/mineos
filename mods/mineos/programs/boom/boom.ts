@@ -73,6 +73,7 @@ namespace mineos {
     x: number
     y: number
     yaw = random() * (math.pi * 2)
+    footstepAccumulator = math.random()
     readonly sprite: number
     constructor(x: number, y: number, sprite: number) {
       this.x = x
@@ -116,6 +117,7 @@ namespace mineos {
     zIndex = 0
     // readonly basePos = create(100,100)
     cache = create(0,0)
+    footstepAccumulator = 0
 
     auxWasPressed = false
 
@@ -392,7 +394,8 @@ namespace mineos {
       }
 
       const moveSpeed = delta * 5.0
-  
+      
+      let moving = false
 
       if (this.system.isKeyDown("up")) {
         if(this.worldMap[floor(this.playerPos.x + this.playerDir.x * moveSpeed)][floor(this.playerPos.y)] == 0) {
@@ -401,6 +404,7 @@ namespace mineos {
         if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y + this.playerDir.y * moveSpeed)] == 0) {
           this.playerPos.y += this.playerDir.y * moveSpeed;
         }
+        moving = true
       }
 
       if (this.system.isKeyDown("down")) {
@@ -410,6 +414,7 @@ namespace mineos {
         if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y - this.playerDir.y * moveSpeed)] == 0){
           this.playerPos.y -= this.playerDir.y * moveSpeed;
         }
+        moving = true
       }
 
       if (this.system.isKeyDown("right")) {
@@ -420,6 +425,7 @@ namespace mineos {
         if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y + this.planeY * moveSpeed)] == 0) {
           this.playerPos.y += this.planeY * moveSpeed;
         }
+        moving = true
       }
 
       if (this.system.isKeyDown("left")) {
@@ -430,6 +436,7 @@ namespace mineos {
         if(this.worldMap[floor(this.playerPos.x)][floor(this.playerPos.y - this.planeY * moveSpeed)] == 0) {
           this.playerPos.y -= this.planeY * moveSpeed;
         }
+        moving = true
       }
 
       // print(this.system.getMouseDelta().x)
@@ -441,6 +448,20 @@ namespace mineos {
       let oldPlaneX = this.planeX;
       this.planeX = this.planeX * cos(-rotSpeed) - this.planeY * sin(-rotSpeed);
       this.planeY = oldPlaneX * sin(-rotSpeed) + this.planeY * cos(-rotSpeed);
+
+      if (moving) {
+        this.footstepAccumulator += delta
+
+        if (this.footstepAccumulator >= 0.5) {
+          this.playFootstep()
+          this.footstepAccumulator = 0
+        }
+        // print(this.footstepAccumulator)
+      }
+    }
+
+    playFootstep() {
+      this.audioController.playNote("footstep", math.random(0,5))
     }
 
     sortSprites(): void {
@@ -754,9 +775,19 @@ namespace mineos {
       }
     }
 
+    drawCrosshair(): void {
+      // This isn't accurate for some reason
+      const centerX = floor(this.windowSize.x / 2)
+      const centerY = floor(this.windowSize.y / 2)
+      const crossHairWidth = 10
+      this.drawLine(centerX - crossHairWidth, centerY, centerX + crossHairWidth, centerY, 255,255,255)
+      this.drawLine(centerX, centerY - crossHairWidth, centerX, centerY + crossHairWidth, 255,255,255)
+    }
+
     render(delta: number): void {
       this.clear()
       this.rayCast()
+      this.drawCrosshair()
       this.flushBuffers()
     }
 
@@ -771,6 +802,7 @@ namespace mineos {
 
       for (let mob of this.mobs) {
         if (!mob.alive) continue
+
         const dir = yaw_to_dir(mob.yaw)
         let hit = false
 
@@ -787,6 +819,12 @@ namespace mineos {
 
         if (hit) {
           mob.yaw = math.random() * (math.pi * 2)
+        }
+
+        mob.footstepAccumulator += delta
+        if (mob.footstepAccumulator > 0.5 + math.random()) {
+          mob.footstepAccumulator = 0
+          this.playFootstep()
         }
 
         // Then update the sprite
@@ -814,6 +852,8 @@ namespace mineos {
 
       const moveSpeed = 0.1
 
+      let firstIter = true
+
       while (!hitWall && !hitMob) {
         if(this.worldMap[floor(bullet.x + bullet.dirX * moveSpeed)][floor(bullet.y)] == 0) {
           bullet.x += bullet.dirX * moveSpeed;
@@ -831,21 +871,25 @@ namespace mineos {
         vecA.x = bullet.x
         vecA.y = bullet.y
 
-        for (const mob of this.mobs) {
-          vecB.x = mob.x
-          vecB.y = mob.y
+        // Stop this from randomly killing mobs behind you
+        if (!firstIter) {
+          for (const mob of this.mobs) {
+            vecB.x = mob.x
+            vecB.y = mob.y
 
-          const dist = vector.distance(vecA, vecB)
-          if (dist < 1 && mob.alive) {
-            mob.alive = false
-            this.sprite[mob.sprite].texture += 2
-            hitMob = true;
+            const dist = vector.distance(vecA, vecB)
+            if (dist < 0.2 && mob.alive) {
+              mob.alive = false
+              this.sprite[mob.sprite].texture += 2
+              hitMob = true;
+              break
+            }
+          }
+          if (hitMob) {
             break
           }
         }
-        if (hitMob) {
-          break
-        }
+        firstIter = false
       }
 
       if (hitMob) {
