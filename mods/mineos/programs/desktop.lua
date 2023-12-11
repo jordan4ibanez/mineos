@@ -479,10 +479,11 @@ do
             create(self.windowSize.x, handleHeight),
             create(0, 0)
         )
+        local stringID = self.uuid .. "window_handle"
         self.renderer:addElement(
-            self.uuid .. "window_handle",
+            stringID,
             {
-                name = "start_button",
+                name = stringID,
                 hud_elem_type = HudElementType.image,
                 position = create(0, 0),
                 text = ("pixel.png^[colorize:" .. "red") .. ":255",
@@ -497,10 +498,19 @@ do
         return self.windowPosition.x
     end
     function WindowProgram.prototype.getPosY(self)
-        return self.windowPosition.y + self.handle.size.y
+        return self.windowPosition.y
     end
     function WindowProgram.prototype.getWindowPosition(self)
         return create(self.windowPosition.x, self.windowPosition.y)
+    end
+    function WindowProgram.prototype.setWindowSize(self, x, y)
+        self.windowSize.x = x
+        self.windowSize.y = y
+    end
+    function WindowProgram.prototype.updateHandleWidth(self, width)
+        local strindID = self.uuid .. "window_handle"
+        self.handle.size.x = width
+        self.renderer:setElementComponentValue(strindID, "scale", self.handle.size)
     end
     function WindowProgram.prototype.move(self)
         error(

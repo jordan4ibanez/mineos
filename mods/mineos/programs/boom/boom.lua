@@ -1401,7 +1401,8 @@ do
         self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
         self.BUFFERS_ARRAY_SIZE_Y = self.performanceBuffer and 4 or 7
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
-        self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
+        self:setWindowSize(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
+        self:updateHandleWidth(self.BUFFER_SIZE_Y * 4)
         do
             local x = 0
             while x < self.BUFFERS_ARRAY_SIZE_X do
@@ -1469,6 +1470,7 @@ do
                     self.enable4kPerformanceMode = false
                     self:cleanAllBuffers()
                     self:generateBuffers()
+                    self:updateHandleWidth(self.windowSize.x)
                     break
                 end
             end
@@ -1479,6 +1481,7 @@ do
                     self.performanceBuffer = true
                     self:cleanAllBuffers()
                     self:generateBuffers()
+                    self:updateHandleWidth(self.windowSize.x)
                     break
                 end
             end
@@ -1510,6 +1513,7 @@ do
                             x = x + 1
                         end
                     end
+                    self:updateHandleWidth(self.windowSize.x * 2)
                     break
                 end
             end

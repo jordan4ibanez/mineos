@@ -323,6 +323,7 @@ namespace mineos {
       this.spriteDistance = Array.from({length: this.sprite.length}, (_,i) => 0)
 
       this.generateBuffers()
+
     }
 
     generateBuffers(): void {
@@ -332,10 +333,11 @@ namespace mineos {
 
       const size = this.BUFFER_SIZE_X * this.BUFFER_SIZE_Y
 
-      this.windowSize = create(
+      this.setWindowSize(
         this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X,
         (this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X) * (4 / 5)
       )
+      this.updateHandleWidth(this.BUFFER_SIZE_Y * 4)
 
       for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
@@ -388,6 +390,8 @@ namespace mineos {
           this.cleanAllBuffers()
           this.generateBuffers()
 
+          this.updateHandleWidth(this.windowSize.x)
+
           break
         }
         case 1: {
@@ -395,6 +399,7 @@ namespace mineos {
           this.performanceBuffer = true
           this.cleanAllBuffers()
           this.generateBuffers()
+          this.updateHandleWidth(this.windowSize.x)
           break
         }
         case 2: {
@@ -421,6 +426,7 @@ namespace mineos {
               )
             }
           }
+          this.updateHandleWidth(this.windowSize.x * 2)
 
           break
         }

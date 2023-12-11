@@ -323,8 +323,9 @@ namespace mineos {
           0,0
         )
       )
-      this.renderer.addElement(this.uuid + "window_handle", {
-        name: "start_button",
+      const stringID = this.uuid + "window_handle"
+      this.renderer.addElement(stringID, {
+        name: stringID,
         hud_elem_type: HudElementType.image,
         position: create(0,0),
         text: "pixel.png^[colorize:" + "red" + ":255",
@@ -340,7 +341,7 @@ namespace mineos {
       return this.windowPosition.x
     }
     getPosY(): number {
-      return this.windowPosition.y + this.handle.size.y
+      return this.windowPosition.y
     }
     getWindowPosition(): Vec2 {
       // Creating a new object every time, who cares
@@ -348,6 +349,17 @@ namespace mineos {
         this.windowPosition.x,
         this.windowPosition.y
       )
+    }
+
+    setWindowSize(x: number, y: number): void {
+      this.windowSize.x = x
+      this.windowSize.y = y
+    }
+
+    updateHandleWidth(width: number): void {
+      const strindID = this.uuid + "window_handle"
+      this.handle.size.x = width
+      this.renderer.setElementComponentValue(strindID, "scale", this.handle.size)
     }
 
     move(): void {
