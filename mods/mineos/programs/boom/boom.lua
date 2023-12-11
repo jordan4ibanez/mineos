@@ -219,11 +219,12 @@ do
         )
         self.performanceBuffer = true
         self.performanceMode = false
-        self.enable4kPerformanceMode = true
+        self.enable4kPerformanceMode = false
+        self.inPerformanceMode = 1
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
-        self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
-        self.BUFFERS_ARRAY_SIZE_Y = self.performanceBuffer and 4 or 7
+        self.BUFFERS_ARRAY_SIZE_X = 0
+        self.BUFFERS_ARRAY_SIZE_Y = 0
         self.loaded = false
         self.currentPixelCount = 0
         self.clearColor = v3f(0, 0, 0)
@@ -231,7 +232,9 @@ do
         self.zIndex = 0
         self.cache = create(0, 0)
         self.footstepAccumulator = 0
+        self.shiftWasPressed = false
         self.auxWasPressed = false
+        self.zWasPressed = false
         self.currentBullet = nil
         self.frameAccum = 0
         self.buffering = 0
@@ -909,10 +912,6 @@ do
                 i = i + 1
             end
         end
-        self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
-        for ____, arr in ipairs(self.textures) do
-            assert(#arr == self.texHeight * self.texWidth * CHANNELS)
-        end
         self.ZBuffer = __TS__ArrayFrom(
             {length = self.windowSize.x},
             function(____, _, i) return 0 end
@@ -925,7 +924,13 @@ do
             {length = #self.sprite},
             function(____, _, i) return 0 end
         )
+        self:generateBuffers()
+    end
+    function Boom.prototype.generateBuffers(self)
+        self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
+        self.BUFFERS_ARRAY_SIZE_Y = self.performanceBuffer and 4 or 7
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
+        self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
         do
             local x = 0
             while x < self.BUFFERS_ARRAY_SIZE_X do
@@ -957,6 +962,81 @@ do
                 x = x + 1
             end
         end
+    end
+    function Boom.prototype.cleanAllBuffers(self)
+        do
+            local x = 0
+            while x < self.BUFFERS_ARRAY_SIZE_X do
+                do
+                    local y = 0
+                    while y < self.BUFFERS_ARRAY_SIZE_Y do
+                        local id = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y)
+                        self.renderer:removeElement(id)
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
+        self.buffers = {}
+    end
+    function Boom.prototype.cyclePerformanceMode(self)
+        self.inPerformanceMode = self.inPerformanceMode + 1
+        if self.inPerformanceMode > 2 then
+            self.inPerformanceMode = 0
+        end
+        repeat
+            local ____switch27 = self.inPerformanceMode
+            local ____cond27 = ____switch27 == 0
+            if ____cond27 then
+                do
+                    print("ULTRA QUALITY")
+                    self.performanceBuffer = false
+                    self.enable4kPerformanceMode = false
+                    self:cleanAllBuffers()
+                    self:generateBuffers()
+                    break
+                end
+            end
+            ____cond27 = ____cond27 or ____switch27 == 1
+            if ____cond27 then
+                do
+                    print("LOW QUALITY")
+                    self.performanceBuffer = true
+                    self:cleanAllBuffers()
+                    self:generateBuffers()
+                    break
+                end
+            end
+            ____cond27 = ____cond27 or ____switch27 == 2
+            if ____cond27 then
+                do
+                    print("LOW QUALITY 4k")
+                    self.enable4kPerformanceMode = true
+                    local buffer_scale = self.enable4kPerformanceMode and create(2, 2) or create(1, 1)
+                    do
+                        local x = 0
+                        while x < self.BUFFERS_ARRAY_SIZE_X do
+                            do
+                                local y = 0
+                                while y < self.BUFFERS_ARRAY_SIZE_Y do
+                                    local id = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y)
+                                    self.renderer:setElementComponentValue(id, "scale", buffer_scale)
+                                    self.renderer:setElementComponentValue(
+                                        id,
+                                        "offset",
+                                        create(self.windowPosition.x + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1), self.windowPosition.y + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1))
+                                    )
+                                    y = y + 1
+                                end
+                            end
+                            x = x + 1
+                        end
+                    end
+                    break
+                end
+            end
+        until true
     end
     function Boom.prototype.bufferKey(self, x, y)
         return x % self.BUFFERS_ARRAY_SIZE_X + y * self.BUFFERS_ARRAY_SIZE_X
@@ -1083,6 +1163,16 @@ do
         if not self.desktop:isMouseLocked() then
             return
         end
+        local shiftPressed = self.system:isKeyDown("sneak")
+        if shiftPressed and not self.shiftWasPressed then
+            self.performanceMode = not self.performanceMode
+        end
+        self.shiftWasPressed = shiftPressed
+        local zPressed = self.system:isKeyDown("zoom")
+        if zPressed and not self.zWasPressed then
+            self:cyclePerformanceMode()
+        end
+        self.zWasPressed = zPressed
         if self.system:isMouseClicked() then
             self.currentBullet = __TS__New(
                 Bullet,
@@ -1519,7 +1609,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue109
+                    goto __continue121
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -1545,7 +1635,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue109::
+            ::__continue121::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)

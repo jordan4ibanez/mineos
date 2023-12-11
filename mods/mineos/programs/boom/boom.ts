@@ -103,12 +103,13 @@ namespace mineos {
     performanceBuffer: boolean = true
     performanceMode: boolean = false
     //! If you enable performanceBuffer in 4k, make sure you enable this as well!
-    enable4kPerformanceMode = true
+    enable4kPerformanceMode = false
+    inPerformanceMode = 1
     
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
-    readonly BUFFERS_ARRAY_SIZE_X = (this.performanceBuffer) ? 4 : 8
-    readonly BUFFERS_ARRAY_SIZE_Y = (this.performanceBuffer) ? 4 : 7
+    BUFFERS_ARRAY_SIZE_X = 0//(this.performanceBuffer) ? 4 : 8
+    BUFFERS_ARRAY_SIZE_Y = 0//(this.performanceBuffer) ? 4 : 7
 
     loaded = false
     currentPixelCount = 0
@@ -119,7 +120,9 @@ namespace mineos {
     cache = create(0,0)
     footstepAccumulator = 0
 
+    shiftWasPressed = false
     auxWasPressed = false
+    zWasPressed = false
 
     currentBullet: Bullet | null = null
 
@@ -228,24 +231,33 @@ namespace mineos {
         ))
       }
 
-      this.windowSize = create(
-          this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X,
-          (this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X) * (4 / 5)
-        )
+      
 
-      for (const arr of this.textures) {
+      // for (const arr of this.textures) {
         // print("Length: " + arr.length)
         // print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
-        assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
+        // assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
         // print(this.texHeight * this.texWidth * CHANNELS)
-      }
+      // }
 
       this.ZBuffer = Array.from({length: this.windowSize.x}, (_,i) => 0)
       this.spriteOrder = Array.from({length: this.sprite.length}, (_,i) => 0)
       this.spriteDistance = Array.from({length: this.sprite.length}, (_,i) => 0)
 
+      this.generateBuffers()
+    }
+
+    generateBuffers(): void {
+
+      this.BUFFERS_ARRAY_SIZE_X = (this.performanceBuffer) ? 4 : 8
+      this.BUFFERS_ARRAY_SIZE_Y = (this.performanceBuffer) ? 4 : 7
 
       const size = this.BUFFER_SIZE_X * this.BUFFER_SIZE_Y
+
+      this.windowSize = create(
+        this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X,
+        (this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X) * (4 / 5)
+      )
 
       for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
@@ -272,6 +284,72 @@ namespace mineos {
         }
       }
     }
+
+
+    cleanAllBuffers(): void {
+      for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
+        for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
+          const id = "boomBuffer" + x + " " + y
+          this.renderer.removeElement(id)
+        }
+      }
+      this.buffers = []
+    }
+
+    cyclePerformanceMode(): void {
+
+      this.inPerformanceMode++
+      if (this.inPerformanceMode > 2) {
+        this.inPerformanceMode = 0
+      }
+      switch (this.inPerformanceMode) {
+        case 0: {
+          print("ULTRA QUALITY")
+          this.performanceBuffer = false
+          this.enable4kPerformanceMode = false
+          this.cleanAllBuffers()
+          this.generateBuffers()
+
+          break
+        }
+        case 1: {
+          print("LOW QUALITY")
+          this.performanceBuffer = true
+          this.cleanAllBuffers()
+          this.generateBuffers()
+          break
+        }
+        case 2: {
+          print("LOW QUALITY 4k")
+          this.enable4kPerformanceMode = true
+          const buffer_scale = (this.enable4kPerformanceMode) ?
+            create(2,2) : create (1,1)
+
+          for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
+            for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
+              const id = "boomBuffer" + x + " " + y
+              this.renderer.setElementComponentValue(
+                id,
+                "scale", 
+                buffer_scale
+              )
+              this.renderer.setElementComponentValue(
+                id,
+                "offset", 
+                create(
+                  this.windowPosition.x + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
+                  this.windowPosition.y + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
+                )
+              )
+            }
+          }
+
+          break
+        }
+      }
+
+    }
+
   
     bufferKey(x: number, y: number): number {
       return (x % this.BUFFERS_ARRAY_SIZE_X) + (y * this.BUFFERS_ARRAY_SIZE_X)
@@ -364,6 +442,7 @@ namespace mineos {
       }
     }
 
+
     playerControls(delta: number) {
 
       // Toggle capturing mouse with aux1
@@ -382,6 +461,23 @@ namespace mineos {
       if (!this.desktop.isMouseLocked()) {
         return
       }
+
+      const shiftPressed = this.system.isKeyDown("sneak")
+
+      if (shiftPressed && !this.shiftWasPressed) {
+        this.performanceMode = !this.performanceMode
+      }
+
+      this.shiftWasPressed = shiftPressed
+
+      const zPressed = this.system.isKeyDown("zoom")
+
+      if (zPressed && !this.zWasPressed) {
+        this.cyclePerformanceMode()
+      }
+
+      this.zWasPressed = zPressed
+
 
       if (this.system.isMouseClicked()) {
         this.currentBullet = new Bullet(
