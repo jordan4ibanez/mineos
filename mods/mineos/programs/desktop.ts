@@ -296,17 +296,62 @@ namespace mineos {
   /**
    * Base layer for the decoration is 0 to 1, don't draw into this.
    */
+  const handleHeight = 24
+
   export class WindowProgram extends Program {
     desktop: DesktopEnvironment
     windowSize: Vec2
     windowPosition: Vec2 = create(100,100)
+    handle: AABB
+    readonly uuid: string
+
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
       super(system, renderer, audio)
       this.desktop = desktop
       this.windowSize = windowSize
+      this.uuid = uuid()
+      this.handle = new AABB(
+        create(
+          this.windowPosition.x,
+          this.windowPosition.y - handleHeight
+        ),
+        create(
+          this.windowSize.x,
+          handleHeight
+        ),
+        create(
+          0,0
+        )
+      )
+      this.renderer.addElement(this.uuid + "window_handle", {
+        name: "start_button",
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "pixel.png^[colorize:" + "red" + ":255",
+        scale: this.handle.size,
+        alignment: create(1,1),
+        offset: this.handle.offset,
+        z_index: 0
+      })
     }
-    move() {
 
+    // We want to know where the actual window starts, not the handle
+    getPosX(): number {
+      return this.windowPosition.x
+    }
+    getPosY(): number {
+      return this.windowPosition.y + this.handle.size.y
+    }
+    getWindowPosition(): Vec2 {
+      // Creating a new object every time, who cares
+      return create(
+        this.windowPosition.x,
+        this.windowPosition.y
+      )
+    }
+    
+    move() {
+      throw new Error("Move not implemented")
     }
   }
 
