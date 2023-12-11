@@ -46,6 +46,96 @@ local function __TS__ObjectEntries(obj)
     end
     return result
 end
+
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
+local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
+do
+    local function getErrorStack(self, constructor)
+        if debug == nil then
+            return nil
+        end
+        local level = 1
+        while true do
+            local info = debug.getinfo(level, "f")
+            level = level + 1
+            if not info then
+                level = 1
+                break
+            elseif info.func == constructor then
+                break
+            end
+        end
+        if __TS__StringIncludes(_VERSION, "Lua 5.0") then
+            return debug.traceback(("[Level " .. tostring(level)) .. "]")
+        else
+            return debug.traceback(nil, level)
+        end
+    end
+    local function wrapErrorToString(self, getDescription)
+        return function(self)
+            local description = getDescription(self)
+            local caller = debug.getinfo(3, "f")
+            local isClassicLua = __TS__StringIncludes(_VERSION, "Lua 5.0") or _VERSION == "Lua 5.1"
+            if isClassicLua or caller and caller.func ~= error then
+                return description
+            else
+                return (description .. "\n") .. tostring(self.stack)
+            end
+        end
+    end
+    local function initErrorClass(self, Type, name)
+        Type.name = name
+        return setmetatable(
+            Type,
+            {__call = function(____, _self, message) return __TS__New(Type, message) end}
+        )
+    end
+    local ____initErrorClass_1 = initErrorClass
+    local ____class_0 = __TS__Class()
+    ____class_0.name = ""
+    function ____class_0.prototype.____constructor(self, message)
+        if message == nil then
+            message = ""
+        end
+        self.message = message
+        self.name = "Error"
+        self.stack = getErrorStack(nil, self.constructor.new)
+        local metatable = getmetatable(self)
+        if metatable and not metatable.__errorToStringPatched then
+            metatable.__errorToStringPatched = true
+            metatable.__tostring = wrapErrorToString(nil, metatable.__tostring)
+        end
+    end
+    function ____class_0.prototype.__tostring(self)
+        return self.message ~= "" and (self.name .. ": ") .. self.message or self.name
+    end
+    Error = ____initErrorClass_1(nil, ____class_0, "Error")
+    local function createErrorClass(self, name)
+        local ____initErrorClass_3 = initErrorClass
+        local ____class_2 = __TS__Class()
+        ____class_2.name = ____class_2.name
+        __TS__ClassExtends(____class_2, Error)
+        function ____class_2.prototype.____constructor(self, ...)
+            ____class_2.____super.prototype.____constructor(self, ...)
+            self.name = name
+        end
+        return ____initErrorClass_3(nil, ____class_2, name)
+    end
+    RangeError = createErrorClass(nil, "RangeError")
+    ReferenceError = createErrorClass(nil, "ReferenceError")
+    SyntaxError = createErrorClass(nil, "SyntaxError")
+    TypeError = createErrorClass(nil, "TypeError")
+    URIError = createErrorClass(nil, "URIError")
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -372,6 +462,7 @@ do
     end
     local programQueue = {}
     --- Base layer for the decoration is 0 to 1, don't draw into this.
+    local handleHeight = 24
     mineos.WindowProgram = __TS__Class()
     local WindowProgram = mineos.WindowProgram
     WindowProgram.name = "WindowProgram"
@@ -381,8 +472,41 @@ do
         self.windowPosition = create(100, 100)
         self.desktop = desktop
         self.windowSize = windowSize
+        self.uuid = mineos.uuid()
+        self.handle = __TS__New(
+            AABB,
+            create(self.windowPosition.x, self.windowPosition.y - handleHeight),
+            create(self.windowSize.x, handleHeight),
+            create(0, 0)
+        )
+        self.renderer:addElement(
+            self.uuid .. "window_handle",
+            {
+                name = "start_button",
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. "red") .. ":255",
+                scale = self.handle.size,
+                alignment = create(1, 1),
+                offset = self.handle.offset,
+                z_index = 0
+            }
+        )
+    end
+    function WindowProgram.prototype.getPosX(self)
+        return self.windowPosition.x
+    end
+    function WindowProgram.prototype.getPosY(self)
+        return self.windowPosition.y + self.handle.size.y
+    end
+    function WindowProgram.prototype.getWindowPosition(self)
+        return create(self.windowPosition.x, self.windowPosition.y)
     end
     function WindowProgram.prototype.move(self)
+        error(
+            __TS__New(Error, "Move not implemented"),
+            0
+        )
     end
     mineos.DesktopEnvironment = __TS__Class()
     local DesktopEnvironment = mineos.DesktopEnvironment

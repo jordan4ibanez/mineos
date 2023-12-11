@@ -1423,7 +1423,10 @@ do
                                 text = "pixel.png",
                                 scale = buffer_scale,
                                 alignment = create(1, 1),
-                                offset = create(self.windowPosition.x + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1), self.windowPosition.y + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1)),
+                                offset = create(
+                                    self:getPosX() + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1),
+                                    self:getPosY() + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1)
+                                ),
                                 z_index = self.zIndex
                             }
                         )
@@ -1496,7 +1499,10 @@ do
                                     self.renderer:setElementComponentValue(
                                         id,
                                         "offset",
-                                        create(self.windowPosition.x + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1), self.windowPosition.y + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1))
+                                        create(
+                                            self:getPosX() + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1),
+                                            self:getPosY() + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1)
+                                        )
                                     )
                                     y = y + 1
                                 end
@@ -2147,7 +2153,7 @@ do
                     vecB.x = mob.x
                     vecB.y = mob.y
                     local dist = vector.distance(vecA, vecB)
-                    if dist < 0.2 and mob.alive then
+                    if dist < 0.4 and mob.alive then
                         mob.alive = false
                         local ____self_sprite_index_22, ____texture_23 = self.sprite[mob.sprite + 1], "texture"
                         ____self_sprite_index_22[____texture_23] = ____self_sprite_index_22[____texture_23] + 2
