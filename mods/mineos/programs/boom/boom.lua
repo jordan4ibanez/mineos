@@ -973,7 +973,7 @@ do
         }
         do
             local i = 0
-            while i < 40 do
+            while i < 1 do
                 local ____self_sprite_0 = self.sprite
                 ____self_sprite_0[#____self_sprite_0 + 1] = s(
                     20.5,
@@ -984,8 +984,6 @@ do
                 ____self_mobs_1[#____self_mobs_1 + 1] = __TS__New(Mob, 20.5, 12.5, #self.sprite - 1)
                 i = i + 1
             end
-        end
-        for ____, mob in ipairs(self.mobs) do
         end
         self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
         for ____, arr in ipairs(self.textures) do
