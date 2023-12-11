@@ -174,6 +174,7 @@ do
         self.frameAccum = 0
         self.buffering = 0
         self.buffers = {}
+        self.performanceMode = true
         self.playerPos = create(22, 12)
         self.playerDir = create(-1, 0)
         self.time = 0
@@ -1053,6 +1054,10 @@ do
                         local cellY = floor(floorY)
                         local tx = floor(bit.band(self.texWidth * (floorX - cellX), self.texWidth - 1))
                         local ty = floor(bit.band(self.texHeight * (floorY - cellY), self.texHeight - 1))
+                        if self.performanceMode then
+                            tx = floor(tx / 4)
+                            ty = floor(ty / 4)
+                        end
                         floorX = floorX + floorStepX
                         floorY = floorY + floorStepY
                         local floorTexture = 3
@@ -1169,7 +1174,14 @@ do
                     wallX = posX + perpWallDist * rayDirX
                 end
                 wallX = wallX - floor(wallX)
-                local texX = floor(wallX * self.texWidth)
+                local texX = 0
+                if self.performanceMode then
+                    local precision = 64
+                    local divisor = 4
+                    texX = floor(floor(wallX * precision / divisor) * divisor / precision * self.texWidth)
+                else
+                    texX = floor(wallX * self.texWidth)
+                end
                 if side == 0 and rayDirX > 0 then
                     texX = self.texWidth - texX - 1
                 end
@@ -1182,10 +1194,18 @@ do
                 do
                     local y = drawStart
                     while y < drawEnd do
-                        local texY = bit.band(
-                            floor(texPos),
-                            self.texHeight - 1
-                        )
+                        local texY = 0
+                        if self.performanceMode then
+                            texY = bit.band(
+                                floor(texPos / 4) * 4,
+                                self.texHeight - 1
+                            )
+                        else
+                            texY = bit.band(
+                                floor(texPos),
+                                self.texHeight - 1
+                            )
+                        end
                         texPos = texPos + step
                         local container = self.textures[texNum + 1]
                         local index = (self.texHeight * texY + texX) * CHANNELS

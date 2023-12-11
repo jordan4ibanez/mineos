@@ -64,6 +64,8 @@ namespace mineos {
     
     buffers: string[][] = []
 
+    performanceMode: boolean = true
+
     playerPos = create(22,12)
     playerDir = create(-1, 0)
     time = 0
@@ -351,9 +353,11 @@ namespace mineos {
           let tx = floor(bit.band(this.texWidth * (floorX - cellX), (this.texWidth - 1))) ;
           let ty = floor(bit.band(this.texHeight * (floorY - cellY), (this.texHeight - 1)));
 
-          // Make the ceiling/floor look horrible to improve performance
-          // tx = floor(tx / 4)
-          // ty = floor(ty / 4)
+          //? Make the ceiling/floor look horrible to improve performance
+          if (this.performanceMode) {
+            tx = floor(tx / 4)
+            ty = floor(ty / 4)
+          }
           
 
           floorX += floorStepX;
@@ -464,7 +468,15 @@ namespace mineos {
         wallX -= floor(wallX);
 
         //x coordinate on the texture
-        let texX = floor(wallX * this.texWidth);
+        let texX = 0
+        if (this.performanceMode) {
+          const precision = 64
+          const divisor = 4
+          texX = floor(((floor((wallX * precision) / divisor) * divisor) / precision) * this.texWidth);
+        } else {
+          texX = floor(wallX * this.texWidth);
+        }
+
         if (side == 0 && rayDirX > 0) {
           texX = this.texWidth - texX - 1;
         }
@@ -481,7 +493,13 @@ namespace mineos {
         let texPos = (drawStart - h / 2 + lineHeight / 2) * step;
         for(let y = drawStart; y < drawEnd; y++) {
           // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
-          let texY = bit.band(floor(texPos), (this.texHeight - 1));
+          
+          let texY = 0 
+          if (this.performanceMode) {
+            texY = bit.band(floor(texPos / 4) * 4, (this.texHeight - 1));
+          } else {
+            texY = bit.band(floor(texPos), (this.texHeight - 1));
+          }
           texPos += step;
           const container = this.textures[texNum]
           const index = (this.texHeight * texY + texX) * CHANNELS
