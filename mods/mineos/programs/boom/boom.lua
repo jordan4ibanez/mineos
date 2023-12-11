@@ -949,14 +949,9 @@ do
                 5
             }
         }
-        self.mobs = {
-            __TS__New(Mob, 20.5, 12.5, 1),
-            __TS__New(Mob, 20.5, 12.5, 2)
-        }
+        self.mobs = {}
         self.sprite = {
             s(20.5, 11.5, 10),
-            s(20.5, 12.5, 11),
-            s(20.5, 13.5, 12),
             s(18.5, 4.5, 10),
             s(10, 4.5, 10),
             s(10, 12.5, 10),
@@ -976,6 +971,22 @@ do
             s(10, 15.1, 8),
             s(10.5, 15.8, 8)
         }
+        do
+            local i = 0
+            while i < 40 do
+                local ____self_sprite_0 = self.sprite
+                ____self_sprite_0[#____self_sprite_0 + 1] = s(
+                    20.5,
+                    11.5,
+                    math.random(11, 12)
+                )
+                local ____self_mobs_1 = self.mobs
+                ____self_mobs_1[#____self_mobs_1 + 1] = __TS__New(Mob, 20.5, 12.5, #self.sprite - 1)
+                i = i + 1
+            end
+        end
+        for ____, mob in ipairs(self.mobs) do
+        end
         self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
         for ____, arr in ipairs(self.textures) do
             assert(#arr == self.texHeight * self.texWidth * CHANNELS)
@@ -1000,8 +1011,8 @@ do
                 do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_SIZE_Y do
-                        local ____self_buffers_0 = self.buffers
-                        ____self_buffers_0[#____self_buffers_0 + 1] = __TS__ArrayFrom(
+                        local ____self_buffers_2 = self.buffers
+                        ____self_buffers_2[#____self_buffers_2 + 1] = __TS__ArrayFrom(
                             {length = size},
                             function(____, _, i) return (i + 1) % 4 == 0 and char(0) or char(0) end
                         )
@@ -1154,42 +1165,42 @@ do
         local moveSpeed = delta * 5
         if self.system:isKeyDown("up") then
             if self.worldMap[floor(self.playerPos.x + self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
-                local ____self_playerPos_1, ____x_2 = self.playerPos, "x"
-                ____self_playerPos_1[____x_2] = ____self_playerPos_1[____x_2] + self.playerDir.x * moveSpeed
+                local ____self_playerPos_3, ____x_4 = self.playerPos, "x"
+                ____self_playerPos_3[____x_4] = ____self_playerPos_3[____x_4] + self.playerDir.x * moveSpeed
             end
             if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + self.playerDir.y * moveSpeed) + 1] == 0 then
-                local ____self_playerPos_3, ____y_4 = self.playerPos, "y"
-                ____self_playerPos_3[____y_4] = ____self_playerPos_3[____y_4] + self.playerDir.y * moveSpeed
+                local ____self_playerPos_5, ____y_6 = self.playerPos, "y"
+                ____self_playerPos_5[____y_6] = ____self_playerPos_5[____y_6] + self.playerDir.y * moveSpeed
             end
         end
         if self.system:isKeyDown("down") then
             if self.worldMap[floor(self.playerPos.x - self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
-                local ____self_playerPos_5, ____x_6 = self.playerPos, "x"
-                ____self_playerPos_5[____x_6] = ____self_playerPos_5[____x_6] - self.playerDir.x * moveSpeed
+                local ____self_playerPos_7, ____x_8 = self.playerPos, "x"
+                ____self_playerPos_7[____x_8] = ____self_playerPos_7[____x_8] - self.playerDir.x * moveSpeed
             end
             if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y - self.playerDir.y * moveSpeed) + 1] == 0 then
-                local ____self_playerPos_7, ____y_8 = self.playerPos, "y"
-                ____self_playerPos_7[____y_8] = ____self_playerPos_7[____y_8] - self.playerDir.y * moveSpeed
+                local ____self_playerPos_9, ____y_10 = self.playerPos, "y"
+                ____self_playerPos_9[____y_10] = ____self_playerPos_9[____y_10] - self.playerDir.y * moveSpeed
             end
         end
         if self.system:isKeyDown("right") then
             if self.worldMap[floor(self.playerPos.x + self.planeX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
-                local ____self_playerPos_9, ____x_10 = self.playerPos, "x"
-                ____self_playerPos_9[____x_10] = ____self_playerPos_9[____x_10] + self.planeX * moveSpeed
+                local ____self_playerPos_11, ____x_12 = self.playerPos, "x"
+                ____self_playerPos_11[____x_12] = ____self_playerPos_11[____x_12] + self.planeX * moveSpeed
             end
             if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y + self.planeY * moveSpeed) + 1] == 0 then
-                local ____self_playerPos_11, ____y_12 = self.playerPos, "y"
-                ____self_playerPos_11[____y_12] = ____self_playerPos_11[____y_12] + self.planeY * moveSpeed
+                local ____self_playerPos_13, ____y_14 = self.playerPos, "y"
+                ____self_playerPos_13[____y_14] = ____self_playerPos_13[____y_14] + self.planeY * moveSpeed
             end
         end
         if self.system:isKeyDown("left") then
             if self.worldMap[floor(self.playerPos.x - self.planeX * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
-                local ____self_playerPos_13, ____x_14 = self.playerPos, "x"
-                ____self_playerPos_13[____x_14] = ____self_playerPos_13[____x_14] - self.planeX * moveSpeed
+                local ____self_playerPos_15, ____x_16 = self.playerPos, "x"
+                ____self_playerPos_15[____x_16] = ____self_playerPos_15[____x_16] - self.planeX * moveSpeed
             end
             if self.worldMap[floor(self.playerPos.x) + 1][floor(self.playerPos.y - self.planeY * moveSpeed) + 1] == 0 then
-                local ____self_playerPos_15, ____y_16 = self.playerPos, "y"
-                ____self_playerPos_15[____y_16] = ____self_playerPos_15[____y_16] - self.planeY * moveSpeed
+                local ____self_playerPos_17, ____y_18 = self.playerPos, "y"
+                ____self_playerPos_17[____y_18] = ____self_playerPos_17[____y_18] - self.planeY * moveSpeed
             end
         end
         local rotSpeed = self.system:getMouseDelta().x

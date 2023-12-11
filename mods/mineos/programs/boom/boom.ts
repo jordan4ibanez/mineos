@@ -154,22 +154,11 @@ namespace mineos {
     ]
 
     // Mobs point into the sprite array
-    mobs: Mob[] = [
-      new Mob(
-        20.5, 12.5, 1  
-      ),
-      new Mob(
-        20.5, 12.5, 2
-      )
-    ]
+    mobs: Mob[] = []
 
 
     sprite: Sprite[] = [
       s(20.5, 11.5, 10), //green light in front of playerstart
-      // Oerrki
-      s(20.5, 12.5, 11),
-      // Dungeon Master
-      s(20.5, 13.5, 12),
       //green lights in every room
       s(18.5,4.5, 10),
       s(10.0,4.5, 10),
@@ -207,6 +196,18 @@ namespace mineos {
       // }
 
       super(system, renderer, audio, desktop, windowSize)
+
+      for (let i = 0; i < 40; i++) {
+        this.sprite.push(s(20.5, 11.5, math.random(11,12)))
+
+        this.mobs.push(new Mob(
+          20.5, 12.5, this.sprite.length - 1
+        ))
+      }
+
+      for (const mob of this.mobs) {
+        // add their sprites
+      }
 
       this.windowSize = create(
           this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X,
