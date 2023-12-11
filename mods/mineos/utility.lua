@@ -30,5 +30,20 @@ do
         end
         return input
     end
+    math.randomseed(os.time())
+    local random = math.random
+    local gsub = string.gsub
+    local format = string.format
+    function mineos.uuid()
+        local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        return (gsub(
+            template,
+            "[xy]",
+            function(c)
+                local v = c == "x" and random(0, 15) or random(8, 11)
+                return format("%x", v)
+            end
+        ))
+    end
     mineos.colorize = minetest.colorize
 end

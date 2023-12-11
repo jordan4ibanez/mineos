@@ -41,5 +41,18 @@ namespace mineos {
     return input
   }
 
+  math.randomseed(os.time())
+  const random = math.random;
+  const gsub = string.gsub;
+  const format = string.format
+  // https://gist.github.com/jrus/3197011
+  export function uuid(): string {
+    const template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+    return gsub(template, "[xy]", (c: string) => {
+      const v = (c == "x") && random(0, 0xf) || random(8, 0xb)
+      return format("%x", v)
+    })[0]
+  }
+
   export const colorize = minetest.colorize;
 }
