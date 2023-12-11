@@ -218,7 +218,7 @@ namespace mineos {
 
       super(system, renderer, audio, desktop, windowSize)
 
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 40; i++) {
         this.sprite.push(s(20.5, 11.5, math.random(11,12)))
 
         this.mobs.push(new Mob(
@@ -235,7 +235,7 @@ namespace mineos {
         // print("Length: " + arr.length)
         // print("GOAL: " + (this.texHeight * this.texWidth * CHANNELS))
         assert(arr.length == this.texHeight * this.texWidth * CHANNELS)
-        print(this.texHeight * this.texWidth * CHANNELS)
+        // print(this.texHeight * this.texWidth * CHANNELS)
       }
 
       this.ZBuffer = Array.from({length: this.windowSize.x}, (_,i) => 0)

@@ -895,7 +895,7 @@ do
         }
         do
             local i = 0
-            while i < 1 do
+            while i < 40 do
                 local ____self_sprite_0 = self.sprite
                 ____self_sprite_0[#____self_sprite_0 + 1] = s(
                     20.5,
@@ -910,7 +910,6 @@ do
         self.windowSize = create(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
         for ____, arr in ipairs(self.textures) do
             assert(#arr == self.texHeight * self.texWidth * CHANNELS)
-            print(self.texHeight * self.texWidth * CHANNELS)
         end
         self.ZBuffer = __TS__ArrayFrom(
             {length = self.windowSize.x},
@@ -1474,6 +1473,30 @@ do
     function Boom.prototype.mobsThink(self, delta)
         local moveSpeed = delta * 5
         for ____, mob in ipairs(self.mobs) do
+            do
+                if not mob.alive then
+                    goto __continue105
+                end
+                local dir = yaw_to_dir(mob.yaw)
+                local hit = false
+                if self.worldMap[floor(mob.x + dir.x * moveSpeed) + 1][floor(mob.y) + 1] == 0 then
+                    mob.x = mob.x + dir.x * moveSpeed
+                else
+                    hit = true
+                end
+                if self.worldMap[floor(mob.x) + 1][floor(mob.y + dir.z * moveSpeed) + 1] == 0 then
+                    mob.y = mob.y + dir.z * moveSpeed
+                else
+                    hit = true
+                end
+                if hit then
+                    mob.yaw = math.random() * (math.pi * 2)
+                end
+                local sp = self.sprite[mob.sprite + 1]
+                sp.x = mob.x
+                sp.y = mob.y
+            end
+            ::__continue105::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)
