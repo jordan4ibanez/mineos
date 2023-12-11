@@ -160,9 +160,9 @@ do
             desktop,
             windowSize
         )
-        self.performanceBuffer = true
-        self.performanceMode = true
-        self.enable4kPerformanceMode = true
+        self.performanceBuffer = false
+        self.performanceMode = false
+        self.enable4kPerformanceMode = false
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
         self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8

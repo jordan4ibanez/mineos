@@ -39,10 +39,10 @@ namespace mineos {
   // Locked into 5/4 resolution at 800 x 640.
   class Boom extends WindowProgram {
 
-    performanceBuffer: boolean = true
-    performanceMode: boolean = true
+    performanceBuffer: boolean = false
+    performanceMode: boolean = false
     //! If you enable performanceBuffer in 4k, make sure you enable this as well!
-    enable4kPerformanceMode = true
+    enable4kPerformanceMode = false
     
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
