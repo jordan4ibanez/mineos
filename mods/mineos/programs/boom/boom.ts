@@ -38,10 +38,14 @@ namespace mineos {
   // This program does not have a dynamic buffer because it was enough trouble following a tutorial on a software raycaster.
   // Locked into 5/4 resolution at 800 x 640.
   class Boom extends WindowProgram {
+
+    performanceBuffer: boolean = true
+    performanceMode: boolean = false
+    
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
-    readonly BUFFERS_ARRAY_SIZE_X = 8
-    readonly BUFFERS_ARRAY_SIZE_Y = 7
+    readonly BUFFERS_ARRAY_SIZE_X = (this.performanceBuffer) ? 4 : 8
+    readonly BUFFERS_ARRAY_SIZE_Y = (this.performanceBuffer) ? 4 : 7
 
     loaded = false
     currentPixelCount = 0
@@ -64,7 +68,6 @@ namespace mineos {
     
     buffers: string[][] = []
 
-    performanceMode: boolean = false
 
     playerPos = create(22,12)
     playerDir = create(-1, 0)

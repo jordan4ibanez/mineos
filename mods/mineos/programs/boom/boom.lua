@@ -160,10 +160,12 @@ do
             desktop,
             windowSize
         )
+        self.performanceBuffer = true
+        self.performanceMode = false
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
-        self.BUFFERS_ARRAY_SIZE_X = 8
-        self.BUFFERS_ARRAY_SIZE_Y = 7
+        self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
+        self.BUFFERS_ARRAY_SIZE_Y = self.performanceBuffer and 4 or 7
         self.loaded = false
         self.currentPixelCount = 0
         self.clearColor = v3f(0, 0, 0)
@@ -174,7 +176,6 @@ do
         self.frameAccum = 0
         self.buffering = 0
         self.buffers = {}
-        self.performanceMode = false
         self.playerPos = create(22, 12)
         self.playerDir = create(-1, 0)
         self.time = 0
