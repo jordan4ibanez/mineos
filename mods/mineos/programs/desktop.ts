@@ -350,7 +350,7 @@ namespace mineos {
       )
     }
 
-    move() {
+    move(): void {
       throw new Error("Move not implemented")
     }
   }
