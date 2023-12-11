@@ -40,7 +40,9 @@ namespace mineos {
   class Boom extends WindowProgram {
 
     performanceBuffer: boolean = true
-    performanceMode: boolean = false
+    performanceMode: boolean = true
+    //! If you enable performanceBuffer in 4k, make sure you enable this as well!
+    enable4kPerformanceMode = true
     
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
