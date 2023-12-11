@@ -20,10 +20,10 @@ namespace mineos {
     }
     // A bolt on so you can do things when it dies.
     destructor() {
-
+      throw new Error("ERROR: destructor not implemented.")
     }
     main(delta: number): void {
-      
+      throw new Error("ERROR: main not implemented.")
     }
   }
 

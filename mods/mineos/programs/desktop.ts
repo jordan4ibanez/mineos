@@ -349,7 +349,7 @@ namespace mineos {
         this.windowPosition.y
       )
     }
-    
+
     move() {
       throw new Error("Move not implemented")
     }
