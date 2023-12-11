@@ -20,6 +20,10 @@ namespace mineos {
   // RGBA
   const CHANNELS = 4
 
+  // Vector cache
+  const vecA = vector.create(0,0,0)
+  const vecB = vector.create(0,0,0)
+
   {
     const n = -1
 
@@ -65,6 +69,7 @@ namespace mineos {
   }
 
   class Mob {
+    alive = true
     x: number
     y: number
     yaw = random() * (math.pi * 2)
@@ -765,29 +770,28 @@ namespace mineos {
       const moveSpeed = delta * 5.0
 
       for (let mob of this.mobs) {
-        const dir = yaw_to_dir(mob.yaw)
-        let hit = false
+        // const dir = yaw_to_dir(mob.yaw)
+        // let hit = false
 
-        if(this.worldMap[floor(mob.x + dir.x * moveSpeed)][floor(mob.y)] == 0) {
-          mob.x += dir.x * moveSpeed;
-        } else {
-          hit = true
-        }
-        if(this.worldMap[floor(mob.x)][floor(mob.y + dir.z * moveSpeed)] == 0) {
-          mob.y += dir.z * moveSpeed;
-        } else {
-          hit = true
-        }
+        // if(this.worldMap[floor(mob.x + dir.x * moveSpeed)][floor(mob.y)] == 0) {
+        //   mob.x += dir.x * moveSpeed;
+        // } else {
+        //   hit = true
+        // }
+        // if(this.worldMap[floor(mob.x)][floor(mob.y + dir.z * moveSpeed)] == 0) {
+        //   mob.y += dir.z * moveSpeed;
+        // } else {
+        //   hit = true
+        // }
 
-        if (hit) {
-          mob.yaw = math.random() * (math.pi * 2)
-        }
+        // if (hit) {
+        //   mob.yaw = math.random() * (math.pi * 2)
+        // }
 
-        // Then update the sprite
-        const sp = this.sprite[mob.sprite]
-        sp.x = mob.x
-        sp.y = mob.y
-
+        // // Then update the sprite
+        // const sp = this.sprite[mob.sprite]
+        // sp.x = mob.x
+        // sp.y = mob.y
       }
     }
 
@@ -815,11 +819,33 @@ namespace mineos {
           break;
         }
 
-        
+        vecA.x = bullet.x
+        vecA.y = bullet.y
+
+        for (const mob of this.mobs) {
+          vecB.x = mob.x
+          vecB.y = mob.y
+
+          const dist = vector.distance(vecA, vecB)
+          if (dist < 1 && mob.alive) {
+            mob.alive = false
+            this.sprite[mob.sprite].texture = 2
+            hitMob = true;
+            break
+          }
+        }
+        if (hitMob) {
+          break
+        }
       }
 
+      if (hitMob) {
+        this.currentBullet = null
+        
+      }
+      
       if (hitWall) {
-        print("wall", bullet.x, bullet.y)
+        this.audioController.playSoundDelay("bulletRicochet", 1, 0.15)
         this.currentBullet = null
       }
     }

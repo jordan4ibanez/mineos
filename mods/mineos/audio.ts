@@ -136,6 +136,16 @@ namespace mineos {
         fade: fade
         })
     }
+
+    playSoundDelay(name: string, volume: number, delay: number): void {
+      minetest.after(delay, () => {
+        minetest.sound_play(
+          {name: name},
+          {to_player: "singleplayer",
+          gain: volume,
+          })
+      })
+    }
     playSoundRepeat(name: string, volume: number, fade?: number): number {
       return minetest.sound_play(
         {name: name},
