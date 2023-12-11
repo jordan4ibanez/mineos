@@ -160,9 +160,9 @@ do
             desktop,
             windowSize
         )
-        self.performanceBuffer = false
+        self.performanceBuffer = true
         self.performanceMode = true
-        self.buffer4kMode = true
+        self.enable4kPerformanceMode = true
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
         self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
@@ -830,6 +830,7 @@ do
                             {length = size},
                             function(____, _, i) return (i + 1) % 4 == 0 and char(0) or char(0) end
                         )
+                        local buffer_scale = self.enable4kPerformanceMode and create(2, 2) or create(1, 1)
                         self.renderer:addElement(
                             (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
                             {
@@ -837,9 +838,9 @@ do
                                 hud_elem_type = HudElementType.image,
                                 position = create(0, 0),
                                 text = "pixel.png",
-                                scale = create(1, 1),
+                                scale = buffer_scale,
                                 alignment = create(1, 1),
-                                offset = create(self.windowPosition.x + self.BUFFER_SIZE_Y * x, self.windowPosition.y + self.BUFFER_SIZE_Y * y),
+                                offset = create(self.windowPosition.x + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1), self.windowPosition.y + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1)),
                                 z_index = self.zIndex
                             }
                         )

@@ -140,17 +140,20 @@ namespace mineos {
           
           this.buffers.push(Array.from({length: size}, (_,i) => ((i + 1) % 4 == 0) ? char(0) : char(0)))
 
+          const buffer_scale = (this.enable4kPerformanceMode) ?
+            create(2,2) : create (1,1)
+
           this.renderer.addElement("boomBuffer" + x + " " + y, {
             name: "boomBuffer" + x + " " + y,
             hud_elem_type: HudElementType.image,
             position: create(0,0),
             text: "pixel.png",
             // number: this.currentColor,
-            scale: create(1,1),
+            scale: buffer_scale,
             alignment: create(1,1),
             offset: create(
-              this.windowPosition.x + (this.BUFFER_SIZE_Y * x),
-              this.windowPosition.y + (this.BUFFER_SIZE_Y * y),
+              this.windowPosition.x + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
+              this.windowPosition.y + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
             ),
             z_index: this.zIndex        
           })
