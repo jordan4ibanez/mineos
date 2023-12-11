@@ -946,7 +946,7 @@ namespace mineos {
       let hitWall = false
       let hitMob = false
 
-      const moveSpeed = 0.1
+      const moveSpeed = 0.01
 
       let firstIter = true
 

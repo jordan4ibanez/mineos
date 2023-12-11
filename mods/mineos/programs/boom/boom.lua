@@ -1653,7 +1653,7 @@ do
         local bullet = self.currentBullet
         local hitWall = false
         local hitMob = false
-        local moveSpeed = 0.1
+        local moveSpeed = 0.01
         local firstIter = true
         while not hitWall and not hitMob do
             if self.worldMap[floor(bullet.x + bullet.dirX * moveSpeed) + 1][floor(bullet.y) + 1] == 0 then
