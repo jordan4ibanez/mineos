@@ -389,9 +389,6 @@ namespace mineos {
           this.enable4kPerformanceMode = false
           this.cleanAllBuffers()
           this.generateBuffers()
-
-          this.updateHandleWidth(this.windowSize.x)
-
           break
         }
         case 1: {
@@ -399,7 +396,6 @@ namespace mineos {
           this.performanceBuffer = true
           this.cleanAllBuffers()
           this.generateBuffers()
-          this.updateHandleWidth(this.windowSize.x)
           break
         }
         case 2: {
@@ -426,6 +422,7 @@ namespace mineos {
               )
             }
           }
+          // This is a special case because we're upscaling the framebuffer, which means the window isn't correctly sized OOPS
           this.updateHandleWidth(this.windowSize.x * 2)
 
           break
