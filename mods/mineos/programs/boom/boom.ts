@@ -76,6 +76,20 @@ namespace mineos {
     }
   }
 
+  // Bullet is just another word for raycast
+  class Bullet {
+    x: number
+    y: number
+    dirX: number
+    dirY: number
+    constructor(x: number, y: number, dirX: number, dirY: number) {
+      this.x = x
+      this.y = y
+      this.dirX = dirX
+      this.dirY = dirY
+    }
+  }
+
   // This program does not have a dynamic buffer because it was enough trouble following a tutorial on a software raycaster.
   // Locked into 5/4 resolution at 800 x 640.
   class Boom extends WindowProgram {
@@ -99,6 +113,8 @@ namespace mineos {
     cache = create(0,0)
 
     auxWasPressed = false
+
+    currentBullet: Bullet | null = null
 
     // Think of this as opengl buffering.
     // 0 - vsync off
@@ -358,6 +374,16 @@ namespace mineos {
       // Don't control boom if the mouse isn't locked into the window
       if (!this.desktop.isMouseLocked()) {
         return
+      }
+
+      if (this.system.isMouseClicked()) {
+        this.currentBullet = new Bullet(
+          this.playerPos.x,
+          this.playerPos.y,
+          this.playerDir.x,
+          this.playerDir.y
+        )
+        this.audioController.playSound("gunshot", 1)
       }
 
       const moveSpeed = delta * 5.0
@@ -638,11 +664,6 @@ namespace mineos {
         
         // Set the Depth Buffer
         this.ZBuffer[x] = perpWallDist
-        if (this.ZBuffer[x] == null) {
-          throw new Error("oops")
-        } else {
-          // print(x, this.ZBuffer[x])
-        }
 
         // Untextured
 
@@ -736,7 +757,7 @@ namespace mineos {
 
     load(): void {
       this.desktop.lockMouse()
-      this.audioController.playSong("boom_theme")
+      // this.audioController.playSong("boom_theme")
       this.loaded = true
     }
 
@@ -770,11 +791,45 @@ namespace mineos {
       }
     }
 
+    processBullet(): void {
+      if (!this.currentBullet) return
+
+      let bullet = this.currentBullet;
+
+      let hitWall = false
+      let hitMob = false
+
+      const moveSpeed = 0.1
+
+      while (!hitWall && !hitMob) {
+        if(this.worldMap[floor(bullet.x + bullet.dirX * moveSpeed)][floor(bullet.y)] == 0) {
+          bullet.x += bullet.dirX * moveSpeed;
+        } else {
+          hitWall = true
+          break;
+        }
+        if(this.worldMap[floor(bullet.x)][floor(bullet.y + bullet.dirY * moveSpeed)] == 0) {
+          bullet.y += bullet.dirY * moveSpeed;
+        } else {
+          hitWall = true
+          break;
+        }
+
+        
+      }
+
+      if (hitWall) {
+        print("wall", bullet.x, bullet.y)
+        this.currentBullet = null
+      }
+    }
+
     main(delta: number): void {
       if (!this.loaded) this.load()
-      this.audioController.update(delta)
+      // this.audioController.update(delta)
       this.mobsThink(delta)
       this.playerControls(delta)
+      this.processBullet()
       this.render(delta)
     }
 

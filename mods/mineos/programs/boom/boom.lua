@@ -283,6 +283,14 @@ do
         self.y = y
         self.sprite = sprite
     end
+    local Bullet = __TS__Class()
+    Bullet.name = "Bullet"
+    function Bullet.prototype.____constructor(self, x, y, dirX, dirY)
+        self.x = x
+        self.y = y
+        self.dirX = dirX
+        self.dirY = dirY
+    end
     local Boom = __TS__Class()
     Boom.name = "Boom"
     __TS__ClassExtends(Boom, mineos.WindowProgram)
@@ -309,6 +317,7 @@ do
         self.zIndex = 0
         self.cache = create(0, 0)
         self.auxWasPressed = false
+        self.currentBullet = nil
         self.frameAccum = 0
         self.buffering = 0
         self.buffers = {}
@@ -1160,6 +1169,16 @@ do
         if not self.desktop:isMouseLocked() then
             return
         end
+        if self.system:isMouseClicked() then
+            self.currentBullet = __TS__New(
+                Bullet,
+                self.playerPos.x,
+                self.playerPos.y,
+                self.playerDir.x,
+                self.playerDir.y
+            )
+            self.audioController:playSound("gunshot", 1)
+        end
         local moveSpeed = delta * 5
         if self.system:isKeyDown("up") then
             if self.worldMap[floor(self.playerPos.x + self.playerDir.x * moveSpeed) + 1][floor(self.playerPos.y) + 1] == 0 then
@@ -1544,7 +1563,6 @@ do
     end
     function Boom.prototype.load(self)
         self.desktop:lockMouse()
-        self.audioController:playSong("boom_theme")
         self.loaded = true
     end
     function Boom.prototype.mobsThink(self, delta)
@@ -1570,13 +1588,40 @@ do
             sp.y = mob.y
         end
     end
+    function Boom.prototype.processBullet(self)
+        if not self.currentBullet then
+            return
+        end
+        local bullet = self.currentBullet
+        local hitWall = false
+        local hitMob = false
+        local moveSpeed = 0.1
+        while not hitWall and not hitMob do
+            if self.worldMap[floor(bullet.x + bullet.dirX * moveSpeed) + 1][floor(bullet.y) + 1] == 0 then
+                bullet.x = bullet.x + bullet.dirX * moveSpeed
+            else
+                hitWall = true
+                break
+            end
+            if self.worldMap[floor(bullet.x) + 1][floor(bullet.y + bullet.dirY * moveSpeed) + 1] == 0 then
+                bullet.y = bullet.y + bullet.dirY * moveSpeed
+            else
+                hitWall = true
+                break
+            end
+        end
+        if hitWall then
+            print(bullet.x, bullet.y)
+            self.currentBullet = nil
+        end
+    end
     function Boom.prototype.main(self, delta)
         if not self.loaded then
             self:load()
         end
-        self.audioController:update(delta)
         self:mobsThink(delta)
         self:playerControls(delta)
+        self:processBullet()
         self:render(delta)
     end
     mineos.DesktopEnvironment:registerProgram(Boom)
