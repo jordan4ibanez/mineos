@@ -24,6 +24,7 @@ namespace mineos {
     name: string
     // Basically notes per second.
     tempo = 20
+    volume = 1
     // Instrument: [notes]
     data: {[id: string] : number[]} = {}
 
@@ -104,7 +105,7 @@ namespace mineos {
         // Play notes
         for (const [instrument, data] of Object.entries(this.currentSong.data)) {
           // print("playing " + instrument + " note " + this.currentNote)
-          this.playNote(instrument, data[this.currentNote])
+          this.playNote(instrument, data[this.currentNote], this.currentSong.volume)
         }
 
         this.currentNote ++
@@ -116,14 +117,14 @@ namespace mineos {
       
     }
 
-    playNote(instrument: string, pitch: number): void {
+    playNote(instrument: string, pitch: number, volume: number = 1): void {
       if (pitch == -1) return
       // This is lazy as heck.
       let fPitch = 1 + translationKey[pitch]!!
       minetest.sound_play(
         {name: instrument},
         {to_player: "singleplayer",
-        gain: 1.0,
+        gain: volume,
         pitch: fPitch
         })
     }
