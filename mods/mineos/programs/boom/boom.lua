@@ -5,6 +5,38 @@ local function __TS__New(target, ...)
     return instance
 end
 
+local function __TS__Class(self)
+    local c = {prototype = {}}
+    c.prototype.__index = c.prototype
+    c.prototype.constructor = c
+    return c
+end
+
+local function __TS__ClassExtends(target, base)
+    target.____super = base
+    local staticMetatable = setmetatable({__index = base}, base)
+    setmetatable(target, staticMetatable)
+    local baseMetatable = getmetatable(base)
+    if baseMetatable then
+        if type(baseMetatable.__index) == "function" then
+            staticMetatable.__index = baseMetatable.__index
+        end
+        if type(baseMetatable.__newindex) == "function" then
+            staticMetatable.__newindex = baseMetatable.__newindex
+        end
+    end
+    setmetatable(target.prototype, base.prototype)
+    if type(base.prototype.__index) == "function" then
+        target.prototype.__index = base.prototype.__index
+    end
+    if type(base.prototype.__newindex) == "function" then
+        target.prototype.__newindex = base.prototype.__newindex
+    end
+    if type(base.prototype.__tostring) == "function" then
+        target.prototype.__tostring = base.prototype.__tostring
+    end
+end
+
 local __TS__Symbol, Symbol
 do
     local symbolMetatable = {__tostring = function(self)
@@ -93,38 +125,6 @@ do
         return result
     end
 end
-
-local function __TS__Class(self)
-    local c = {prototype = {}}
-    c.prototype.__index = c.prototype
-    c.prototype.constructor = c
-    return c
-end
-
-local function __TS__ClassExtends(target, base)
-    target.____super = base
-    local staticMetatable = setmetatable({__index = base}, base)
-    setmetatable(target, staticMetatable)
-    local baseMetatable = getmetatable(base)
-    if baseMetatable then
-        if type(baseMetatable.__index) == "function" then
-            staticMetatable.__index = baseMetatable.__index
-        end
-        if type(baseMetatable.__newindex) == "function" then
-            staticMetatable.__newindex = baseMetatable.__newindex
-        end
-    end
-    setmetatable(target.prototype, base.prototype)
-    if type(base.prototype.__index) == "function" then
-        target.prototype.__index = base.prototype.__index
-    end
-    if type(base.prototype.__newindex) == "function" then
-        target.prototype.__newindex = base.prototype.__newindex
-    end
-    if type(base.prototype.__tostring) == "function" then
-        target.prototype.__tostring = base.prototype.__tostring
-    end
-end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -150,19 +150,489 @@ do
         local n = -1
         math.randomseed(os.time())
         local song = __TS__New(mineos.Song, "boom_theme")
-        song.tempo = 5
-        song.data.guitar = __TS__ArrayFrom(
-            {length = 256},
-            function(____, _, i) return math.random(-1, 11) end
-        )
-        song.data.trumpet = __TS__ArrayFrom(
-            {length = 256},
-            function(____, _, i) return math.random(-1, 11) end
-        )
-        song.data.bassTrumpet = __TS__ArrayFrom(
-            {length = 256},
-            function(____, _, i) return math.random(-1, 11) end
-        )
+        song.tempo = 8
+        song.data.guitar = {
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            3,
+            n,
+            n,
+            n,
+            n,
+            n,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            3,
+            n,
+            n,
+            n,
+            n,
+            n,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            5,
+            0,
+            0,
+            3,
+            n,
+            n,
+            n,
+            n,
+            n,
+            3,
+            5,
+            10,
+            5,
+            3,
+            5,
+            10,
+            3,
+            1,
+            5,
+            10,
+            5,
+            1,
+            5,
+            10,
+            1,
+            0,
+            5,
+            10,
+            5,
+            0,
+            5,
+            10,
+            0,
+            0,
+            5,
+            9,
+            5,
+            0,
+            5,
+            9,
+            0,
+            3,
+            5,
+            10,
+            5,
+            3,
+            5,
+            10,
+            3,
+            1,
+            5,
+            10,
+            5,
+            1,
+            5,
+            10,
+            1,
+            0,
+            5,
+            10,
+            5,
+            0,
+            5,
+            10,
+            0,
+            0,
+            5,
+            9,
+            5,
+            0,
+            5,
+            9,
+            0,
+            3,
+            5,
+            10,
+            5,
+            3,
+            5,
+            10,
+            3,
+            1,
+            5,
+            10,
+            5,
+            1,
+            5,
+            10,
+            1,
+            0,
+            5,
+            10,
+            5,
+            0,
+            5,
+            10,
+            0,
+            0,
+            5,
+            9,
+            5,
+            0,
+            5,
+            9,
+            0,
+            3,
+            5,
+            10,
+            5,
+            3,
+            5,
+            10,
+            3,
+            1,
+            5,
+            10,
+            5,
+            1,
+            5,
+            10,
+            1,
+            0,
+            5,
+            10,
+            5,
+            0,
+            5,
+            10,
+            0,
+            0,
+            5,
+            9,
+            5,
+            0,
+            5,
+            9,
+            0,
+            3,
+            5,
+            10,
+            5,
+            3,
+            5,
+            10,
+            3,
+            1,
+            5,
+            10,
+            5,
+            1,
+            5,
+            10,
+            1,
+            0,
+            5,
+            10,
+            5,
+            0,
+            5,
+            10,
+            0,
+            0,
+            5,
+            9,
+            5,
+            0,
+            5,
+            9,
+            0,
+            3,
+            5,
+            10,
+            5,
+            3,
+            5,
+            10,
+            3,
+            1,
+            5,
+            10,
+            5,
+            1,
+            5,
+            10,
+            1,
+            0,
+            5,
+            10,
+            5,
+            0,
+            5,
+            10,
+            0,
+            0,
+            5,
+            9,
+            5,
+            0,
+            5,
+            9,
+            0,
+            3,
+            10,
+            5,
+            3,
+            10,
+            5,
+            3,
+            5,
+            1,
+            10,
+            5,
+            1,
+            10,
+            5,
+            1,
+            5,
+            0,
+            10,
+            5,
+            0,
+            10,
+            5,
+            0,
+            5,
+            0,
+            9,
+            5,
+            0,
+            9,
+            5,
+            0,
+            5,
+            3,
+            10,
+            5,
+            3,
+            10,
+            5,
+            3,
+            5,
+            1,
+            10,
+            5,
+            1,
+            10,
+            5,
+            1,
+            5,
+            0,
+            10,
+            5,
+            0,
+            10,
+            5,
+            0,
+            5,
+            0,
+            9,
+            5,
+            0,
+            9,
+            5,
+            0,
+            5,
+            3,
+            10,
+            5,
+            3,
+            10,
+            5,
+            3,
+            5,
+            1,
+            10,
+            5,
+            1,
+            10,
+            5,
+            1,
+            5,
+            0,
+            10,
+            5,
+            0,
+            10,
+            5,
+            0,
+            5,
+            0,
+            9,
+            5,
+            0,
+            9,
+            5,
+            0,
+            5,
+            3,
+            10,
+            5,
+            3,
+            10,
+            5,
+            3,
+            5,
+            1,
+            10,
+            5,
+            1,
+            10,
+            5,
+            1,
+            5,
+            0,
+            10,
+            5,
+            0,
+            10,
+            5,
+            0,
+            5,
+            0,
+            9,
+            5,
+            0,
+            9,
+            5,
+            0,
+            5,
+            3,
+            10,
+            5,
+            3,
+            10,
+            5,
+            3,
+            5,
+            1,
+            10,
+            5,
+            1,
+            10,
+            5,
+            1,
+            5,
+            0,
+            10,
+            5,
+            0,
+            10,
+            5,
+            0,
+            5,
+            0,
+            9,
+            5,
+            0,
+            9,
+            5,
+            0,
+            5,
+            3,
+            10,
+            5,
+            3,
+            10,
+            5,
+            3,
+            5,
+            1,
+            10,
+            5,
+            1,
+            10,
+            5,
+            1,
+            5,
+            0,
+            10,
+            5,
+            0,
+            10,
+            5,
+            0,
+            5,
+            0,
+            9,
+            5,
+            0,
+            9,
+            5,
+            0,
+            5
+        }
         mineos.AudioController:registerSong(song)
     end
     local function swap(i, z)
@@ -986,9 +1456,9 @@ do
             self.inPerformanceMode = 0
         end
         repeat
-            local ____switch27 = self.inPerformanceMode
-            local ____cond27 = ____switch27 == 0
-            if ____cond27 then
+            local ____switch24 = self.inPerformanceMode
+            local ____cond24 = ____switch24 == 0
+            if ____cond24 then
                 do
                     print("ULTRA QUALITY")
                     self.performanceBuffer = false
@@ -998,8 +1468,8 @@ do
                     break
                 end
             end
-            ____cond27 = ____cond27 or ____switch27 == 1
-            if ____cond27 then
+            ____cond24 = ____cond24 or ____switch24 == 1
+            if ____cond24 then
                 do
                     print("LOW QUALITY")
                     self.performanceBuffer = true
@@ -1008,8 +1478,8 @@ do
                     break
                 end
             end
-            ____cond27 = ____cond27 or ____switch27 == 2
-            if ____cond27 then
+            ____cond24 = ____cond24 or ____switch24 == 2
+            if ____cond24 then
                 do
                     print("LOW QUALITY 4k")
                     self.enable4kPerformanceMode = true
@@ -1602,6 +2072,7 @@ do
     end
     function Boom.prototype.load(self)
         self.desktop:lockMouse()
+        self.audioController:playSong("boom_theme")
         self.loaded = true
     end
     function Boom.prototype.mobsThink(self, delta)
@@ -1609,7 +2080,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue121
+                    goto __continue118
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -1635,7 +2106,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue121::
+            ::__continue118::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)
@@ -1705,6 +2176,7 @@ do
         if not self.loaded then
             self:load()
         end
+        self.audioController:update(delta)
         self:mobsThink(delta)
         self:playerControls(delta)
         self:processBullet()

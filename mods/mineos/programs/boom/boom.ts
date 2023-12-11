@@ -28,12 +28,89 @@ namespace mineos {
     const n = -1
 
     math.randomseed(os.time())
-    // This song is literally randomly generated, good luck to your ears
     let song: Song = new Song("boom_theme")
-    song.tempo = 5
-    song.data["guitar"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
-    song.data["trumpet"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
-    song.data["bassTrumpet"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
+    song.tempo = 8
+    song.data["guitar"] = [
+
+      0,0,0,0,6,0,0,5,
+      0,0,0,0,6,0,0,5,
+      0,0,0,0,6,0,0,5,
+      0,0,3,n,n,n,n,n,
+
+      0,0,0,0,6,0,0,5,
+      0,0,0,0,6,0,0,5,
+      0,0,0,0,6,0,0,5,
+      0,0,3,n,n,n,n,n,
+
+      0,0,0,0,6,0,0,5,
+      0,0,0,0,6,0,0,5,
+      0,0,0,0,6,0,0,5,
+      0,0,3,n,n,n,n,n,
+
+      //1
+      3,5,10,5,3,5,10,3,
+      1,5,10,5,1,5,10,1,
+      0,5,10,5,0,5,10,0,
+      0,5,9,5,0,5,9,0,
+      //2
+      3,5,10,5,3,5,10,3,
+      1,5,10,5,1,5,10,1,
+      0,5,10,5,0,5,10,0,
+      0,5,9,5,0,5,9,0,
+      //3
+      3,5,10,5,3,5,10,3,
+      1,5,10,5,1,5,10,1,
+      0,5,10,5,0,5,10,0,
+      0,5,9,5,0,5,9,0,
+      //4
+      3,5,10,5,3,5,10,3,
+      1,5,10,5,1,5,10,1,
+      0,5,10,5,0,5,10,0,
+      0,5,9,5,0,5,9,0,
+      //5
+      3,5,10,5,3,5,10,3,
+      1,5,10,5,1,5,10,1,
+      0,5,10,5,0,5,10,0,
+      0,5,9,5,0,5,9,0,
+      //6
+      3,5,10,5,3,5,10,3,
+      1,5,10,5,1,5,10,1,
+      0,5,10,5,0,5,10,0,
+      0,5,9,5,0,5,9,0,
+
+      //1
+      3,10,5,3,10,5,3,5,
+      1,10,5,1,10,5,1,5,
+      0,10,5,0,10,5,0,5,
+      0,9,5,0,9,5,0,5,
+      //2
+      3,10,5,3,10,5,3,5,
+      1,10,5,1,10,5,1,5,
+      0,10,5,0,10,5,0,5,
+      0,9,5,0,9,5,0,5,
+      //3
+      3,10,5,3,10,5,3,5,
+      1,10,5,1,10,5,1,5,
+      0,10,5,0,10,5,0,5,
+      0,9,5,0,9,5,0,5,
+      //4
+      3,10,5,3,10,5,3,5,
+      1,10,5,1,10,5,1,5,
+      0,10,5,0,10,5,0,5,
+      0,9,5,0,9,5,0,5,
+      //5
+      3,10,5,3,10,5,3,5,
+      1,10,5,1,10,5,1,5,
+      0,10,5,0,10,5,0,5,
+      0,9,5,0,9,5,0,5,
+      //6
+      3,10,5,3,10,5,3,5,
+      1,10,5,1,10,5,1,5,
+      0,10,5,0,10,5,0,5,
+      0,9,5,0,9,5,0,5,
+    ]
+    // song.data["trumpet"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
+    // song.data["bassTrumpet"] = Array.from({length: 256}, (_,i) => math.random(-1,11))
     AudioController.registerSong(song)
   }
 
@@ -889,7 +966,8 @@ namespace mineos {
 
     load(): void {
       this.desktop.lockMouse()
-      // this.audioController.playSong("boom_theme")
+      // This is horrible
+      this.audioController.playSong("boom_theme")
       this.loaded = true
     }
 
@@ -1004,7 +1082,7 @@ namespace mineos {
 
     main(delta: number): void {
       if (!this.loaded) this.load()
-      // this.audioController.update(delta)
+      this.audioController.update(delta)
       this.mobsThink(delta)
       this.playerControls(delta)
       this.processBullet()
