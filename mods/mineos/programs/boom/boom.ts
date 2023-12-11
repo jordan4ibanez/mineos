@@ -795,6 +795,14 @@ namespace mineos {
       }
     }
 
+    addBulletHole(x: number, z: number): void {
+      this.spriteOrder.push(0)
+      this.spriteDistance.push(0)
+      this.sprite.push(s(
+        x,z,15
+      ))
+    }
+
     processBullet(): void {
       if (!this.currentBullet) return
 
@@ -829,7 +837,7 @@ namespace mineos {
           const dist = vector.distance(vecA, vecB)
           if (dist < 1 && mob.alive) {
             mob.alive = false
-            this.sprite[mob.sprite].texture = 2
+            this.sprite[mob.sprite].texture += 2
             hitMob = true;
             break
           }
@@ -840,11 +848,14 @@ namespace mineos {
       }
 
       if (hitMob) {
+        this.audioController.playSoundDelay("mobExplode", 1, 0.15)
         this.currentBullet = null
-        
       }
-      
+
       if (hitWall) {
+        if (this.currentBullet != null) {
+          this.addBulletHole(this.currentBullet.x, this.currentBullet.y)
+        }
         this.audioController.playSoundDelay("bulletRicochet", 1, 0.15)
         this.currentBullet = null
       }

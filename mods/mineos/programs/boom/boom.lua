@@ -1476,6 +1476,14 @@ do
         for ____, mob in ipairs(self.mobs) do
         end
     end
+    function Boom.prototype.addBulletHole(self, x, z)
+        local ____self_spriteOrder_19 = self.spriteOrder
+        ____self_spriteOrder_19[#____self_spriteOrder_19 + 1] = 0
+        local ____self_spriteDistance_20 = self.spriteDistance
+        ____self_spriteDistance_20[#____self_spriteDistance_20 + 1] = 0
+        local ____self_sprite_21 = self.sprite
+        ____self_sprite_21[#____self_sprite_21 + 1] = s(x, z, 15)
+    end
     function Boom.prototype.processBullet(self)
         if not self.currentBullet then
             return
@@ -1505,7 +1513,8 @@ do
                 local dist = vector.distance(vecA, vecB)
                 if dist < 1 and mob.alive then
                     mob.alive = false
-                    self.sprite[mob.sprite + 1].texture = 2
+                    local ____self_sprite_index_22, ____texture_23 = self.sprite[mob.sprite + 1], "texture"
+                    ____self_sprite_index_22[____texture_23] = ____self_sprite_index_22[____texture_23] + 2
                     hitMob = true
                     break
                 end
@@ -1515,10 +1524,13 @@ do
             end
         end
         if hitMob then
+            self.audioController:playSoundDelay("mobExplode", 1, 0.15)
             self.currentBullet = nil
         end
         if hitWall then
-            print("wall", bullet.x, bullet.y)
+            if self.currentBullet ~= nil then
+                self:addBulletHole(self.currentBullet.x, self.currentBullet.y)
+            end
             self.audioController:playSoundDelay("bulletRicochet", 1, 0.15)
             self.currentBullet = nil
         end
