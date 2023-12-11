@@ -770,28 +770,29 @@ namespace mineos {
       const moveSpeed = delta * 5.0
 
       for (let mob of this.mobs) {
-        // const dir = yaw_to_dir(mob.yaw)
-        // let hit = false
+        if (!mob.alive) continue
+        const dir = yaw_to_dir(mob.yaw)
+        let hit = false
 
-        // if(this.worldMap[floor(mob.x + dir.x * moveSpeed)][floor(mob.y)] == 0) {
-        //   mob.x += dir.x * moveSpeed;
-        // } else {
-        //   hit = true
-        // }
-        // if(this.worldMap[floor(mob.x)][floor(mob.y + dir.z * moveSpeed)] == 0) {
-        //   mob.y += dir.z * moveSpeed;
-        // } else {
-        //   hit = true
-        // }
+        if(this.worldMap[floor(mob.x + dir.x * moveSpeed)][floor(mob.y)] == 0) {
+          mob.x += dir.x * moveSpeed;
+        } else {
+          hit = true
+        }
+        if(this.worldMap[floor(mob.x)][floor(mob.y + dir.z * moveSpeed)] == 0) {
+          mob.y += dir.z * moveSpeed;
+        } else {
+          hit = true
+        }
 
-        // if (hit) {
-        //   mob.yaw = math.random() * (math.pi * 2)
-        // }
+        if (hit) {
+          mob.yaw = math.random() * (math.pi * 2)
+        }
 
-        // // Then update the sprite
-        // const sp = this.sprite[mob.sprite]
-        // sp.x = mob.x
-        // sp.y = mob.y
+        // Then update the sprite
+        const sp = this.sprite[mob.sprite]
+        sp.x = mob.x
+        sp.y = mob.y
       }
     }
 
