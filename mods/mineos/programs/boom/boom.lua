@@ -174,7 +174,7 @@ do
         self.frameAccum = 0
         self.buffering = 0
         self.buffers = {}
-        self.performanceMode = true
+        self.performanceMode = false
         self.playerPos = create(22, 12)
         self.playerDir = create(-1, 0)
         self.time = 0
@@ -1055,8 +1055,8 @@ do
                         local tx = floor(bit.band(self.texWidth * (floorX - cellX), self.texWidth - 1))
                         local ty = floor(bit.band(self.texHeight * (floorY - cellY), self.texHeight - 1))
                         if self.performanceMode then
-                            tx = floor(tx / 4)
-                            ty = floor(ty / 4)
+                            tx = floor(tx / 4) * 4
+                            ty = floor(ty / 4) * 4
                         end
                         floorX = floorX + floorStepX
                         floorY = floorY + floorStepY
