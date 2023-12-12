@@ -1164,7 +1164,10 @@ namespace mineos {
     main(delta: number): void {
       if (delta > 0.1) delta = 0.1
 
-      if (!this.loaded) this.load()
+      if (!this.loaded) {
+        this.load()
+        return
+      }
       this.audioController.update(delta)
       this.mobsThink(delta)
       this.playerControls(delta)

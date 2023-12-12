@@ -2243,6 +2243,7 @@ do
         end
         if not self.loaded then
             self:load()
+            return
         end
         self.audioController:update(delta)
         self:mobsThink(delta)
