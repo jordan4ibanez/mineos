@@ -231,6 +231,9 @@ do
             )
         end
     end
+    function AudioController.prototype.stopSong(self)
+        self.currentSong = nil
+    end
     function AudioController.prototype.update(self, delta)
         if self.currentSong == nil then
             print("error: no current song!")

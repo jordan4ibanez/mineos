@@ -93,6 +93,10 @@ namespace mineos {
       }
     }
 
+    stopSong(): void {
+      this.currentSong = null
+    }
+
     update(delta: number) {
       if (this.currentSong == null) {
         print("error: no current song!")
