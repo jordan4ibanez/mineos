@@ -304,6 +304,7 @@ namespace mineos {
     windowPosition: Vec2 = create(100,100)
     handle: AABB
     readonly uuid: string
+    windowTitle: string
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
       super(system, renderer, audio)
@@ -313,7 +314,7 @@ namespace mineos {
       this.handle = new AABB(
         create(
           this.windowPosition.x,
-          this.windowPosition.y - handleHeight
+          this.windowPosition.y - handleHeight + 1
         ),
         create(
           this.windowSize.x,
@@ -334,6 +335,25 @@ namespace mineos {
         offset: this.handle.offset,
         z_index: 0
       })
+
+      this.windowTitle = "a test title"
+      const stringIDTitle = this.uuid + "window_name"
+      this.renderer.addElement(stringIDTitle, {
+        name: stringIDTitle,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: this.windowTitle,
+        number: colors.colorHEX(0,0,0),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.handle.offset.x + 2,
+          this.handle.offset.y + 3,
+        ),
+        // style: 4,
+        z_index: 1
+      })
+
     }
 
     // We want to know where the actual window starts, not the handle
@@ -354,6 +374,11 @@ namespace mineos {
     setWindowSize(x: number, y: number): void {
       this.windowSize.x = x
       this.windowSize.y = y
+    }
+    setWindowTitle(newTitle: string): void {
+      this.windowTitle = newTitle
+      const stringIDTitle = this.uuid + "window_name"
+      this.renderer.setElementComponentValue(stringIDTitle, "text", newTitle)
     }
 
     updateHandleWidth(width: number): void {

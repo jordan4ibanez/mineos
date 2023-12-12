@@ -475,7 +475,7 @@ do
         self.uuid = mineos.uuid()
         self.handle = __TS__New(
             AABB,
-            create(self.windowPosition.x, self.windowPosition.y - handleHeight),
+            create(self.windowPosition.x, self.windowPosition.y - handleHeight + 1),
             create(self.windowSize.x, handleHeight),
             create(0, 0)
         )
@@ -493,6 +493,22 @@ do
                 z_index = 0
             }
         )
+        self.windowTitle = "a test title"
+        local stringIDTitle = self.uuid .. "window_name"
+        self.renderer:addElement(
+            stringIDTitle,
+            {
+                name = stringIDTitle,
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = self.windowTitle,
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.handle.offset.x + 2, self.handle.offset.y + 3),
+                z_index = 1
+            }
+        )
     end
     function WindowProgram.prototype.getPosX(self)
         return self.windowPosition.x
@@ -506,6 +522,11 @@ do
     function WindowProgram.prototype.setWindowSize(self, x, y)
         self.windowSize.x = x
         self.windowSize.y = y
+    end
+    function WindowProgram.prototype.setWindowTitle(self, newTitle)
+        self.windowTitle = newTitle
+        local stringIDTitle = self.uuid .. "window_name"
+        self.renderer:setElementComponentValue(stringIDTitle, "text", newTitle)
     end
     function WindowProgram.prototype.updateHandleWidth(self, width)
         local strindID = self.uuid .. "window_handle"

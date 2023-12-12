@@ -691,6 +691,7 @@ do
         self.performanceBuffer = true
         self.performanceMode = false
         self.enable4kPerformanceMode = false
+        self.shouldRender = true
         self.inPerformanceMode = 1
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
@@ -706,6 +707,7 @@ do
         self.shiftWasPressed = false
         self.auxWasPressed = false
         self.zWasPressed = false
+        self.spaceWasPressed = false
         self.currentBullet = nil
         self.frameAccum = 0
         self.buffering = 0
@@ -1396,13 +1398,15 @@ do
             function(____, _, i) return 0 end
         )
         self:generateBuffers()
+        self:pushNewTitle(0)
     end
     function Boom.prototype.generateBuffers(self)
         self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
         self.BUFFERS_ARRAY_SIZE_Y = self.performanceBuffer and 4 or 7
         local size = self.BUFFER_SIZE_X * self.BUFFER_SIZE_Y
         self:setWindowSize(self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X, self.BUFFER_SIZE_Y * self.BUFFERS_ARRAY_SIZE_X * (4 / 5))
-        self:updateHandleWidth(self.BUFFER_SIZE_Y * 4)
+        print("new window size: " .. tostring(self.windowSize.x))
+        self:updateHandleWidth(self.windowSize.x)
         do
             local x = 0
             while x < self.BUFFERS_ARRAY_SIZE_X do
@@ -1470,7 +1474,6 @@ do
                     self.enable4kPerformanceMode = false
                     self:cleanAllBuffers()
                     self:generateBuffers()
-                    self:updateHandleWidth(self.windowSize.x)
                     break
                 end
             end
@@ -1481,7 +1484,6 @@ do
                     self.performanceBuffer = true
                     self:cleanAllBuffers()
                     self:generateBuffers()
-                    self:updateHandleWidth(self.windowSize.x)
                     break
                 end
             end
@@ -1518,6 +1520,13 @@ do
                 end
             end
         until true
+        self:pushNewTitle(0)
+    end
+    function Boom.prototype.pushNewTitle(self, delta)
+        local precision = 1000000
+        local d = floor(delta * precision) / precision
+        local ____string = (((((((("BOOM | pBuf:" .. tostring(self.performanceBuffer)) .. " | 4k:") .. tostring(self.enable4kPerformanceMode)) .. " | pTex:") .. tostring(self.performanceMode)) .. "| render: ") .. tostring(self.shouldRender)) .. " | d:") .. tostring(d)
+        self:setWindowTitle(____string)
     end
     function Boom.prototype.bufferKey(self, x, y)
         return x % self.BUFFERS_ARRAY_SIZE_X + y * self.BUFFERS_ARRAY_SIZE_X
@@ -1572,13 +1581,18 @@ do
                     while y < self.BUFFERS_ARRAY_SIZE_Y do
                         local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
                         local stringThing = concat(currentBuffer)
-                        local rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
-                        local rawData = encode_base64(rawPNG)
-                        self.renderer:setElementComponentValue(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
-                            "text",
-                            "[png:" .. rawData
-                        )
+                        local rawPNG = nil
+                        if self.shouldRender then
+                            rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
+                        end
+                        if rawPNG then
+                            local rawData = encode_base64(rawPNG)
+                            self.renderer:setElementComponentValue(
+                                (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                                "text",
+                                "[png:" .. rawData
+                            )
+                        end
                         y = y + 1
                     end
                 end
@@ -1647,6 +1661,7 @@ do
         local shiftPressed = self.system:isKeyDown("sneak")
         if shiftPressed and not self.shiftWasPressed then
             self.performanceMode = not self.performanceMode
+            self:pushNewTitle(0)
         end
         self.shiftWasPressed = shiftPressed
         local zPressed = self.system:isKeyDown("zoom")
@@ -1654,6 +1669,11 @@ do
             self:cyclePerformanceMode()
         end
         self.zWasPressed = zPressed
+        local spacePressed = self.system:isKeyDown("jump")
+        if spacePressed and not self.spaceWasPressed then
+            self.shouldRender = not self.shouldRender
+        end
+        self.spaceWasPressed = spacePressed
         if self.system:isMouseClicked() then
             self.currentBullet = __TS__New(
                 Bullet,
@@ -2091,7 +2111,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue118
+                    goto __continue122
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -2117,7 +2137,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue118::
+            ::__continue122::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)
@@ -2192,6 +2212,7 @@ do
         self:playerControls(delta)
         self:processBullet()
         self:render(delta)
+        self:pushNewTitle(delta)
     end
     mineos.DesktopEnvironment:registerProgram(Boom)
 end

@@ -182,6 +182,7 @@ namespace mineos {
     performanceMode: boolean = false
     //! If you enable performanceBuffer in 4k, make sure you enable this as well!
     enable4kPerformanceMode = false
+    shouldRender = true
     inPerformanceMode = 1
     
     readonly BUFFER_SIZE_Y = 100
@@ -201,6 +202,7 @@ namespace mineos {
     shiftWasPressed = false
     auxWasPressed = false
     zWasPressed = false
+    spaceWasPressed = false
 
     currentBullet: Bullet | null = null
 
@@ -324,6 +326,8 @@ namespace mineos {
 
       this.generateBuffers()
 
+      this.pushNewTitle(0)
+
     }
 
     generateBuffers(): void {
@@ -337,7 +341,8 @@ namespace mineos {
         this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X,
         (this.BUFFER_SIZE_Y * this.BUFFERS_ARRAY_SIZE_X) * (4 / 5)
       )
-      this.updateHandleWidth(this.BUFFER_SIZE_Y * 4)
+      print("new window size: " + this.windowSize.x)
+      this.updateHandleWidth(this.windowSize.x)
 
       for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
@@ -429,8 +434,19 @@ namespace mineos {
         }
       }
 
+      this.pushNewTitle(0)
     }
 
+    pushNewTitle(delta: number): void {
+      const precision = 1000000
+      const d = floor(delta * precision) / precision
+      const string = "BOOM | pBuf:" + this.performanceBuffer + 
+      " | 4k:" + this.enable4kPerformanceMode +
+       " | pTex:" + this.performanceMode +
+       "| render: " + this.shouldRender +
+        " | d:" + d 
+      this.setWindowTitle(string)
+    }
   
     bufferKey(x: number, y: number): number {
       return (x % this.BUFFERS_ARRAY_SIZE_X) + (y * this.BUFFERS_ARRAY_SIZE_X)
@@ -469,7 +485,6 @@ namespace mineos {
       if (this.frameAccum > this.buffering) {
         this.frameAccum = 0
       } else {
-        // print ("skipped " + this.frameAccum)
         return
       }
 
@@ -480,10 +495,18 @@ namespace mineos {
 
           let stringThing = concat(currentBuffer)
 
-          const rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
-          const rawData = encode_base64(rawPNG)
+          let rawPNG = null
 
-          this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
+          if (this.shouldRender) {
+            rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
+          }
+
+          if (rawPNG) {
+            const rawData = encode_base64(rawPNG)
+            this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
+          }
+          
+
         }
       }
     }
@@ -547,6 +570,7 @@ namespace mineos {
 
       if (shiftPressed && !this.shiftWasPressed) {
         this.performanceMode = !this.performanceMode
+        this.pushNewTitle(0)
       }
 
       this.shiftWasPressed = shiftPressed
@@ -558,6 +582,14 @@ namespace mineos {
       }
 
       this.zWasPressed = zPressed
+
+      const spacePressed = this.system.isKeyDown("jump")
+      
+      if (spacePressed && !this.spaceWasPressed) {
+        this.shouldRender = !this.shouldRender
+      }
+
+      this.spaceWasPressed = spacePressed
 
 
       if (this.system.isMouseClicked()) {
@@ -978,6 +1010,7 @@ namespace mineos {
     mobsThink(delta: number): void {
       const moveSpeed = delta * 5.0
 
+      //! fixme: mobs can get shoved out of the map and crash the OS if the delta is too high
       for (let mob of this.mobs) {
         if (!mob.alive) continue
 
@@ -1091,6 +1124,7 @@ namespace mineos {
       this.playerControls(delta)
       this.processBullet()
       this.render(delta)
+      this.pushNewTitle(delta)
     }
 
   }
