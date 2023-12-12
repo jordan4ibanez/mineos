@@ -688,10 +688,12 @@ do
             desktop,
             windowSize
         )
+        self.thisInstance = 0
         self.performanceBuffer = true
         self.performanceMode = false
         self.enable4kPerformanceMode = false
         self.inPerformanceMode = 1
+        self.focused = true
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
         self.BUFFERS_ARRAY_SIZE_X = 0
@@ -1370,6 +1372,8 @@ do
             s(10, 15.1, 8),
             s(10.5, 15.8, 8)
         }
+        self.thisInstance = Boom.instance
+        Boom.instance = Boom.instance + 1
         do
             local i = 0
             while i < 40 do
@@ -1399,6 +1403,9 @@ do
         self:generateBuffers()
         self:pushNewTitle(0)
     end
+    function Boom.prototype.genBufferKey(self, x, y)
+        return (((("boomBuffer_" .. tostring(self.thisInstance)) .. "_") .. tostring(x)) .. "_") .. tostring(y)
+    end
     function Boom.prototype.move(self)
         do
             local x = 0
@@ -1407,7 +1414,7 @@ do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_SIZE_Y do
                         self.renderer:setElementComponentValue(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            self:genBufferKey(x, y),
                             "offset",
                             create(
                                 self:getPosX() + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1),
@@ -1441,9 +1448,9 @@ do
                         )
                         local buffer_scale = self.enable4kPerformanceMode and create(2, 2) or create(1, 1)
                         self.renderer:addElement(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            self:genBufferKey(x, y),
                             {
-                                name = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                                name = self:genBufferKey(x, y),
                                 hud_elem_type = HudElementType.image,
                                 position = create(0, 0),
                                 text = "pixel.png",
@@ -1470,7 +1477,7 @@ do
                 do
                     local y = 0
                     while y < self.BUFFERS_ARRAY_SIZE_Y do
-                        local id = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y)
+                        local id = self:genBufferKey(x, y)
                         self.renderer:removeElement(id)
                         y = y + 1
                     end
@@ -1486,9 +1493,9 @@ do
             self.inPerformanceMode = 0
         end
         repeat
-            local ____switch27 = self.inPerformanceMode
-            local ____cond27 = ____switch27 == 0
-            if ____cond27 then
+            local ____switch28 = self.inPerformanceMode
+            local ____cond28 = ____switch28 == 0
+            if ____cond28 then
                 do
                     print("ULTRA QUALITY")
                     self.performanceBuffer = false
@@ -1498,8 +1505,8 @@ do
                     break
                 end
             end
-            ____cond27 = ____cond27 or ____switch27 == 1
-            if ____cond27 then
+            ____cond28 = ____cond28 or ____switch28 == 1
+            if ____cond28 then
                 do
                     print("LOW QUALITY")
                     self.performanceBuffer = true
@@ -1508,8 +1515,8 @@ do
                     break
                 end
             end
-            ____cond27 = ____cond27 or ____switch27 == 2
-            if ____cond27 then
+            ____cond28 = ____cond28 or ____switch28 == 2
+            if ____cond28 then
                 do
                     print("LOW QUALITY 4k")
                     self.enable4kPerformanceMode = true
@@ -1520,7 +1527,7 @@ do
                             do
                                 local y = 0
                                 while y < self.BUFFERS_ARRAY_SIZE_Y do
-                                    local id = (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y)
+                                    local id = self:genBufferKey(x, y)
                                     self.renderer:setElementComponentValue(id, "scale", buffer_scale)
                                     self.renderer:setElementComponentValue(
                                         id,
@@ -1605,7 +1612,7 @@ do
                         local rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
                         local rawData = encode_base64(rawPNG)
                         self.renderer:setElementComponentValue(
-                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            self:genBufferKey(x, y),
                             "text",
                             "[png:" .. rawData
                         )
@@ -1664,14 +1671,26 @@ do
     function Boom.prototype.playerControls(self, delta)
         local auxPressed = self.system:isKeyDown("aux1")
         if auxPressed and not self.auxWasPressed then
-            if self.desktop:isMouseLocked() then
+            if self.desktop:isMouseLocked() and self.focused then
+                self.focused = false
                 self.desktop:unlockMouse()
-            else
-                self.desktop:lockMouse()
+            elseif not self.focused then
+                local multiplier = self.enable4kPerformanceMode and 2 or 1
+                local size = create(self.windowSize.x * multiplier, self.windowSize.y * multiplier)
+                local collisionBox = __TS__New(
+                    mineos.AABB,
+                    self.windowPosition,
+                    size,
+                    create(0, 0)
+                )
+                if collisionBox:pointWithin(self.desktop:getMousePos()) then
+                    self.focused = true
+                    self.desktop:lockMouse()
+                end
             end
         end
         self.auxWasPressed = auxPressed
-        if not self.desktop:isMouseLocked() then
+        if not self.focused then
             return
         end
         local shiftPressed = self.system:isKeyDown("sneak")
@@ -2122,7 +2141,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue122
+                    goto __continue124
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -2148,7 +2167,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue122::
+            ::__continue124::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)
@@ -2228,5 +2247,6 @@ do
         self:render(delta)
         self:pushNewTitle(delta)
     end
+    Boom.instance = 0
     mineos.DesktopEnvironment:registerProgram(Boom)
 end

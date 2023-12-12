@@ -178,12 +178,16 @@ namespace mineos {
   // Locked into 5/4 resolution at 800 x 640.
   class Boom extends WindowProgram {
 
+    static instance = 0
+    thisInstance = 0
+
     performanceBuffer: boolean = true
     performanceMode: boolean = false
     //! If you enable performanceBuffer in 4k, make sure you enable this as well!
     enable4kPerformanceMode = false
     // shouldRender = true
     inPerformanceMode = 1
+    focused = true
     
     readonly BUFFER_SIZE_Y = 100
     readonly BUFFER_SIZE_X = this.BUFFER_SIZE_Y * CHANNELS
@@ -296,12 +300,16 @@ namespace mineos {
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
 
+
       // Boom is special, it runs in 500x500 resolution because this is for a gamejam
       // if (windowSize.x != 500 || windowSize.y != 500) {
       //   throw new Error("BOOM MUST RUN IN 500 X 500!")
       // }
 
       super(system, renderer, audio, desktop, windowSize)
+
+      this.thisInstance = Boom.instance
+      Boom.instance++
 
       for (let i = 0; i < 40; i++) {
         this.sprite.push(s(20.5, 11.5, math.random(11,12)))
@@ -327,13 +335,16 @@ namespace mineos {
       this.generateBuffers()
 
       this.pushNewTitle(0)
+    }
 
+    genBufferKey(x: number, y: number): string {
+      return "boomBuffer_" + this.thisInstance + "_" + x + "_" + y
     }
 
     move(): void {
       for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
-          this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "offset", create(
+          this.renderer.setElementComponentValue(this.genBufferKey(x,y), "offset", create(
             this.getPosX() + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
             this.getPosY() + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
           ))
@@ -363,8 +374,8 @@ namespace mineos {
           const buffer_scale = (this.enable4kPerformanceMode) ?
             create(2,2) : create (1,1)
 
-          this.renderer.addElement("boomBuffer" + x + " " + y, {
-            name: "boomBuffer" + x + " " + y,
+          this.renderer.addElement(this.genBufferKey(x,y), {
+            name: this.genBufferKey(x,y),
             hud_elem_type: HudElementType.image,
             position: create(0,0),
             text: "pixel.png",
@@ -385,7 +396,7 @@ namespace mineos {
     cleanAllBuffers(): void {
       for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
         for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
-          const id = "boomBuffer" + x + " " + y
+          const id = this.genBufferKey(x,y)
           this.renderer.removeElement(id)
         }
       }
@@ -422,7 +433,7 @@ namespace mineos {
 
           for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
             for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
-              const id = "boomBuffer" + x + " " + y
+              const id = this.genBufferKey(x,y)
               this.renderer.setElementComponentValue(
                 id,
                 "scale", 
@@ -514,7 +525,7 @@ namespace mineos {
 
           // if (rawPNG) {
             const rawData = encode_base64(rawPNG)
-            this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
+            this.renderer.setElementComponentValue(this.genBufferKey(x,y), "text", "[png:" + rawData)
           // }
           
 
@@ -563,17 +574,33 @@ namespace mineos {
       // Toggle capturing mouse with aux1
       const auxPressed = this.system.isKeyDown("aux1")
       if (auxPressed && !this.auxWasPressed) {
-        if (this.desktop.isMouseLocked()) {
+        if (this.desktop.isMouseLocked() && this.focused) {
+          this.focused = false
           this.desktop.unlockMouse()
-        } else {
-          this.desktop.lockMouse()
+        } else if (!this.focused) {
+          // We'll just create a new object because this is literally 1 frame
+          const multiplier = (this.enable4kPerformanceMode) ? 2 : 1
+          const size = create (
+            this.windowSize.x * multiplier,
+            this.windowSize.y * multiplier
+          )
+          const collisionBox = new AABB(
+            this.windowPosition,
+            size,
+            create(0,0)
+          )
+          // You have to have your mouse hovered to lock into the game
+          if (collisionBox.pointWithin(this.desktop.getMousePos())) {
+            this.focused = true
+            this.desktop.lockMouse()
+          }
         }
       }
 
       this.auxWasPressed = auxPressed
 
       // Don't control boom if the mouse isn't locked into the window
-      if (!this.desktop.isMouseLocked()) {
+      if (!this.focused) {
         return
       }
 

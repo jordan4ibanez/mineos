@@ -143,7 +143,8 @@ do
     local color = colors.color
     local colorRGB = colors.colorRGB
     local colorScalar = colors.colorScalar
-    local AABB = __TS__Class()
+    mineos.AABB = __TS__Class()
+    local AABB = mineos.AABB
     AABB.name = "AABB"
     function AABB.prototype.____constructor(self, offset, size, anchor)
         self.offset = offset
@@ -192,7 +193,7 @@ do
             Icon,
             iconName,
             __TS__New(
-                AABB,
+                mineos.AABB,
                 create(0, self.yOffset),
                 create(40, 40),
                 create(0, 0)
@@ -276,7 +277,7 @@ do
         self.program = program
         self.text = text
         self.collisionBox = __TS__New(
-            AABB,
+            mineos.AABB,
             create(1, yOffset or StartMenuEntry.yOffset),
             create(198, 32),
             create(0, 1)
@@ -475,7 +476,7 @@ do
         self.windowSize = windowSize
         self.uuid = mineos.uuid()
         self.handle = __TS__New(
-            AABB,
+            mineos.AABB,
             create(self.windowPosition.x, self.windowPosition.y - handleHeight + 1),
             create(self.windowSize.x, handleHeight),
             create(0, 0)
@@ -715,7 +716,7 @@ do
         ____self_components_7[#____self_components_7 + 1] = __TS__New(
             DesktopComponent,
             __TS__New(
-                AABB,
+                mineos.AABB,
                 create(0, -32),
                 create(66, 32),
                 create(0, 1)

@@ -5,7 +5,7 @@ namespace mineos {
   const colorRGB = colors.colorRGB;
   const colorScalar = colors.colorScalar;
 
-  class AABB {
+  export class AABB {
     offset: Vec2
     size: Vec2
     anchor: Vec2
