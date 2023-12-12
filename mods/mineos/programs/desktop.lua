@@ -136,6 +136,34 @@ do
     TypeError = createErrorClass(nil, "TypeError")
     URIError = createErrorClass(nil, "URIError")
 end
+
+local function __TS__ObjectGetOwnPropertyDescriptors(object)
+    local metatable = getmetatable(object)
+    if not metatable then
+        return {}
+    end
+    return rawget(metatable, "_descriptors") or ({})
+end
+
+local function __TS__Delete(target, key)
+    local descriptors = __TS__ObjectGetOwnPropertyDescriptors(target)
+    local descriptor = descriptors[key]
+    if descriptor then
+        if not descriptor.configurable then
+            error(
+                __TS__New(
+                    TypeError,
+                    ((("Cannot delete property " .. tostring(key)) .. " of ") .. tostring(target)) .. "."
+                ),
+                0
+            )
+        end
+        descriptors[key] = nil
+        return true
+    end
+    target[key] = nil
+    return true
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -464,6 +492,7 @@ do
     local programQueue = {}
     --- Base layer for the decoration is 0 to 1, don't draw into this.
     local handleHeight = 24
+    local buttonSize = handleHeight - 1
     mineos.WindowProgram = __TS__Class()
     local WindowProgram = mineos.WindowProgram
     WindowProgram.name = "WindowProgram"
@@ -488,7 +517,7 @@ do
                 name = stringID,
                 hud_elem_type = HudElementType.image,
                 position = create(0, 0),
-                text = ("pixel.png^[colorize:" .. "red") .. ":255",
+                text = ("pixel.png^[colorize:" .. color(50, 50, 50)) .. ":255",
                 scale = self.handle.size,
                 alignment = create(1, 1),
                 offset = self.handle.offset,
@@ -511,15 +540,41 @@ do
                 z_index = 1
             }
         )
+        local stringIDButton = self.uuid .. "window_button"
+        self.renderer:addElement(
+            stringIDButton,
+            {
+                name = stringIDButton,
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. color(60, 60, 60)) .. ":255",
+                scale = create(buttonSize, buttonSize),
+                alignment = create(1, 1),
+                offset = create(self.handle.offset.x + self.handle.size.x - buttonSize, self.handle.offset.y),
+                z_index = 1
+            }
+        )
+        local stringIDButtonX = self.uuid .. "window_button_x"
+        self.renderer:addElement(
+            stringIDButtonX,
+            {
+                name = stringIDButtonX,
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = "X",
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.handle.offset.x + self.handle.size.x - buttonSize + 6, self.handle.offset.y + 3),
+                z_index = 2
+            }
+        )
     end
-    function WindowProgram.prototype.getPosX(self)
-        return self.windowPosition.x
-    end
-    function WindowProgram.prototype.getPosY(self)
-        return self.windowPosition.y
-    end
-    function WindowProgram.prototype.getWindowPosition(self)
-        return create(self.windowPosition.x, self.windowPosition.y)
+    function WindowProgram.prototype.__INTERNALDELETION(self)
+        self.renderer:removeElement(self.uuid .. "window_handle")
+        self.renderer:removeElement(self.uuid .. "window_name")
+        self.renderer:removeElement(self.uuid .. "window_button")
+        self.renderer:removeElement(self.uuid .. "window_button_x")
     end
     function WindowProgram.prototype.setWindowPos(self, x, y)
         self.windowPosition.x = x
@@ -536,7 +591,28 @@ do
             "offset",
             create(self.handle.offset.x + 2, self.handle.offset.y + 3)
         )
+        local stringIDButton = self.uuid .. "window_button"
+        self.renderer:setElementComponentValue(
+            stringIDButton,
+            "offset",
+            create(self.handle.offset.x + self.handle.size.x - buttonSize, self.handle.offset.y)
+        )
+        local stringIDButtonX = self.uuid .. "window_button_x"
+        self.renderer:setElementComponentValue(
+            stringIDButtonX,
+            "offset",
+            create(self.handle.offset.x + self.handle.size.x - buttonSize + 6, self.handle.offset.y + 3)
+        )
         self:move()
+    end
+    function WindowProgram.prototype.getPosX(self)
+        return self.windowPosition.x
+    end
+    function WindowProgram.prototype.getPosY(self)
+        return self.windowPosition.y
+    end
+    function WindowProgram.prototype.getWindowPosition(self)
+        return create(self.windowPosition.x, self.windowPosition.y)
     end
     function WindowProgram.prototype.setWindowSize(self, x, y)
         self.windowSize.x = x
@@ -551,6 +627,18 @@ do
         local strindID = self.uuid .. "window_handle"
         self.handle.size.x = width
         self.renderer:setElementComponentValue(strindID, "scale", self.handle.size)
+        local stringIDButton = self.uuid .. "window_button"
+        self.renderer:setElementComponentValue(
+            stringIDButton,
+            "offset",
+            create(self.handle.offset.x + self.handle.size.x - buttonSize, self.handle.offset.y)
+        )
+        local stringIDButtonX = self.uuid .. "window_button_x"
+        self.renderer:setElementComponentValue(
+            stringIDButtonX,
+            "offset",
+            create(self.handle.offset.x + self.handle.size.x - buttonSize + 6, self.handle.offset.y + 3)
+        )
     end
     function WindowProgram.prototype.move(self)
         error(
@@ -776,13 +864,31 @@ do
             end
         end
         if self.system:isMouseClicked() then
+            local deleting = -1
+            local index = 0
             for ____, winProgram in ipairs(self.runningPrograms) do
                 if winProgram.handle:pointWithin(self.mousePosition) then
-                    self.grabbedProgram = winProgram
-                    self.grabbedProgram.offset.x = self.mousePosition.x - winProgram:getPosX()
-                    self.grabbedProgram.offset.y = self.mousePosition.y - winProgram:getPosY()
+                    local XAABB = __TS__New(
+                        mineos.AABB,
+                        create(winProgram.handle.offset.x + winProgram.handle.size.x - buttonSize + 6, winProgram.handle.offset.y + 3),
+                        create(buttonSize, buttonSize),
+                        create(0, 0)
+                    )
+                    if XAABB:pointWithin(self.mousePosition) then
+                        deleting = index
+                    else
+                        self.grabbedProgram = winProgram
+                        self.grabbedProgram.offset.x = self.mousePosition.x - winProgram:getPosX()
+                        self.grabbedProgram.offset.y = self.mousePosition.y - winProgram:getPosY()
+                    end
                     break
                 end
+                index = index + 1
+            end
+            if deleting >= 0 then
+                self.runningPrograms[deleting + 1]:__INTERNALDELETION()
+                self.runningPrograms[deleting + 1]:destructor()
+                __TS__Delete(self.runningPrograms, deleting + 1)
             end
             if self.grabbedProgram == nil then
                 for ____, element in ipairs(self.components) do

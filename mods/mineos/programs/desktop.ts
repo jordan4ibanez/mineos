@@ -297,6 +297,7 @@ namespace mineos {
    * Base layer for the decoration is 0 to 1, don't draw into this.
    */
   const handleHeight = 24
+  const buttonSize = handleHeight - 1
 
   export class WindowProgram extends Program {
     desktop: DesktopEnvironment
@@ -330,7 +331,7 @@ namespace mineos {
         name: stringID,
         hud_elem_type: HudElementType.image,
         position: create(0,0),
-        text: "pixel.png^[colorize:" + "red" + ":255",
+        text: "pixel.png^[colorize:" + color(50,50,50) + ":255",
         scale: this.handle.size,
         alignment: create(1,1),
         offset: this.handle.offset,
@@ -355,21 +356,45 @@ namespace mineos {
         z_index: 1
       })
 
+      const stringIDButton = this.uuid + "window_button"
+      this.renderer.addElement(stringIDButton, {
+        name: stringIDButton,
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "pixel.png^[colorize:" + color(60,60,60) + ":255",
+        scale: create(buttonSize,buttonSize),
+        alignment: create(1,1),
+        offset: create(
+          this.handle.offset.x + this.handle.size.x - buttonSize,
+          this.handle.offset.y
+        ),
+        z_index: 1
+      })
+      
+      const stringIDButtonX = this.uuid + "window_button_x"
+      this.renderer.addElement(stringIDButtonX, {
+        name: stringIDButtonX,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: "X",
+        number: colors.colorHEX(0,0,0),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.handle.offset.x + this.handle.size.x - buttonSize + 6,
+          this.handle.offset.y + 3
+        ),
+        // style: 4,
+        z_index: 2
+      })
     }
 
-    // We want to know where the actual window starts, not the handle
-    getPosX(): number {
-      return this.windowPosition.x
-    }
-    getPosY(): number {
-      return this.windowPosition.y
-    }
-    getWindowPosition(): Vec2 {
-      // Creating a new object every time, who cares
-      return create(
-        this.windowPosition.x,
-        this.windowPosition.y
-      )
+    // Names like this so you know never to call it.
+    __INTERNALDELETION(): void {
+      this.renderer.removeElement(this.uuid + "window_handle")
+      this.renderer.removeElement(this.uuid + "window_name")
+      this.renderer.removeElement(this.uuid + "window_button")
+      this.renderer.removeElement(this.uuid + "window_button_x")
     }
 
     setWindowPos(x: number, y: number): void {
@@ -389,8 +414,35 @@ namespace mineos {
         this.handle.offset.y + 3,
       ))
 
+      const stringIDButton = this.uuid + "window_button"
+      this.renderer.setElementComponentValue(stringIDButton, "offset", create(
+        this.handle.offset.x + this.handle.size.x - buttonSize,
+        this.handle.offset.y
+      ))
+
+      const stringIDButtonX = this.uuid + "window_button_x"
+      this.renderer.setElementComponentValue(stringIDButtonX, "offset", create(
+        this.handle.offset.x + this.handle.size.x - buttonSize + 6,
+        this.handle.offset.y + 3
+      ))
+
       this.move()
 
+    }
+
+    // We want to know where the actual window starts, not the handle
+    getPosX(): number {
+      return this.windowPosition.x
+    }
+    getPosY(): number {
+      return this.windowPosition.y
+    }
+    getWindowPosition(): Vec2 {
+      // Creating a new object every time, who cares
+      return create(
+        this.windowPosition.x,
+        this.windowPosition.y
+      )
     }
 
     setWindowSize(x: number, y: number): void {
@@ -407,6 +459,18 @@ namespace mineos {
       const strindID = this.uuid + "window_handle"
       this.handle.size.x = width
       this.renderer.setElementComponentValue(strindID, "scale", this.handle.size)
+
+      const stringIDButton = this.uuid + "window_button"
+      this.renderer.setElementComponentValue(stringIDButton, "offset", create(
+        this.handle.offset.x + this.handle.size.x - buttonSize,
+        this.handle.offset.y
+      ))
+
+      const stringIDButtonX = this.uuid + "window_button_x"
+      this.renderer.setElementComponentValue(stringIDButtonX, "offset", create(
+        this.handle.offset.x + this.handle.size.x - buttonSize + 6,
+        this.handle.offset.y + 3
+      ))
     }
 
     move(): void {
@@ -654,14 +718,34 @@ namespace mineos {
       // Clicking desktop components
       if (this.system.isMouseClicked()) {
 
+        let deleting = -1
         // window handles before any desktop components
+        let index = 0
         for (const winProgram of this.runningPrograms) {
           if (winProgram.handle.pointWithin(this.mousePosition)) {
-            this.grabbedProgram = winProgram
-            this.grabbedProgram.offset.x = this.mousePosition.x - winProgram.getPosX()
-            this.grabbedProgram.offset.y = this.mousePosition.y - winProgram.getPosY()
+
+            const XAABB = new AABB(create(
+                winProgram.handle.offset.x + winProgram.handle.size.x - buttonSize + 6,
+                winProgram.handle.offset.y + 3
+              ),
+              create(buttonSize, buttonSize),
+              create(0,0))
+            if (XAABB.pointWithin(this.mousePosition)) {
+              deleting = index
+            } else {
+              this.grabbedProgram = winProgram
+              this.grabbedProgram.offset.x = this.mousePosition.x - winProgram.getPosX()
+              this.grabbedProgram.offset.y = this.mousePosition.y - winProgram.getPosY()
+            }
             break;
           }
+          index++
+        }
+
+        if (deleting >= 0) {
+          this.runningPrograms[deleting].__INTERNALDELETION()
+          this.runningPrograms[deleting].destructor()
+          delete this.runningPrograms[deleting]
         }
 
         // Now click a component if we're not dragging a window around
