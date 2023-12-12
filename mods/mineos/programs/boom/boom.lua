@@ -2193,6 +2193,9 @@ do
         end
     end
     function Boom.prototype.main(self, delta)
+        if delta > 0.1 then
+            delta = 0.1
+        end
         if not self.loaded then
             self:load()
         end
