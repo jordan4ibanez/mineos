@@ -691,7 +691,6 @@ do
         self.performanceBuffer = true
         self.performanceMode = false
         self.enable4kPerformanceMode = false
-        self.shouldRender = true
         self.inPerformanceMode = 1
         self.BUFFER_SIZE_Y = 100
         self.BUFFER_SIZE_X = self.BUFFER_SIZE_Y * CHANNELS
@@ -1525,7 +1524,7 @@ do
     function Boom.prototype.pushNewTitle(self, delta)
         local precision = 1000000
         local d = floor(delta * precision) / precision
-        local ____string = (((((((("BOOM | pBuf:" .. tostring(self.performanceBuffer)) .. " | 4k:") .. tostring(self.enable4kPerformanceMode)) .. " | pTex:") .. tostring(self.performanceMode)) .. "| render: ") .. tostring(self.shouldRender)) .. " | d:") .. tostring(d)
+        local ____string = (((((("BOOM | pBuf:" .. tostring(self.performanceBuffer)) .. " | 4k:") .. tostring(self.enable4kPerformanceMode)) .. " | pTex:") .. tostring(self.performanceMode)) .. " | d:") .. tostring(d)
         self:setWindowTitle(____string)
     end
     function Boom.prototype.bufferKey(self, x, y)
@@ -1582,9 +1581,7 @@ do
                         local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
                         local stringThing = concat(currentBuffer)
                         local rawPNG = nil
-                        if self.shouldRender then
-                            rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
-                        end
+                        rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
                         if rawPNG then
                             local rawData = encode_base64(rawPNG)
                             self.renderer:setElementComponentValue(
@@ -1669,11 +1666,6 @@ do
             self:cyclePerformanceMode()
         end
         self.zWasPressed = zPressed
-        local spacePressed = self.system:isKeyDown("jump")
-        if spacePressed and not self.spaceWasPressed then
-            self.shouldRender = not self.shouldRender
-        end
-        self.spaceWasPressed = spacePressed
         if self.system:isMouseClicked() then
             self.currentBullet = __TS__New(
                 Bullet,
@@ -2111,7 +2103,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue122
+                    goto __continue120
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -2137,7 +2129,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue122::
+            ::__continue120::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)

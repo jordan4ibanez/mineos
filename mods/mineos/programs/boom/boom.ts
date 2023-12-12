@@ -182,7 +182,7 @@ namespace mineos {
     performanceMode: boolean = false
     //! If you enable performanceBuffer in 4k, make sure you enable this as well!
     enable4kPerformanceMode = false
-    shouldRender = true
+    // shouldRender = true
     inPerformanceMode = 1
     
     readonly BUFFER_SIZE_Y = 100
@@ -443,7 +443,7 @@ namespace mineos {
       const string = "BOOM | pBuf:" + this.performanceBuffer + 
       " | 4k:" + this.enable4kPerformanceMode +
        " | pTex:" + this.performanceMode +
-       "| render: " + this.shouldRender +
+      //  "| render: " + this.shouldRender +
         " | d:" + d 
       this.setWindowTitle(string)
     }
@@ -497,9 +497,9 @@ namespace mineos {
 
           let rawPNG = null
 
-          if (this.shouldRender) {
-            rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
-          }
+          // if (this.shouldRender) {
+          rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
+          // }
 
           if (rawPNG) {
             const rawData = encode_base64(rawPNG)
@@ -583,13 +583,13 @@ namespace mineos {
 
       this.zWasPressed = zPressed
 
-      const spacePressed = this.system.isKeyDown("jump")
+      // const spacePressed = this.system.isKeyDown("jump")
       
-      if (spacePressed && !this.spaceWasPressed) {
-        this.shouldRender = !this.shouldRender
-      }
+      // if (spacePressed && !this.spaceWasPressed) {
+        // this.shouldRender = !this.shouldRender
+      // }
 
-      this.spaceWasPressed = spacePressed
+      // this.spaceWasPressed = spacePressed
 
 
       if (this.system.isMouseClicked()) {
