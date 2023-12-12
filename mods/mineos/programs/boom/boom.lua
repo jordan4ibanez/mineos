@@ -2233,6 +2233,10 @@ do
             self.currentBullet = nil
         end
     end
+    function Boom.prototype.destructor(self)
+        self:cleanAllBuffers()
+        self.audioController:stopSong()
+    end
     function Boom.prototype.main(self, delta)
         if delta > 0.1 then
             delta = 0.1

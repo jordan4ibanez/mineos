@@ -403,6 +403,7 @@ namespace mineos {
       this.buffers = []
     }
 
+
     cyclePerformanceMode(): void {
 
       this.inPerformanceMode++
@@ -1153,6 +1154,11 @@ namespace mineos {
         this.audioController.playSoundDelay("bulletRicochet", 1, 0.15)
         this.currentBullet = null
       }
+    }
+
+    destructor(): void {
+      this.cleanAllBuffers()
+      this.audioController.stopSong()
     }
 
     main(delta: number): void {
