@@ -134,7 +134,7 @@ namespace mineos {
       const windowSize = this.renderer.frameBufferSize
 
       if (this.currentIcon == null) {
-        if (this.system.isMouseClicked()) {
+        if (this.system.isMouseClicked() && this.desktop.grabbedProgram == null) {
           for (const [name, icon] of Object.entries(this.icons)) {
             if (icon.collisionBox.pointWithin(mousePos)) {
               //todo: Could use this portion to launch an app
@@ -409,7 +409,7 @@ namespace mineos {
     startMenu: StartMenu
     programBlueprints: {[id: string] : typeof WindowProgram} = {}
     runningPrograms: WindowProgram[] = []
-
+    grabbedProgram: WindowProgram | null = null
     mouseLocked = false
 
 
@@ -619,9 +619,23 @@ namespace mineos {
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
 
       if (this.system.isMouseClicked()) {
-        for (const element of this.components) {
-          if (element.collisionBox.pointWithin(this.mousePosition)) {
-            element.onClick(this)
+
+        // window handles before any desktop components
+        for (const winProgram of this.runningPrograms) {
+          if (winProgram.handle.pointWithin(this.mousePosition)) {
+            this.grabbedProgram = winProgram
+            break;
+          }
+        }
+
+        // Now click a component if we're not dragging a window around
+        if (this.grabbedProgram == null) {
+          for (const element of this.components) {
+            if (element.collisionBox.pointWithin(this.mousePosition)) {
+              element.onClick(this)
+              // Only click one element
+              break;
+            }
           }
         }
       }

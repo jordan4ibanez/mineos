@@ -246,7 +246,7 @@ do
         local mousePos = self.desktop:getMousePos()
         local windowSize = self.renderer.frameBufferSize
         if self.currentIcon == nil then
-            if self.system:isMouseClicked() then
+            if self.system:isMouseClicked() and self.desktop.grabbedProgram == nil then
                 for ____, ____value in ipairs(__TS__ObjectEntries(self.icons)) do
                     local name = ____value[1]
                     local icon = ____value[2]
@@ -554,6 +554,7 @@ do
         self.focused = true
         self.programBlueprints = {}
         self.runningPrograms = {}
+        self.grabbedProgram = nil
         self.mouseLocked = false
         self.acceleration = 250
         self.icons = __TS__New(
@@ -749,9 +750,18 @@ do
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
         if self.system:isMouseClicked() then
-            for ____, element in ipairs(self.components) do
-                if element.collisionBox:pointWithin(self.mousePosition) then
-                    element:onClick(self)
+            for ____, winProgram in ipairs(self.runningPrograms) do
+                if winProgram.handle:pointWithin(self.mousePosition) then
+                    self.grabbedProgram = winProgram
+                    break
+                end
+            end
+            if self.grabbedProgram == nil then
+                for ____, element in ipairs(self.components) do
+                    if element.collisionBox:pointWithin(self.mousePosition) then
+                        element:onClick(self)
+                        break
+                    end
                 end
             end
         end
