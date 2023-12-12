@@ -470,6 +470,7 @@ do
     function WindowProgram.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
         WindowProgram.____super.prototype.____constructor(self, system, renderer, audio)
         self.windowPosition = create(100, 100)
+        self.offset = create(0, 0)
         self.desktop = desktop
         self.windowSize = windowSize
         self.uuid = mineos.uuid()
@@ -519,6 +520,23 @@ do
     function WindowProgram.prototype.getWindowPosition(self)
         return create(self.windowPosition.x, self.windowPosition.y)
     end
+    function WindowProgram.prototype.setWindowPos(self, x, y)
+        self.windowPosition.x = x
+        self.windowPosition.y = y
+        do
+            self.handle.offset.x = self.windowPosition.x
+            self.handle.offset.y = self.windowPosition.y - handleHeight + 1
+        end
+        local stringID = self.uuid .. "window_handle"
+        self.renderer:setElementComponentValue(stringID, "offset", self.handle.offset)
+        local stringIDTitle = self.uuid .. "window_name"
+        self.renderer:setElementComponentValue(
+            stringIDTitle,
+            "offset",
+            create(self.handle.offset.x + 2, self.handle.offset.y + 3)
+        )
+        self:move()
+    end
     function WindowProgram.prototype.setWindowSize(self, x, y)
         self.windowSize.x = x
         self.windowSize.y = y
@@ -535,7 +553,7 @@ do
     end
     function WindowProgram.prototype.move(self)
         error(
-            __TS__New(Error, "Move not implemented"),
+            __TS__New(Error, "Move not implemented for " .. self.windowTitle),
             0
         )
     end
@@ -749,10 +767,21 @@ do
         end
         local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
+        if self.grabbedProgram ~= nil then
+            if self.system:isMouseDown() then
+                self.grabbedProgram:setWindowPos(self.mousePosition.x - self.grabbedProgram.offset.x, self.mousePosition.y - self.grabbedProgram.offset.y)
+                print("dragging")
+            else
+                print("let go")
+                self.grabbedProgram = nil
+            end
+        end
         if self.system:isMouseClicked() then
             for ____, winProgram in ipairs(self.runningPrograms) do
                 if winProgram.handle:pointWithin(self.mousePosition) then
                     self.grabbedProgram = winProgram
+                    self.grabbedProgram.offset.x = self.mousePosition.x - winProgram:getPosX()
+                    self.grabbedProgram.offset.y = self.mousePosition.y - winProgram:getPosY()
                     break
                 end
             end

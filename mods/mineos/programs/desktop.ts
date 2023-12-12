@@ -303,6 +303,7 @@ namespace mineos {
     windowSize: Vec2
     windowPosition: Vec2 = create(100,100)
     handle: AABB
+    offset: Vec2 = create(0,0)
     readonly uuid: string
     windowTitle: string
 
@@ -371,6 +372,27 @@ namespace mineos {
       )
     }
 
+    setWindowPos(x: number, y: number): void {
+      this.windowPosition.x = x
+      this.windowPosition.y = y
+
+      this.handle.offset.x = this.windowPosition.x,
+      this.handle.offset.y = this.windowPosition.y - handleHeight + 1
+
+      const stringID = this.uuid + "window_handle"
+      this.renderer.setElementComponentValue(stringID, "offset", this.handle.offset)
+
+      const stringIDTitle = this.uuid + "window_name"
+
+      this.renderer.setElementComponentValue(stringIDTitle, "offset", create(
+        this.handle.offset.x + 2,
+        this.handle.offset.y + 3,
+      ))
+
+      this.move()
+
+    }
+
     setWindowSize(x: number, y: number): void {
       this.windowSize.x = x
       this.windowSize.y = y
@@ -388,7 +410,7 @@ namespace mineos {
     }
 
     move(): void {
-      throw new Error("Move not implemented")
+      throw new Error("Move not implemented for " + this.windowTitle)
     }
   }
 
@@ -618,12 +640,28 @@ namespace mineos {
       // Mouse always positions based on the top left.
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
 
+      if (this.grabbedProgram != null) {
+        if (this.system.isMouseDown()) {
+          this.grabbedProgram.setWindowPos(
+            this.mousePosition.x - this.grabbedProgram.offset.x,
+            this.mousePosition.y - this.grabbedProgram.offset.y
+          )
+          print("dragging")
+        } else {
+          print("let go")
+          this.grabbedProgram = null
+        }
+      }
+
+      // Clicking desktop components
       if (this.system.isMouseClicked()) {
 
         // window handles before any desktop components
         for (const winProgram of this.runningPrograms) {
           if (winProgram.handle.pointWithin(this.mousePosition)) {
             this.grabbedProgram = winProgram
+            this.grabbedProgram.offset.x = this.mousePosition.x - winProgram.getPosX()
+            this.grabbedProgram.offset.y = this.mousePosition.y - winProgram.getPosY()
             break;
           }
         }
