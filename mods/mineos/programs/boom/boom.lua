@@ -1399,6 +1399,28 @@ do
         self:generateBuffers()
         self:pushNewTitle(0)
     end
+    function Boom.prototype.move(self)
+        do
+            local x = 0
+            while x < self.BUFFERS_ARRAY_SIZE_X do
+                do
+                    local y = 0
+                    while y < self.BUFFERS_ARRAY_SIZE_Y do
+                        self.renderer:setElementComponentValue(
+                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            "offset",
+                            create(
+                                self:getPosX() + self.BUFFER_SIZE_Y * x * (self.enable4kPerformanceMode and 2 or 1),
+                                self:getPosY() + self.BUFFER_SIZE_Y * y * (self.enable4kPerformanceMode and 2 or 1)
+                            )
+                        )
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
+    end
     function Boom.prototype.generateBuffers(self)
         self.BUFFERS_ARRAY_SIZE_X = self.performanceBuffer and 4 or 8
         self.BUFFERS_ARRAY_SIZE_Y = self.performanceBuffer and 4 or 7
@@ -1464,9 +1486,9 @@ do
             self.inPerformanceMode = 0
         end
         repeat
-            local ____switch24 = self.inPerformanceMode
-            local ____cond24 = ____switch24 == 0
-            if ____cond24 then
+            local ____switch27 = self.inPerformanceMode
+            local ____cond27 = ____switch27 == 0
+            if ____cond27 then
                 do
                     print("ULTRA QUALITY")
                     self.performanceBuffer = false
@@ -1476,8 +1498,8 @@ do
                     break
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 1
-            if ____cond24 then
+            ____cond27 = ____cond27 or ____switch27 == 1
+            if ____cond27 then
                 do
                     print("LOW QUALITY")
                     self.performanceBuffer = true
@@ -1486,8 +1508,8 @@ do
                     break
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 2
-            if ____cond24 then
+            ____cond27 = ____cond27 or ____switch27 == 2
+            if ____cond27 then
                 do
                     print("LOW QUALITY 4k")
                     self.enable4kPerformanceMode = true
@@ -2100,7 +2122,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue119
+                    goto __continue122
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -2126,7 +2148,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue119::
+            ::__continue122::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)

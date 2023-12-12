@@ -330,6 +330,17 @@ namespace mineos {
 
     }
 
+    move(): void {
+      for (let x = 0; x < this.BUFFERS_ARRAY_SIZE_X; x++) {
+        for (let y = 0; y < this.BUFFERS_ARRAY_SIZE_Y; y++) {
+          this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "offset", create(
+            this.getPosX() + (this.BUFFER_SIZE_Y * x * ((this.enable4kPerformanceMode) ? 2 : 1)),
+            this.getPosY() + (this.BUFFER_SIZE_Y * y * ((this.enable4kPerformanceMode) ? 2 : 1)),
+          ))
+        }
+      }
+    }
+
     generateBuffers(): void {
 
       this.BUFFERS_ARRAY_SIZE_X = (this.performanceBuffer) ? 4 : 8
@@ -1119,7 +1130,7 @@ namespace mineos {
 
     main(delta: number): void {
       if (delta > 0.1) delta = 0.1
-      
+
       if (!this.loaded) this.load()
       this.audioController.update(delta)
       this.mobsThink(delta)

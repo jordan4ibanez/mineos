@@ -770,9 +770,7 @@ do
         if self.grabbedProgram ~= nil then
             if self.system:isMouseDown() then
                 self.grabbedProgram:setWindowPos(self.mousePosition.x - self.grabbedProgram.offset.x, self.mousePosition.y - self.grabbedProgram.offset.y)
-                print("dragging")
             else
-                print("let go")
                 self.grabbedProgram = nil
             end
         end

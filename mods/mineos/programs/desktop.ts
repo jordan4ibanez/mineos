@@ -646,9 +646,7 @@ namespace mineos {
             this.mousePosition.x - this.grabbedProgram.offset.x,
             this.mousePosition.y - this.grabbedProgram.offset.y
           )
-          print("dragging")
         } else {
-          print("let go")
           this.grabbedProgram = null
         }
       }
