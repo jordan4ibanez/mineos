@@ -495,16 +495,16 @@ namespace mineos {
 
           let stringThing = concat(currentBuffer)
 
-          let rawPNG = null
+          let rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)//null
 
           // if (this.shouldRender) {
-          rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
+          // rawPNG = encode_png(this.BUFFER_SIZE_Y,this.BUFFER_SIZE_Y, stringThing, 9)
           // }
 
-          if (rawPNG) {
+          // if (rawPNG) {
             const rawData = encode_base64(rawPNG)
             this.renderer.setElementComponentValue("boomBuffer" + x + " " + y, "text", "[png:" + rawData)
-          }
+          // }
           
 
         }

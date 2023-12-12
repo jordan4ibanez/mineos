@@ -1580,16 +1580,13 @@ do
                     while y < self.BUFFERS_ARRAY_SIZE_Y do
                         local currentBuffer = self.buffers[self:bufferKey(x, y) + 1]
                         local stringThing = concat(currentBuffer)
-                        local rawPNG = nil
-                        rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
-                        if rawPNG then
-                            local rawData = encode_base64(rawPNG)
-                            self.renderer:setElementComponentValue(
-                                (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
-                                "text",
-                                "[png:" .. rawData
-                            )
-                        end
+                        local rawPNG = encode_png(self.BUFFER_SIZE_Y, self.BUFFER_SIZE_Y, stringThing, 9)
+                        local rawData = encode_base64(rawPNG)
+                        self.renderer:setElementComponentValue(
+                            (("boomBuffer" .. tostring(x)) .. " ") .. tostring(y),
+                            "text",
+                            "[png:" .. rawData
+                        )
                         y = y + 1
                     end
                 end
@@ -2103,7 +2100,7 @@ do
         for ____, mob in ipairs(self.mobs) do
             do
                 if not mob.alive then
-                    goto __continue120
+                    goto __continue119
                 end
                 local dir = yaw_to_dir(mob.yaw)
                 local hit = false
@@ -2129,7 +2126,7 @@ do
                 sp.x = mob.x
                 sp.y = mob.y
             end
-            ::__continue120::
+            ::__continue119::
         end
     end
     function Boom.prototype.addBulletHole(self, x, z)
