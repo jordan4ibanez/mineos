@@ -742,11 +742,11 @@ do
             self.oldFrameBufferSize = screenSize
             self.icons:corral()
         end
-        local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         if self.mouseLocked then
             self.mousePosition.x = 9000
             self.mousePosition.y = 9000
         end
+        local finalizedMousePos = create(self.mousePosition.x - 1, self.mousePosition.y - 1)
         self.renderer:setElementComponentValue("mouse", "offset", finalizedMousePos)
         if self.system:isMouseClicked() then
             for ____, element in ipairs(self.components) do

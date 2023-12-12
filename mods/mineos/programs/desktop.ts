@@ -603,17 +603,17 @@ namespace mineos {
         this.icons.corral()
       }
 
-      // -1 to have the inner pixel of the mouse be the pointer.
-      const finalizedMousePos = create(
-        this.mousePosition.x - 1,
-        this.mousePosition.y - 1
-      )
-
       // Now we can simply dump the mouse off the screen if it's "locked"
       if (this.mouseLocked) {
         this.mousePosition.x = 9000
         this.mousePosition.y = 9000
       }
+
+      // -1 to have the inner pixel of the mouse be the pointer.
+      const finalizedMousePos = create(
+        this.mousePosition.x - 1,
+        this.mousePosition.y - 1
+      )
   
       // Mouse always positions based on the top left.
       this.renderer.setElementComponentValue("mouse", "offset", finalizedMousePos)
