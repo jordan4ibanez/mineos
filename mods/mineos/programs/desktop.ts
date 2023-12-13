@@ -718,10 +718,10 @@ namespace mineos {
       // Clicking desktop components
       if (this.system.isMouseClicked()) {
 
-        let deleting = -1
+        let deleting = ""
         // window handles before any desktop components
-        let index = 0
-        for (const winProgram of this.runningPrograms) {
+        // let index = 0
+        for (const [index,winProgram] of Object.entries(this.runningPrograms)) {
           if (winProgram.handle.pointWithin(this.mousePosition)) {
 
             const XAABB = new AABB(create(
@@ -731,7 +731,8 @@ namespace mineos {
               create(buttonSize, buttonSize),
               create(0,0))
             if (XAABB.pointWithin(this.mousePosition)) {
-              deleting = index
+              deleting = winProgram.uuid
+
             } else {
               this.grabbedProgram = winProgram
               this.grabbedProgram.offset.x = this.mousePosition.x - winProgram.getPosX()
@@ -739,13 +740,21 @@ namespace mineos {
             }
             break;
           }
-          index++
+          // index++
         }
 
-        if (deleting >= 0) {
-          this.runningPrograms[deleting].__INTERNALDELETION()
-          this.runningPrograms[deleting].destructor()
-          delete this.runningPrograms[deleting]
+        if (deleting != "") {
+
+          let i = 0
+          for (const [index, winProgram] of Object.entries(this.runningPrograms)) {
+            if (winProgram.uuid == deleting) {
+              this.runningPrograms[i].__INTERNALDELETION()
+              this.runningPrograms[i].destructor()
+              this.runningPrograms.splice(i, 1)
+              break;
+            }
+            i++
+          }
         }
 
         // Now click a component if we're not dragging a window around

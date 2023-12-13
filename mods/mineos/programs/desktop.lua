@@ -137,32 +137,82 @@ do
     URIError = createErrorClass(nil, "URIError")
 end
 
-local function __TS__ObjectGetOwnPropertyDescriptors(object)
-    local metatable = getmetatable(object)
-    if not metatable then
-        return {}
-    end
-    return rawget(metatable, "_descriptors") or ({})
+local function __TS__CountVarargs(...)
+    return select("#", ...)
 end
 
-local function __TS__Delete(target, key)
-    local descriptors = __TS__ObjectGetOwnPropertyDescriptors(target)
-    local descriptor = descriptors[key]
-    if descriptor then
-        if not descriptor.configurable then
-            error(
-                __TS__New(
-                    TypeError,
-                    ((("Cannot delete property " .. tostring(key)) .. " of ") .. tostring(target)) .. "."
-                ),
-                0
-            )
+local function __TS__ArraySplice(self, ...)
+    local args = {...}
+    local len = #self
+    local actualArgumentCount = __TS__CountVarargs(...)
+    local start = args[1]
+    local deleteCount = args[2]
+    if start < 0 then
+        start = len + start
+        if start < 0 then
+            start = 0
         end
-        descriptors[key] = nil
-        return true
+    elseif start > len then
+        start = len
     end
-    target[key] = nil
-    return true
+    local itemCount = actualArgumentCount - 2
+    if itemCount < 0 then
+        itemCount = 0
+    end
+    local actualDeleteCount
+    if actualArgumentCount == 0 then
+        actualDeleteCount = 0
+    elseif actualArgumentCount == 1 then
+        actualDeleteCount = len - start
+    else
+        actualDeleteCount = deleteCount or 0
+        if actualDeleteCount < 0 then
+            actualDeleteCount = 0
+        end
+        if actualDeleteCount > len - start then
+            actualDeleteCount = len - start
+        end
+    end
+    local out = {}
+    for k = 1, actualDeleteCount do
+        local from = start + k
+        if self[from] ~= nil then
+            out[k] = self[from]
+        end
+    end
+    if itemCount < actualDeleteCount then
+        for k = start + 1, len - actualDeleteCount do
+            local from = k + actualDeleteCount
+            local to = k + itemCount
+            if self[from] then
+                self[to] = self[from]
+            else
+                self[to] = nil
+            end
+        end
+        for k = len - actualDeleteCount + itemCount + 1, len do
+            self[k] = nil
+        end
+    elseif itemCount > actualDeleteCount then
+        for k = len - actualDeleteCount, start + 1, -1 do
+            local from = k + actualDeleteCount
+            local to = k + itemCount
+            if self[from] then
+                self[to] = self[from]
+            else
+                self[to] = nil
+            end
+        end
+    end
+    local j = start + 1
+    for i = 3, actualArgumentCount do
+        self[j] = args[i]
+        j = j + 1
+    end
+    for k = #self, len - actualDeleteCount + itemCount + 1, -1 do
+        self[k] = nil
+    end
+    return out
 end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
@@ -864,9 +914,10 @@ do
             end
         end
         if self.system:isMouseClicked() then
-            local deleting = -1
-            local index = 0
-            for ____, winProgram in ipairs(self.runningPrograms) do
+            local deleting = ""
+            for ____, ____value in ipairs(__TS__ObjectEntries(self.runningPrograms)) do
+                local index = ____value[1]
+                local winProgram = ____value[2]
                 if winProgram.handle:pointWithin(self.mousePosition) then
                     local XAABB = __TS__New(
                         mineos.AABB,
@@ -875,7 +926,7 @@ do
                         create(0, 0)
                     )
                     if XAABB:pointWithin(self.mousePosition) then
-                        deleting = index
+                        deleting = winProgram.uuid
                     else
                         self.grabbedProgram = winProgram
                         self.grabbedProgram.offset.x = self.mousePosition.x - winProgram:getPosX()
@@ -883,12 +934,20 @@ do
                     end
                     break
                 end
-                index = index + 1
             end
-            if deleting >= 0 then
-                self.runningPrograms[deleting + 1]:__INTERNALDELETION()
-                self.runningPrograms[deleting + 1]:destructor()
-                __TS__Delete(self.runningPrograms, deleting + 1)
+            if deleting ~= "" then
+                local i = 0
+                for ____, ____value in ipairs(__TS__ObjectEntries(self.runningPrograms)) do
+                    local index = ____value[1]
+                    local winProgram = ____value[2]
+                    if winProgram.uuid == deleting then
+                        self.runningPrograms[i + 1]:__INTERNALDELETION()
+                        self.runningPrograms[i + 1]:destructor()
+                        __TS__ArraySplice(self.runningPrograms, i, 1)
+                        break
+                    end
+                    i = i + 1
+                end
             end
             if self.grabbedProgram == nil then
                 for ____, element in ipairs(self.components) do
