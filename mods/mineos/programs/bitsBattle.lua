@@ -683,6 +683,25 @@ do
     function BitsBattle.prototype.destructor(self)
         print("bits battle destroyed")
         self.renderer:removeElement("chips_challenge_bg" .. tostring(self.instance))
+        do
+            local x = 0
+            while x < self.VISIBLE_SIZE do
+                do
+                    local y = 0
+                    while y < self.VISIBLE_SIZE do
+                        do
+                            local layer = 0
+                            while layer <= 1 do
+                                self.renderer:removeElement(self:grabTileKey(x, y, layer))
+                                layer = layer + 1
+                            end
+                        end
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
     end
     function BitsBattle.prototype.load(self)
         mineos.System.out:println("Loading Bits' Battle!")
@@ -985,125 +1004,143 @@ do
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end
+    function BitsBattle.prototype.playKeyPickup(self)
+        self.audioController:playSound("key_pickup", 1)
+    end
+    function BitsBattle.prototype.playDoorUnlock(self)
+        self.audioController:playSound("door_unlock", 1)
+    end
     function BitsBattle.prototype.collisionDetection(self, newTile, x, y)
         repeat
-            local ____switch24 = newTile
-            local ____cond24 = ____switch24 == 0
-            if ____cond24 then
+            local ____switch29 = newTile
+            local ____cond29 = ____switch29 == 0
+            if ____cond29 then
                 return true
             end
-            ____cond24 = ____cond24 or ____switch24 == 1
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 1
+            if ____cond29 then
                 return false
             end
-            ____cond24 = ____cond24 or ____switch24 == 2
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 2
+            if ____cond29 then
                 do
                     if self.blueKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.blueKeys = self.blueKeys - 1
+                        self:playDoorUnlock()
                         print("new blue keys: " .. tostring(self.blueKeys))
                         return true
                     end
                     return false
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 3
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 3
+            if ____cond29 then
                 do
                     if self.redKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.redKeys = self.redKeys - 1
+                        self:playDoorUnlock()
                         print("new red keys: " .. tostring(self.redKeys))
                         return true
                     end
                     return false
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 4
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 4
+            if ____cond29 then
                 do
                     if self.yellowKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.yellowKeys = self.yellowKeys - 1
+                        self:playDoorUnlock()
                         print("new yellow keys: " .. tostring(self.yellowKeys))
                         return true
                     end
                     return false
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 5
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 5
+            if ____cond29 then
                 do
                     if self.greenKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.greenKeys = self.greenKeys - 1
+                        self:playDoorUnlock()
                         print("new green keys: " .. tostring(self.greenKeys))
                         return true
                     end
                     return false
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 6
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 6
+            if ____cond29 then
                 do
                     self.blueKeys = self.blueKeys + 1
+                    self:playKeyPickup()
                     print("new blue keys: " .. tostring(self.blueKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 7
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 7
+            if ____cond29 then
                 do
                     self.redKeys = self.redKeys + 1
+                    self:playKeyPickup()
                     print("new red keys: " .. tostring(self.redKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 8
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 8
+            if ____cond29 then
                 do
                     self.yellowKeys = self.yellowKeys + 1
+                    self:playKeyPickup()
                     print("new yellow keys: " .. tostring(self.yellowKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 9
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 9
+            if ____cond29 then
                 do
                     self.greenKeys = self.greenKeys + 1
+                    self:playKeyPickup()
                     print("new green keys: " .. tostring(self.greenKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 10
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 10
+            if ____cond29 then
                 do
                     self.chipsRemaining = self.chipsRemaining - 1
                     print("new chips remaining: " .. tostring(self.chipsRemaining))
+                    self.audioController:playSound("chip_pickup", 0.6)
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 11
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 11
+            if ____cond29 then
                 do
                     if self.chipsRemaining <= 0 then
                         print("exit opened")
+                        self:playDoorUnlock()
                         self.map[y + 1][x + 1] = 0
                         return true
                     end
                     return false
                 end
             end
-            ____cond24 = ____cond24 or ____switch24 == 12
-            if ____cond24 then
+            ____cond29 = ____cond29 or ____switch29 == 12
+            if ____cond29 then
                 do
                     self:setWindowTitle("Blit's Battle | YOU WIN!")
+                    self.audioController:stopSong()
+                    self.audioController:playSound("win", 1)
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -1120,6 +1157,8 @@ do
             self.pos.x = newX
             self.pos.y = newY
             self:update()
+        else
+            self.audioController:playSound("oof", 1)
         end
     end
     function BitsBattle.prototype.doControls(self)

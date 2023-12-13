@@ -244,6 +244,14 @@ namespace mineos {
     destructor(): void {
       print("bits battle destroyed")
       this.renderer.removeElement("chips_challenge_bg" + this.instance)
+
+      for (let x = 0; x < this.VISIBLE_SIZE; x++) {
+        for (let y = 0; y < this.VISIBLE_SIZE; y++) {
+          for (let layer = 0; layer <= 1; layer ++) {
+            this.renderer.removeElement(this.grabTileKey(x,y,layer))
+          }
+        }
+      }
     }
 
     load() {
@@ -291,94 +299,114 @@ namespace mineos {
       System.out.println("Bit's Battle loaded!");
     }
 
-        // I could break this down into functions, but I don't feel like it
-        collisionDetection(newTile: number, x: number, y: number): boolean {
-          switch(newTile) {
-            case 0: return true
-            case 1: return false
-            case 2: {
-              if (this.blueKeys > 0) {
-                this.map[y][x] = 0
-                this.blueKeys--
-                print("new blue keys: " + this.blueKeys)
-                return true
-              }
-              return false
-            }
-            case 3: {
-              if (this.redKeys > 0) {
-                this.map[y][x] = 0
-                this.redKeys--
-                print("new red keys: " + this.redKeys)
-                return true
-              }
-              return false
-            }
-            case 4: {
-              if (this.yellowKeys > 0) {
-                this.map[y][x] = 0
-                this.yellowKeys--
-                print("new yellow keys: " + this.yellowKeys)
-                return true
-              }
-              return false
-            }
-            case 5: {
-              if (this.greenKeys > 0) {
-                this.map[y][x] = 0
-                this.greenKeys--
-                print("new green keys: " + this.greenKeys)
-                return true
-              }
-              return false
-            }
-            case 6: {
-              this.blueKeys++
-              print("new blue keys: " + this.blueKeys)
-              this.map[y][x] = 0
-              return true
-            }
-            case 7: {
-              this.redKeys++
-              print("new red keys: " + this.redKeys)
-              this.map[y][x] = 0
-              return true
-            }
-            case 8: {
-              this.yellowKeys++
-              print("new yellow keys: " + this.yellowKeys)
-              this.map[y][x] = 0
-              return true
-            }
-            case 9: {
-              this.greenKeys++
-              print("new green keys: " + this.greenKeys)
-              this.map[y][x] = 0
-              return true
-            }
-            case 10: {
-              this.chipsRemaining--
-              print("new chips remaining: " + this.chipsRemaining)
-              this.map[y][x] = 0
-              return true
-            }
-            case 11: {
-              if (this.chipsRemaining <= 0) {
-                print("exit opened")
-                this.map[y][x] = 0
-                return true
-              }
-              return false
-            }
-            case 12: {
-              this.setWindowTitle("Blit's Battle | YOU WIN!")
-              this.map[y][x] = 0
-              return true
-            }
-    
-            default: return false
+    playKeyPickup(): void {
+      this.audioController.playSound("key_pickup", 1)
+    }
+
+    playDoorUnlock(): void {
+      this.audioController.playSound("door_unlock", 1)
+    }
+
+    // I could break this down into functions, but I don't feel like it
+    collisionDetection(newTile: number, x: number, y: number): boolean {
+      switch(newTile) {
+        case 0: return true
+        case 1: return false
+        case 2: {
+          if (this.blueKeys > 0) {
+            this.map[y][x] = 0
+            this.blueKeys--
+            this.playDoorUnlock()
+            print("new blue keys: " + this.blueKeys)
+            return true
           }
+          return false
         }
+        case 3: {
+          if (this.redKeys > 0) {
+            this.map[y][x] = 0
+            this.redKeys--
+            this.playDoorUnlock()
+            print("new red keys: " + this.redKeys)
+            return true
+          }
+          return false
+        }
+        case 4: {
+          if (this.yellowKeys > 0) {
+            this.map[y][x] = 0
+            this.yellowKeys--
+            this.playDoorUnlock()
+            print("new yellow keys: " + this.yellowKeys)
+            return true
+          }
+          return false
+        }
+        case 5: {
+          if (this.greenKeys > 0) {
+            this.map[y][x] = 0
+            this.greenKeys--
+            this.playDoorUnlock()
+            print("new green keys: " + this.greenKeys)
+            return true
+          }
+          return false
+        }
+        case 6: {
+          this.blueKeys++
+          this.playKeyPickup()
+          print("new blue keys: " + this.blueKeys)
+          this.map[y][x] = 0
+          return true
+        }
+        case 7: {
+          this.redKeys++
+          this.playKeyPickup()
+          print("new red keys: " + this.redKeys)
+          this.map[y][x] = 0
+          return true
+        }
+        case 8: {
+          this.yellowKeys++
+          this.playKeyPickup()
+          print("new yellow keys: " + this.yellowKeys)
+          this.map[y][x] = 0
+          return true
+        }
+        case 9: {
+          this.greenKeys++
+          this.playKeyPickup()
+          print("new green keys: " + this.greenKeys)
+          this.map[y][x] = 0
+          return true
+        }
+        case 10: {
+          this.chipsRemaining--
+          print("new chips remaining: " + this.chipsRemaining)
+          this.audioController.playSound("chip_pickup", 0.6)
+          this.map[y][x] = 0
+          return true
+        }
+        case 11: {
+          if (this.chipsRemaining <= 0) {
+            print("exit opened")
+            this.playDoorUnlock()
+            this.map[y][x] = 0
+            return true
+          }
+          return false
+        }
+        case 12: {
+          this.setWindowTitle("Blit's Battle | YOU WIN!")
+          this.audioController.stopSong()
+          this.audioController.playSound("win", 1)
+          this.map[y][x] = 0
+          return true
+        }
+
+        default: return false
+      }
+    }
 
 
     tryMove(x: number, y: number): void {
@@ -388,6 +416,8 @@ namespace mineos {
         this.pos.x = newX
         this.pos.y = newY
         this.update()
+      } else {
+        this.audioController.playSound("oof", 1)
       }
     }
 
