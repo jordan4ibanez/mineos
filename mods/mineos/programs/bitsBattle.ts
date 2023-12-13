@@ -34,6 +34,19 @@ namespace mineos {
   const _ = 0
   const w = 1
   const E = 12
+  
+  // keys
+  const b = 2
+  const r = 3
+  const y = 4
+  const g = 5
+
+  // locks
+  const B = 6
+  const R = 7
+  const Y = 8
+  const G = 9
+
   const S = 11
   const C = 10
 
@@ -52,13 +65,13 @@ namespace mineos {
       [_,_,_,w,w,w,w,w,_,w,w,w,w,w,_,_,_],
       [_,_,_,w,_,_,_,w,w,w,_,_,_,w,_,_,_],
       [_,_,_,w,_,C,_,w,E,w,_,C,_,w,_,_,_],
-      [_,w,w,w,w,w,9,w,_,w,9,w,w,w,w,w,_],
-      [_,w,_,_,_,w,_,_,_,_,_,w,_,_,_,w,_],
+      [_,w,w,w,w,w,G,w,S,w,G,w,w,w,w,w,_],
+      [_,w,_,_,_,B,_,_,_,_,_,R,_,_,_,w,_],
       [_,w,_,C,_,w,_,_,_,_,_,w,_,C,_,w,_],
       [_,w,w,w,w,w,C,_,_,_,C,w,w,w,w,w,_],
       [_,w,_,C,_,w,_,_,_,_,_,w,_,C,_,w,_],
-      [_,w,_,_,_,w,_,_,C,_,_,w,_,_,_,w,_],
-      [_,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,_],
+      [_,w,_,_,_,R,_,_,C,_,_,B,_,_,_,w,_],
+      [_,w,w,w,w,w,w,Y,w,Y,w,w,w,w,w,w,_],
       [_,_,_,_,_,w,_,_,w,_,_,w,_,_,_,_,_],
       [_,_,_,_,_,w,_,C,w,C,_,w,_,_,_,_,_],
       [_,_,_,_,_,w,_,_,w,_,_,w,_,_,_,_,_],
