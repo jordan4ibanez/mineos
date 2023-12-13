@@ -17,6 +17,32 @@ namespace mineos {
       super(system, renderer, audio, desktop, windowSize)
       this.instance = BitsBattle.counter
       BitsBattle.counter++
+
+      this.renderer.addElement("chips_challenge_bg" + this.instance, {
+        name: "chips_challenge_bg_" + this.instance,
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "pixel.png^[colorize:" + colors.color(70,70,70) + ":255",
+        // number: colors.colorHEX(50,50,50),
+        scale: this.windowSize,
+        alignment: create(1,1),
+        offset: create(
+          this.getPosX(),
+          this.getPosY(),
+        ),
+        z_index: 1
+      })
+
+      this.setWindowTitle("Bit's Battle")
+    }
+
+    move() {
+      print("moving bits battle")
+      this.renderer.setElementComponentValue("chips_challenge_bg" + this.instance, "offset", this.windowPosition)
+    }
+
+    destructor(): void {
+      print("bits battle destroyed")
     }
 
     load() {
@@ -58,7 +84,7 @@ namespace mineos {
 
       AudioController.registerSong(bitsTheme)
 
-      // this.audioController.playSong("bitsTheme")
+      this.audioController.playSong("bitsTheme")
 
       // this.renderer.addElement("left", new gui.Button({
       //   position: create(25,10),
@@ -102,7 +128,7 @@ namespace mineos {
 
       print("bits battle instance " + this.instance + " is running " + delta)
 
-      // this.audioController.update(delta)
+      this.audioController.update(delta)
     }
   }
 

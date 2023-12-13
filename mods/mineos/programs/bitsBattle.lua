@@ -66,6 +66,34 @@ do
         }}
         self.instance = BitsBattle.counter
         BitsBattle.counter = BitsBattle.counter + 1
+        self.renderer:addElement(
+            "chips_challenge_bg" .. tostring(self.instance),
+            {
+                name = "chips_challenge_bg_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. colors.color(60, 60, 60)) .. ":255",
+                scale = self.windowSize,
+                alignment = create(1, 1),
+                offset = create(
+                    self:getPosX(),
+                    self:getPosY()
+                ),
+                z_index = 1
+            }
+        )
+        self:setWindowTitle("Bit's Battle")
+    end
+    function BitsBattle.prototype.move(self)
+        print("moving bits battle")
+        self.renderer:setElementComponentValue(
+            "chips_challenge_bg" .. tostring(self.instance),
+            "offset",
+            self.windowPosition
+        )
+    end
+    function BitsBattle.prototype.destructor(self)
+        print("bits battle destroyed")
     end
     function BitsBattle.prototype.load(self)
         mineos.System.out:println("Loading Bits' Battle!")
@@ -364,6 +392,7 @@ do
             2
         }
         mineos.AudioController:registerSong(bitsTheme)
+        self.audioController:playSong("bitsTheme")
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end
@@ -372,6 +401,7 @@ do
             self:load()
         end
         print((("bits battle instance " .. tostring(self.instance)) .. " is running ") .. tostring(delta))
+        self.audioController:update(delta)
     end
     BitsBattle.counter = 0
     mineos.DesktopEnvironment:registerProgram(BitsBattle)

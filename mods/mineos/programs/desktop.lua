@@ -815,6 +815,10 @@ do
             function()
             end
         )
+        self:launchProgram(
+            "BitsBattle",
+            create(500, 500)
+        )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end
