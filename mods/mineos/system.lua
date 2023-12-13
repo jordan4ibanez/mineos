@@ -326,6 +326,7 @@ do
         if self.quitReceived then
             return
         end
+        self.audioController.updated = false
         self:updateFrameBuffer({mineos.osFrameBufferPoll()})
         self:pollMouse()
         if self.booting then

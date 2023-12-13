@@ -256,6 +256,8 @@ namespace mineos {
       //todo: This will do a shutdown process eventually
       if (this.quitReceived) return
 
+      this.audioController.updated = false
+
       this.updateFrameBuffer(osFrameBufferPoll())
 
       this.pollMouse()
