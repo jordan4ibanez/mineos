@@ -108,6 +108,11 @@ namespace mineos {
       [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]
     ]
 
+    upWasDown = false
+    downWasDown = false
+    leftWasDown = false
+    rightWasDown = false
+
     // 9x9
     readonly VISIBLE_SIZE = 9
     readonly TILE_PIXEL_SIZE = 32
@@ -187,10 +192,16 @@ namespace mineos {
     update(): void {
       const startX = this.pos.x - 4
       const startY = this.pos.y - 4
+
       for (let x = 0; x < this.VISIBLE_SIZE; x++) {
         for (let y = 0; y < this.VISIBLE_SIZE; y++) {
+
           const realX = x + startX
           const realY = y + startY
+
+          if (realX < 0 || realY < 0 || realX >= this.MAP_WIDTH || realY >= this.MAP_HEIGHT)  {
+            continue
+          }
 
           let texture = mapToTexture(this.map[realY][realX])
 
@@ -258,47 +269,55 @@ namespace mineos {
 
       this.audioController.playSong("bitsTheme")
 
-      // this.renderer.addElement("left", new gui.Button({
-      //   position: create(25,10),
-      //   size: create(1,1),
-      //   name: "left",
-      //   label: "left"
-      // }))
-
-      // this.renderer.addElement("down", new gui.Button({
-      //   position: create(26,10),
-      //   size: create(1,1),
-      //   name: "down",
-      //   label: "down"
-      // }))
-
-      // this.renderer.addElement("right", new gui.Button({
-      //   position: create(27,10),
-      //   size: create(1,1),
-      //   name: "right",
-      //   label: "right"
-      // }))
-
-      // this.renderer.addElement("up", new gui.Button({
-      //   position: create(26,9),
-      //   size: create(1,1),
-      //   name: "up",
-      //   label: "up"
-      // }))
-
-
-
-
-
-
       this.loaded = true
       System.out.println("Bit's Battle loaded!");
+    }
+
+    tryMove(x: number, y: number): void {
+      const newX = this.pos.x + x
+      const newY = this.pos.y + y
+      // if (this.map[newY][newX] == 0) {
+        this.pos.x = newX
+        this.pos.y = newY
+        this.update()
+      // }
+    }
+
+    doControls(): void {
+      // Up is down and down is dow and right is down and left is down, this isn't confusing at all. I'm floating away at this point
+      const upDown = this.system.isKeyDown("up")
+      const upPressed = upDown && !this.upWasDown
+      this.upWasDown = upDown
+      const downDown = this.system.isKeyDown("down")
+      const downPressed = downDown && !this.downWasDown
+      this.downWasDown = downDown
+      const leftDown = this.system.isKeyDown("left")
+      const leftPressed = leftDown && !this.leftWasDown
+      this.leftWasDown = leftDown
+      const rightDown = this.system.isKeyDown("right")
+      const rightPressed = rightDown && !this.rightWasDown
+      this.rightWasDown = rightDown
+
+      // Filter it like chips challenge, only one key at a time.
+      if (upPressed) {
+        print("up")
+        this.tryMove(0, -1)
+      } else if (downPressed) {
+        print("down")
+        this.tryMove(0, 1)
+      } else if (leftPressed) {
+        this.tryMove(-1, 0)
+      } else if (rightPressed) {
+        this.tryMove(1, 0)
+      }
     }
 
     main(delta: number): void {
       if (!this.loaded) this.load()
 
-      print("bits battle instance " + this.instance + " is running " + delta)
+      // print("bits battle instance " + this.instance + " is running " + delta)
+      this.doControls()
+
 
       this.audioController.update(delta)
     }

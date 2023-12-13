@@ -532,6 +532,10 @@ do
                 _
             }
         }
+        self.upWasDown = false
+        self.downWasDown = false
+        self.leftWasDown = false
+        self.rightWasDown = false
         self.VISIBLE_SIZE = 9
         self.TILE_PIXEL_SIZE = 32
         self.TILE_SCALE = 1.5
@@ -613,17 +617,23 @@ do
                 do
                     local y = 0
                     while y < self.VISIBLE_SIZE do
-                        local realX = x + startX
-                        local realY = y + startY
-                        local texture = mapToTexture(self.map[realY + 1][realX + 1])
-                        if realX == self.pos.x and realY == self.pos.y then
-                            texture = "bit_byte.png"
+                        do
+                            local realX = x + startX
+                            local realY = y + startY
+                            if realX < 0 or realY < 0 or realX >= self.MAP_WIDTH or realY >= self.MAP_HEIGHT then
+                                goto __continue13
+                            end
+                            local texture = mapToTexture(self.map[realY + 1][realX + 1])
+                            if realX == self.pos.x and realY == self.pos.y then
+                                texture = "bit_byte.png"
+                            end
+                            self.renderer:setElementComponentValue(
+                                self:grabTileKey(x, y, 1),
+                                "text",
+                                texture
+                            )
                         end
-                        self.renderer:setElementComponentValue(
-                            self:grabTileKey(x, y, 1),
-                            "text",
-                            texture
-                        )
+                        ::__continue13::
                         y = y + 1
                     end
                 end
@@ -947,11 +957,43 @@ do
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end
+    function BitsBattle.prototype.tryMove(self, x, y)
+        local newX = self.pos.x + x
+        local newY = self.pos.y + y
+        self.pos.x = newX
+        self.pos.y = newY
+        self:update()
+    end
+    function BitsBattle.prototype.doControls(self)
+        local upDown = self.system:isKeyDown("up")
+        local upPressed = upDown and not self.upWasDown
+        self.upWasDown = upDown
+        local downDown = self.system:isKeyDown("down")
+        local downPressed = downDown and not self.downWasDown
+        self.downWasDown = downDown
+        local leftDown = self.system:isKeyDown("left")
+        local leftPressed = leftDown and not self.leftWasDown
+        self.leftWasDown = leftDown
+        local rightDown = self.system:isKeyDown("right")
+        local rightPressed = rightDown and not self.rightWasDown
+        self.rightWasDown = rightDown
+        if upPressed then
+            print("up")
+            self:tryMove(0, -1)
+        elseif downPressed then
+            print("down")
+            self:tryMove(0, 1)
+        elseif leftPressed then
+            self:tryMove(-1, 0)
+        elseif rightPressed then
+            self:tryMove(1, 0)
+        end
+    end
     function BitsBattle.prototype.main(self, delta)
         if not self.loaded then
             self:load()
         end
-        print((("bits battle instance " .. tostring(self.instance)) .. " is running ") .. tostring(delta))
+        self:doControls()
         self.audioController:update(delta)
     end
     BitsBattle.counter = 0
