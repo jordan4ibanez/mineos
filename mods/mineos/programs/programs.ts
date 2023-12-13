@@ -31,7 +31,7 @@ namespace mineos {
     "programs/boot_loader",
     "programs/os_loader",
     "programs/desktop",
-    "programs/bitsBattle",
+    "programs/bits_battle",
     "programs/boom/boom"
   ])
 

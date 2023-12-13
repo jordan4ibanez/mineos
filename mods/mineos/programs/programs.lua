@@ -154,7 +154,7 @@ do
         "programs/boot_loader",
         "programs/os_loader",
         "programs/desktop",
-        "programs/bitsBattle",
+        "programs/bits_battle",
         "programs/boom/boom"
     })
     mineos.System.out:println("programs loaded!")
