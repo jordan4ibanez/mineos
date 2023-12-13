@@ -36,6 +36,11 @@ namespace mineos {
 
     instance = 0
 
+    //! Map is mutable!
+    // 17x16
+    // level 1 of chips challenge
+    MAP_WIDTH = 17
+    MAP_HEIGHT = 16
     map: number[][] = [
       [0,0,0,0,0,0,0,0]
     ]
@@ -44,6 +49,12 @@ namespace mineos {
       super(system, renderer, audio, desktop, windowSize)
       this.instance = BitsBattle.counter
       BitsBattle.counter++
+
+      // Check everything!
+      assert(this.map.length == this.MAP_HEIGHT)
+      for (const arr of this.map) {
+        assert(arr.length == this.MAP_WIDTH)
+      }
 
       this.renderer.addElement("chips_challenge_bg" + this.instance, {
         name: "chips_challenge_bg_" + this.instance,

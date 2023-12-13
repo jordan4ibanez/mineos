@@ -54,6 +54,8 @@ do
         )
         self.loaded = false
         self.instance = 0
+        self.MAP_WIDTH = 17
+        self.MAP_HEIGHT = 16
         self.map = {{
             0,
             0,
@@ -66,6 +68,10 @@ do
         }}
         self.instance = BitsBattle.counter
         BitsBattle.counter = BitsBattle.counter + 1
+        assert(#self.map == self.MAP_HEIGHT)
+        for ____, arr in ipairs(self.map) do
+            assert(#arr == self.MAP_WIDTH)
+        end
         self.renderer:addElement(
             "chips_challenge_bg" .. tostring(self.instance),
             {
