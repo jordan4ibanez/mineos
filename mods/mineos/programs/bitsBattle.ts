@@ -2,6 +2,29 @@ namespace mineos {
 
   const create = vector.create2d;
 
+  // This can be a static function, it's immutable anyways.
+  function mapToTexture(tileID: number): string {
+    switch(tileID) {
+      case 0: return "bg_tile.png"
+      case 1: return "fg_tile.png"
+
+      case 2: return "blue_lock.png"
+      case 3: return "red_lock.png"
+      case 4: return "yellow_lock.png"
+      case 5: return "green_lock.png"
+
+      case 6: return "blue_key.png"
+      case 7: return "red_key.png"
+      case 8: return "yellow_key.png"
+      case 9: return "green_key.png"
+
+      case 10: return "chip.png"
+      case 11: return "chip_socket.png"
+      case 12: return "exit.png"
+      default: throw new Error("How did this even get a different value? " + tileID)
+    }
+  }
+
   /*
   2 layers fg/bg
 
@@ -19,11 +42,11 @@ namespace mineos {
   8 - yellow_key.png - yellow key
   9 - green_key.png  - green key
 
-  10 - chip - computer chip
+  10 - chip.png - computer chip
 
-  11 - socket - blocks exit until you collect all chips
+  11 - chip_socket.png - blocks exit until you collect all chips
 
-  12 - exit - exits the level
+  12 - exit.png - exits the level
 
   in this case it just changes the window title to "You win!"
 
@@ -31,9 +54,9 @@ namespace mineos {
   */
 
   // This makes the map more readable
+  // nothing & wall
   const _ = 0
   const w = 1
-  const E = 12
   
   // keys
   const b = 2
@@ -47,8 +70,12 @@ namespace mineos {
   const Y = 8
   const G = 9
 
-  const S = 11
+  // chips & socket
   const C = 10
+  const S = 11
+
+  // exit
+  const E = 12
 
   class BitsBattle extends WindowProgram {
     loaded = false
@@ -58,8 +85,8 @@ namespace mineos {
     // 17x16
     // level 1 of chips challenge
     chipsRemaining = 11
-    MAP_WIDTH = 17
-    MAP_HEIGHT = 16
+    readonly MAP_WIDTH = 17
+    readonly MAP_HEIGHT = 16
     // The second green key in level 1 doesn't go away.
     // I'm too lazy to implement this, so there's 2 green keys.
     map: number[][] = [
@@ -81,6 +108,12 @@ namespace mineos {
       [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]
     ]
 
+    // 9x9
+    readonly VISIBLE_SIZE = 9
+    readonly TILE_PIXEL_SIZE = 32
+    readonly TILE_SCALE = 1.5
+    readonly TILE_OFFSET = 32
+
     pos = create(8, 7)
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
@@ -93,6 +126,10 @@ namespace mineos {
       for (const arr of this.map) {
         assert(arr.length == this.MAP_WIDTH)
       }
+
+      this.windowSize.x = 640
+      this.windowSize.y = 480
+      this.updateHandleWidth(640)
 
       this.renderer.addElement("chips_challenge_bg" + this.instance, {
         name: "chips_challenge_bg_" + this.instance,
@@ -109,7 +146,44 @@ namespace mineos {
         z_index: 1
       })
 
+      const startX = this.pos.x - 4
+      const startY = this.pos.y - 4
+
+      // Create the initial tile buffers. FG blank, BG bg_tile
+      // We're gonna create a little space in the top 
+
+      for (let x = 0; x < this.VISIBLE_SIZE; x++) {
+        for (let y = 0; y < this.VISIBLE_SIZE; y++) {
+          for (let layer = 0; layer <= 1; layer ++) {
+
+            const realX = x + startX
+            const realY = y + startY
+
+            // 1 is the foreground
+            const tex = (layer == 1) ? "nothing.png" : "bg_tile.png"
+
+            this.renderer.addElement("chips_challenge_bg" + this.instance, {
+              name: "chips_challenge_bg_" + this.instance,
+              hud_elem_type: HudElementType.image,
+              position: create(0,0),
+              text: tex,
+              scale: create(this.TILE_SCALE,this.TILE_SCALE),
+              alignment: create(1,1),
+              offset: create(
+                this.getPosX() + (x * (this.TILE_PIXEL_SIZE * this.TILE_SCALE)) + this.TILE_OFFSET,
+                this.getPosY() + (y * (this.TILE_PIXEL_SIZE * this.TILE_SCALE)) + this.TILE_OFFSET,
+              ),
+              z_index: 1
+            })
+          }
+        }
+      }
+
       this.setWindowTitle("Bit's Battle")
+    }
+
+    grabTileKey(x: number, y: number, layer: number): string {
+      return "chips_challenge_tile_" + x + "_" + y + "_" + layer
     }
 
     move() {
