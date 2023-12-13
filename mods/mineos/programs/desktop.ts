@@ -646,8 +646,8 @@ namespace mineos {
         () => {}
       ))
 
-      // //!!!! DEBUGGING Bit's Battle !!!!!!!
-      this.launchProgram("BitsBattle", create(500, 500))
+      // //!!!! DEBUGGING Gong !!!!!!!
+      this.launchProgram("Gong", create(500, 500))
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")

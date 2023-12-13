@@ -858,7 +858,7 @@ do
             end
         )
         self:launchProgram(
-            "BitsBattle",
+            "Gong",
             create(500, 500)
         )
         self.desktopLoaded = true
