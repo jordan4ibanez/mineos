@@ -29,24 +29,27 @@ namespace mineos {
   No other levels, not enough time in this jam.
   */
 
+  // This makes the map more readable
+  const e = 12
+  const s = 11
+  const c = 10
+
   class BitsBattle extends WindowProgram {
     loaded = false
-
     static counter = 0
-
     instance = 0
-
     //! Map is mutable!
     // 17x16
     // level 1 of chips challenge
+    chipsRemaining = 11
     MAP_WIDTH = 17
     MAP_HEIGHT = 16
     map: number[][] = [
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,1,1,1,1,1,0,1,1,1,1,1,0,0,0],
+      [0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0],
+      [0,0,0,1,0,0,0,1,e,1,0,0,0,1,0,0,0],
+      [0,0,0,1,1,1,1,1,s,1,1,1,1,1,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -59,6 +62,8 @@ namespace mineos {
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     ]
+
+    pos = create(8, 7)
 
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, windowSize: Vec2) {
       super(system, renderer, audio, desktop, windowSize)
