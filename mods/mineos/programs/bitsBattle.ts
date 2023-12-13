@@ -86,6 +86,8 @@ namespace mineos {
     yellowKeys = 0
     greenKeys = 0
 
+    winState = false
+
 
     loaded = false
     static counter = 0
@@ -190,12 +192,145 @@ namespace mineos {
         }
       }
 
+      this.renderer.addElement("chips_keys_red_" + this.instance, {
+        name: "chips_keys_red_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: "Red Keys: " + this.redKeys,
+        number: colors.colorHEX(0,0,0),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.windowPosition.x + 500,
+          this.windowPosition.y + 100
+        ),
+        // style: 4,
+        z_index: 3
+      })
+
+      this.renderer.addElement("chips_keys_green_" + this.instance, {
+        name: "chips_keys_green_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: "Green Keys: " + this.greenKeys,
+        number: colors.colorHEX(0,0,0),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.windowPosition.x + 500,
+          this.windowPosition.y + 150
+        ),
+        // style: 4,
+        z_index: 3
+      })
+
+      this.renderer.addElement("chips_keys_blue_" + this.instance, {
+        name: "chips_keys_blue_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: "Blue Keys: " + this.blueKeys,
+        number: colors.colorHEX(0,0,0),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.windowPosition.x + 500,
+          this.windowPosition.y + 200
+        ),
+        // style: 4,
+        z_index: 3
+      })
+
+      this.renderer.addElement("chips_keys_yellow_" + this.instance, {
+        name: "chips_keys_yellow_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: "Yellow Keys: " + this.yellowKeys,
+        number: colors.colorHEX(0,0,0),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.windowPosition.x + 500,
+          this.windowPosition.y + 250
+        ),
+        // style: 4,
+        z_index: 3
+      })
+
+      this.renderer.addElement("chips_WIN_" + this.instance, {
+        name: "chips_WIN_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: "",
+        number: colors.colorHEX(92,10,31),
+        position: create(0,0),
+        alignment: create(1,1),
+        offset: create(
+          this.windowPosition.x + 480,
+          this.windowPosition.y + 300
+        ),
+        size: create(
+          4,4
+        ),
+        style: 1,
+        z_index: 3
+      })
+
       this.update()
 
-      this.setWindowTitle("Bit's Battle")
+      this.setWindowTitle("Bit's Battle | Lesson 1")
+    }
+
+
+    move() {
+      // print("moving bits battle")
+      this.renderer.setElementComponentValue("chips_challenge_bg" + this.instance, "offset", this.windowPosition)
+
+      this.renderer.setElementComponentValue("chips_keys_red_" + this.instance, "offset", create(
+        this.windowPosition.x + 500,
+        this.windowPosition.y + 100
+      ))
+
+      this.renderer.setElementComponentValue("chips_keys_green_" + this.instance, "offset", create(
+        this.windowPosition.x + 500,
+        this.windowPosition.y + 150
+      ))
+
+      this.renderer.setElementComponentValue("chips_keys_blue_" + this.instance, "offset", create(
+        this.windowPosition.x + 500,
+        this.windowPosition.y + 200
+      ))
+
+      this.renderer.setElementComponentValue("chips_keys_yellow_" + this.instance, "offset", create(
+        this.windowPosition.x + 500,
+        this.windowPosition.y + 250
+      ))
+
+      this.renderer.setElementComponentValue("chips_WIN_" + this.instance, "offset", create(
+        this.windowPosition.x + 480,
+        this.windowPosition.y + 300
+      ))
+
+      for (let x = 0; x < this.VISIBLE_SIZE; x++) {
+        for (let y = 0; y < this.VISIBLE_SIZE; y++) {
+          for (let layer = 0; layer <= 1; layer ++) {
+
+            this.renderer.setElementComponentValue(this.grabTileKey(x,y,layer),"offset", create(
+              this.getPosX() + (x * (this.TILE_PIXEL_SIZE * this.TILE_SCALE)) + this.TILE_OFFSET,
+              this.getPosY() + (y * (this.TILE_PIXEL_SIZE * this.TILE_SCALE)) + this.TILE_OFFSET,
+            ),)
+          }
+        }
+      }
     }
 
     update(): void {
+
+      this.renderer.setElementComponentValue("chips_keys_red_" + this.instance, "text", "Red Keys: " + this.redKeys)
+      this.renderer.setElementComponentValue("chips_keys_blue_" + this.instance, "text", "Green Keys: " + this.greenKeys)
+      this.renderer.setElementComponentValue("chips_keys_green_" + this.instance, "text", "Blue Keys: " + this.blueKeys)
+      this.renderer.setElementComponentValue("chips_keys_yellow_" + this.instance, "text", "Yellow Keys: " + this.yellowKeys)
+      this.renderer.setElementComponentValue("chips_WIN_" + this.instance, "text", (this.winState) ? "YOU\nWIN!" : "")
+
       const startX = this.pos.x - 4
       const startY = this.pos.y - 4
 
@@ -224,26 +359,14 @@ namespace mineos {
       return "chips_challenge_tile_" + x + "_" + y + "_" + layer + "_" + this.instance
     }
 
-    move() {
-      print("moving bits battle")
-      this.renderer.setElementComponentValue("chips_challenge_bg" + this.instance, "offset", this.windowPosition)
-
-      for (let x = 0; x < this.VISIBLE_SIZE; x++) {
-        for (let y = 0; y < this.VISIBLE_SIZE; y++) {
-          for (let layer = 0; layer <= 1; layer ++) {
-
-            this.renderer.setElementComponentValue(this.grabTileKey(x,y,layer),"offset", create(
-              this.getPosX() + (x * (this.TILE_PIXEL_SIZE * this.TILE_SCALE)) + this.TILE_OFFSET,
-              this.getPosY() + (y * (this.TILE_PIXEL_SIZE * this.TILE_SCALE)) + this.TILE_OFFSET,
-            ),)
-          }
-        }
-      }
-    }
-
     destructor(): void {
-      print("bits battle destroyed")
+      // print("bits battle destroyed")
       this.renderer.removeElement("chips_challenge_bg" + this.instance)
+      this.renderer.removeElement("chips_keys_red_" + this.instance)
+      this.renderer.removeElement("chips_keys_green_" + this.instance)
+      this.renderer.removeElement("chips_keys_blue_" + this.instance)
+      this.renderer.removeElement("chips_keys_yellow_" + this.instance)
+      this.renderer.removeElement("chips_WIN_" + this.instance)
 
       for (let x = 0; x < this.VISIBLE_SIZE; x++) {
         for (let y = 0; y < this.VISIBLE_SIZE; y++) {
@@ -317,7 +440,7 @@ namespace mineos {
             this.map[y][x] = 0
             this.blueKeys--
             this.playDoorUnlock()
-            print("new blue keys: " + this.blueKeys)
+            // print("new blue keys: " + this.blueKeys)
             return true
           }
           return false
@@ -327,7 +450,7 @@ namespace mineos {
             this.map[y][x] = 0
             this.redKeys--
             this.playDoorUnlock()
-            print("new red keys: " + this.redKeys)
+            // print("new red keys: " + this.redKeys)
             return true
           }
           return false
@@ -337,7 +460,7 @@ namespace mineos {
             this.map[y][x] = 0
             this.yellowKeys--
             this.playDoorUnlock()
-            print("new yellow keys: " + this.yellowKeys)
+            // print("new yellow keys: " + this.yellowKeys)
             return true
           }
           return false
@@ -347,7 +470,7 @@ namespace mineos {
             this.map[y][x] = 0
             this.greenKeys--
             this.playDoorUnlock()
-            print("new green keys: " + this.greenKeys)
+            // print("new green keys: " + this.greenKeys)
             return true
           }
           return false
@@ -355,41 +478,41 @@ namespace mineos {
         case 6: {
           this.blueKeys++
           this.playKeyPickup()
-          print("new blue keys: " + this.blueKeys)
+          // print("new blue keys: " + this.blueKeys)
           this.map[y][x] = 0
           return true
         }
         case 7: {
           this.redKeys++
           this.playKeyPickup()
-          print("new red keys: " + this.redKeys)
+          // print("new red keys: " + this.redKeys)
           this.map[y][x] = 0
           return true
         }
         case 8: {
           this.yellowKeys++
           this.playKeyPickup()
-          print("new yellow keys: " + this.yellowKeys)
+          // print("new yellow keys: " + this.yellowKeys)
           this.map[y][x] = 0
           return true
         }
         case 9: {
           this.greenKeys++
           this.playKeyPickup()
-          print("new green keys: " + this.greenKeys)
+          // print("new green keys: " + this.greenKeys)
           this.map[y][x] = 0
           return true
         }
         case 10: {
           this.chipsRemaining--
-          print("new chips remaining: " + this.chipsRemaining)
+          // print("new chips remaining: " + this.chipsRemaining)
           this.audioController.playSound("chip_pickup", 0.6)
           this.map[y][x] = 0
           return true
         }
         case 11: {
           if (this.chipsRemaining <= 0) {
-            print("exit opened")
+            // print("exit opened")
             this.playDoorUnlock()
             this.map[y][x] = 0
             return true
@@ -397,9 +520,10 @@ namespace mineos {
           return false
         }
         case 12: {
-          this.setWindowTitle("Blit's Battle | YOU WIN!")
+          this.setWindowTitle("Bit's Battle | YOU WIN!")
           this.audioController.stopSong()
           this.audioController.playSound("win", 1)
+          this.winState = true
           this.map[y][x] = 0
           return true
         }

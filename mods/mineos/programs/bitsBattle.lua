@@ -225,6 +225,7 @@ do
         self.redKeys = 0
         self.yellowKeys = 0
         self.greenKeys = 0
+        self.winState = false
         self.loaded = false
         self.instance = 0
         self.chipsRemaining = 11
@@ -607,51 +608,111 @@ do
                 x = x + 1
             end
         end
+        self.renderer:addElement(
+            "chips_keys_red_" .. tostring(self.instance),
+            {
+                name = "chips_keys_red_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = "Red Keys: " .. tostring(self.redKeys),
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.windowPosition.x + 500, self.windowPosition.y + 100),
+                z_index = 3
+            }
+        )
+        self.renderer:addElement(
+            "chips_keys_green_" .. tostring(self.instance),
+            {
+                name = "chips_keys_green_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = "Green Keys: " .. tostring(self.greenKeys),
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.windowPosition.x + 500, self.windowPosition.y + 150),
+                z_index = 3
+            }
+        )
+        self.renderer:addElement(
+            "chips_keys_blue_" .. tostring(self.instance),
+            {
+                name = "chips_keys_blue_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = "Blue Keys: " .. tostring(self.blueKeys),
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.windowPosition.x + 500, self.windowPosition.y + 200),
+                z_index = 3
+            }
+        )
+        self.renderer:addElement(
+            "chips_keys_yellow_" .. tostring(self.instance),
+            {
+                name = "chips_keys_yellow_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = "Yellow Keys: " .. tostring(self.yellowKeys),
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.windowPosition.x + 500, self.windowPosition.y + 250),
+                z_index = 3
+            }
+        )
+        self.renderer:addElement(
+            "chips_WIN_" .. tostring(self.instance),
+            {
+                name = "chips_WIN_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = "",
+                number = colors.colorHEX(92, 10, 31),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(self.windowPosition.x + 480, self.windowPosition.y + 300),
+                size = create(4, 4),
+                style = 1,
+                z_index = 3
+            }
+        )
         self:update()
-        self:setWindowTitle("Bit's Battle")
-    end
-    function BitsBattle.prototype.update(self)
-        local startX = self.pos.x - 4
-        local startY = self.pos.y - 4
-        do
-            local x = 0
-            while x < self.VISIBLE_SIZE do
-                do
-                    local y = 0
-                    while y < self.VISIBLE_SIZE do
-                        do
-                            local realX = x + startX
-                            local realY = y + startY
-                            if realX < 0 or realY < 0 or realX >= self.MAP_WIDTH or realY >= self.MAP_HEIGHT then
-                                goto __continue13
-                            end
-                            local texture = mapToTexture(self.map[realY + 1][realX + 1])
-                            if realX == self.pos.x and realY == self.pos.y then
-                                texture = "bit_byte.png"
-                            end
-                            self.renderer:setElementComponentValue(
-                                self:grabTileKey(x, y, 1),
-                                "text",
-                                texture
-                            )
-                        end
-                        ::__continue13::
-                        y = y + 1
-                    end
-                end
-                x = x + 1
-            end
-        end
-    end
-    function BitsBattle.prototype.grabTileKey(self, x, y, layer)
-        return (((((("chips_challenge_tile_" .. tostring(x)) .. "_") .. tostring(y)) .. "_") .. tostring(layer)) .. "_") .. tostring(self.instance)
+        self:setWindowTitle("Bit's Battle | Lesson 1")
     end
     function BitsBattle.prototype.move(self)
-        print("moving bits battle")
         self.renderer:setElementComponentValue(
             "chips_challenge_bg" .. tostring(self.instance),
             "offset",
             self.windowPosition
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_red_" .. tostring(self.instance),
+            "offset",
+            create(self.windowPosition.x + 500, self.windowPosition.y + 100)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_green_" .. tostring(self.instance),
+            "offset",
+            create(self.windowPosition.x + 500, self.windowPosition.y + 150)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_blue_" .. tostring(self.instance),
+            "offset",
+            create(self.windowPosition.x + 500, self.windowPosition.y + 200)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_yellow_" .. tostring(self.instance),
+            "offset",
+            create(self.windowPosition.x + 500, self.windowPosition.y + 250)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_WIN_" .. tostring(self.instance),
+            "offset",
+            create(self.windowPosition.x + 480, self.windowPosition.y + 300)
         )
         do
             local x = 0
@@ -680,9 +741,74 @@ do
             end
         end
     end
+    function BitsBattle.prototype.update(self)
+        self.renderer:setElementComponentValue(
+            "chips_keys_red_" .. tostring(self.instance),
+            "text",
+            "Red Keys: " .. tostring(self.redKeys)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_blue_" .. tostring(self.instance),
+            "text",
+            "Green Keys: " .. tostring(self.greenKeys)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_green_" .. tostring(self.instance),
+            "text",
+            "Blue Keys: " .. tostring(self.blueKeys)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_keys_yellow_" .. tostring(self.instance),
+            "text",
+            "Yellow Keys: " .. tostring(self.yellowKeys)
+        )
+        self.renderer:setElementComponentValue(
+            "chips_WIN_" .. tostring(self.instance),
+            "text",
+            self.winState and "YOU\nWIN!" or ""
+        )
+        local startX = self.pos.x - 4
+        local startY = self.pos.y - 4
+        do
+            local x = 0
+            while x < self.VISIBLE_SIZE do
+                do
+                    local y = 0
+                    while y < self.VISIBLE_SIZE do
+                        do
+                            local realX = x + startX
+                            local realY = y + startY
+                            if realX < 0 or realY < 0 or realX >= self.MAP_WIDTH or realY >= self.MAP_HEIGHT then
+                                goto __continue17
+                            end
+                            local texture = mapToTexture(self.map[realY + 1][realX + 1])
+                            if realX == self.pos.x and realY == self.pos.y then
+                                texture = "bit_byte.png"
+                            end
+                            self.renderer:setElementComponentValue(
+                                self:grabTileKey(x, y, 1),
+                                "text",
+                                texture
+                            )
+                        end
+                        ::__continue17::
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
+    end
+    function BitsBattle.prototype.grabTileKey(self, x, y, layer)
+        return (((((("chips_challenge_tile_" .. tostring(x)) .. "_") .. tostring(y)) .. "_") .. tostring(layer)) .. "_") .. tostring(self.instance)
+    end
     function BitsBattle.prototype.destructor(self)
-        print("bits battle destroyed")
         self.renderer:removeElement("chips_challenge_bg" .. tostring(self.instance))
+        self.renderer:removeElement("chips_keys_red_" .. tostring(self.instance))
+        self.renderer:removeElement("chips_keys_green_" .. tostring(self.instance))
+        self.renderer:removeElement("chips_keys_blue_" .. tostring(self.instance))
+        self.renderer:removeElement("chips_keys_yellow_" .. tostring(self.instance))
+        self.renderer:removeElement("chips_WIN_" .. tostring(self.instance))
         do
             local x = 0
             while x < self.VISIBLE_SIZE do
@@ -1028,7 +1154,6 @@ do
                         self.map[y + 1][x + 1] = 0
                         self.blueKeys = self.blueKeys - 1
                         self:playDoorUnlock()
-                        print("new blue keys: " .. tostring(self.blueKeys))
                         return true
                     end
                     return false
@@ -1041,7 +1166,6 @@ do
                         self.map[y + 1][x + 1] = 0
                         self.redKeys = self.redKeys - 1
                         self:playDoorUnlock()
-                        print("new red keys: " .. tostring(self.redKeys))
                         return true
                     end
                     return false
@@ -1054,7 +1178,6 @@ do
                         self.map[y + 1][x + 1] = 0
                         self.yellowKeys = self.yellowKeys - 1
                         self:playDoorUnlock()
-                        print("new yellow keys: " .. tostring(self.yellowKeys))
                         return true
                     end
                     return false
@@ -1067,7 +1190,6 @@ do
                         self.map[y + 1][x + 1] = 0
                         self.greenKeys = self.greenKeys - 1
                         self:playDoorUnlock()
-                        print("new green keys: " .. tostring(self.greenKeys))
                         return true
                     end
                     return false
@@ -1078,7 +1200,6 @@ do
                 do
                     self.blueKeys = self.blueKeys + 1
                     self:playKeyPickup()
-                    print("new blue keys: " .. tostring(self.blueKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -1088,7 +1209,6 @@ do
                 do
                     self.redKeys = self.redKeys + 1
                     self:playKeyPickup()
-                    print("new red keys: " .. tostring(self.redKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -1098,7 +1218,6 @@ do
                 do
                     self.yellowKeys = self.yellowKeys + 1
                     self:playKeyPickup()
-                    print("new yellow keys: " .. tostring(self.yellowKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -1108,7 +1227,6 @@ do
                 do
                     self.greenKeys = self.greenKeys + 1
                     self:playKeyPickup()
-                    print("new green keys: " .. tostring(self.greenKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -1117,7 +1235,6 @@ do
             if ____cond29 then
                 do
                     self.chipsRemaining = self.chipsRemaining - 1
-                    print("new chips remaining: " .. tostring(self.chipsRemaining))
                     self.audioController:playSound("chip_pickup", 0.6)
                     self.map[y + 1][x + 1] = 0
                     return true
@@ -1127,7 +1244,6 @@ do
             if ____cond29 then
                 do
                     if self.chipsRemaining <= 0 then
-                        print("exit opened")
                         self:playDoorUnlock()
                         self.map[y + 1][x + 1] = 0
                         return true
@@ -1138,9 +1254,10 @@ do
             ____cond29 = ____cond29 or ____switch29 == 12
             if ____cond29 then
                 do
-                    self:setWindowTitle("Blit's Battle | YOU WIN!")
+                    self:setWindowTitle("Bit's Battle | YOU WIN!")
                     self.audioController:stopSong()
                     self.audioController:playSound("win", 1)
+                    self.winState = true
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
