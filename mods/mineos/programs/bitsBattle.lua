@@ -221,6 +221,10 @@ do
             desktop,
             windowSize
         )
+        self.blueKeys = 0
+        self.redKeys = 0
+        self.yellowKeys = 0
+        self.greenKeys = 0
         self.loaded = false
         self.instance = 0
         self.chipsRemaining = 11
@@ -608,6 +612,98 @@ do
         self:update()
         self:setWindowTitle("Bit's Battle")
     end
+    function BitsBattle.prototype.collisionDetection(self, newTile, x, y)
+        repeat
+            local ____switch12 = newTile
+            local ____cond12 = ____switch12 == 0
+            if ____cond12 then
+                return true
+            end
+            ____cond12 = ____cond12 or ____switch12 == 1
+            if ____cond12 then
+                return false
+            end
+            ____cond12 = ____cond12 or ____switch12 == 2
+            if ____cond12 then
+                do
+                    if self.blueKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.blueKeys = self.blueKeys - 1
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 3
+            if ____cond12 then
+                do
+                    if self.redKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.redKeys = self.redKeys - 1
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 4
+            if ____cond12 then
+                do
+                    if self.yellowKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.yellowKeys = self.yellowKeys - 1
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 5
+            if ____cond12 then
+                do
+                    if self.greenKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.greenKeys = self.greenKeys - 1
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 6
+            if ____cond12 then
+                do
+                    self.blueKeys = self.blueKeys + 1
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 7
+            if ____cond12 then
+                do
+                    self.redKeys = self.redKeys + 1
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 8
+            if ____cond12 then
+                do
+                    self.yellowKeys = self.yellowKeys + 1
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 9
+            if ____cond12 then
+                do
+                    self.greenKeys = self.greenKeys + 1
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            do
+                return false
+            end
+        until true
+    end
     function BitsBattle.prototype.update(self)
         local startX = self.pos.x - 4
         local startY = self.pos.y - 4
@@ -621,7 +717,7 @@ do
                             local realX = x + startX
                             local realY = y + startY
                             if realX < 0 or realY < 0 or realX >= self.MAP_WIDTH or realY >= self.MAP_HEIGHT then
-                                goto __continue13
+                                goto __continue27
                             end
                             local texture = mapToTexture(self.map[realY + 1][realX + 1])
                             if realX == self.pos.x and realY == self.pos.y then
@@ -633,7 +729,7 @@ do
                                 texture
                             )
                         end
-                        ::__continue13::
+                        ::__continue27::
                         y = y + 1
                     end
                 end
@@ -957,22 +1053,10 @@ do
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end
-    function BitsBattle.prototype.collisionDetection(self, newTile)
-        repeat
-            local ____switch21 = newTile
-            local ____cond21 = ____switch21 == 0
-            if ____cond21 then
-                return true
-            end
-            do
-                return false
-            end
-        until true
-    end
     function BitsBattle.prototype.tryMove(self, x, y)
         local newX = self.pos.x + x
         local newY = self.pos.y + y
-        if self:collisionDetection(self.map[newY + 1][newX + 1]) then
+        if self:collisionDetection(self.map[newY + 1][newX + 1], newX, newY) then
             self.pos.x = newX
             self.pos.y = newY
             self:update()

@@ -78,6 +78,75 @@ namespace mineos {
   const E = 12
 
   class BitsBattle extends WindowProgram {
+
+    // I could break this down into functions, but I don't feel like it
+    collisionDetection(newTile: number, x: number, y: number): boolean {
+      switch(newTile) {
+        case 0: return true
+        case 1: return false
+        case 2: {
+          if (this.blueKeys > 0) {
+            this.map[y][x] = 0
+            this.blueKeys--
+            return true
+          }
+          return false
+        }
+        case 3: {
+          if (this.redKeys > 0) {
+            this.map[y][x] = 0
+            this.redKeys--
+            return true
+          }
+          return false
+        }
+        case 4: {
+          if (this.yellowKeys > 0) {
+            this.map[y][x] = 0
+            this.yellowKeys--
+            return true
+          }
+          return false
+        }
+        case 5: {
+          if (this.greenKeys > 0) {
+            this.map[y][x] = 0
+            this.greenKeys--
+            return true
+          }
+          return false
+        }
+        case 6: {
+          this.blueKeys++
+          this.map[y][x] = 0
+          return true
+        }
+        case 7: {
+          this.redKeys++
+          this.map[y][x] = 0
+          return true
+        }
+        case 8: {
+          this.yellowKeys++
+          this.map[y][x] = 0
+          return true
+        }
+        case 9: {
+          this.greenKeys++
+          this.map[y][x] = 0
+          return true
+        }
+
+        default: return false
+      }
+    }
+
+    blueKeys = 0
+    redKeys = 0
+    yellowKeys = 0
+    greenKeys = 0
+
+
     loaded = false
     static counter = 0
     instance = 0
@@ -273,18 +342,12 @@ namespace mineos {
       System.out.println("Bit's Battle loaded!");
     }
 
-    collisionDetection(newTile: number): boolean {
-      switch(newTile) {
-        case 0: return true
 
-        default: return false
-      }
-    }
 
     tryMove(x: number, y: number): void {
       const newX = this.pos.x + x
       const newY = this.pos.y + y
-      if (this.collisionDetection(this.map[newY][newX])) {
+      if (this.collisionDetection(this.map[newY][newX], newX, newY)) {
         this.pos.x = newX
         this.pos.y = newY
         this.update()
