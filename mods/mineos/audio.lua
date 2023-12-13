@@ -195,6 +195,7 @@ do
     local AudioController = mineos.AudioController
     AudioController.name = "AudioController"
     function AudioController.prototype.____constructor(self, system)
+        self.updated = true
         self.songs = {}
         self.currentSong = nil
         self.currentNote = 0
@@ -235,8 +236,12 @@ do
         self.currentSong = nil
     end
     function AudioController.prototype.update(self, delta)
+        if self.updated then
+            print("skipping")
+            return
+        end
+        self.updated = true
         if self.currentSong == nil then
-            print("error: no current song!")
             return
         end
         local goalTimer = 1 / self.currentSong.tempo

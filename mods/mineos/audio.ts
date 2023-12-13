@@ -59,6 +59,8 @@ namespace mineos {
   export class AudioController {
     system: System
 
+    updated = true
+
     songs: {[id: string] : Song} = {}
     currentSong: Song | null = null
 
@@ -98,8 +100,15 @@ namespace mineos {
     }
 
     update(delta: number) {
+
+      if (this.updated) {
+        print("skipping")
+        return
+      }
+      this.updated = true
+
       if (this.currentSong == null) {
-        print("error: no current song!")
+        // print("error: no current song!")
         return
       }
       const goalTimer = (1 / this.currentSong.tempo)
