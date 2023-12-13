@@ -581,8 +581,6 @@ do
                         do
                             local layer = 0
                             while layer <= 1 do
-                                local realX = x + startX
-                                local realY = y + startY
                                 local tex = layer == 1 and "nothing.png" or "bg_tile.png"
                                 self.renderer:addElement(
                                     self:grabTileKey(x, y, layer),
@@ -612,134 +610,6 @@ do
         self:update()
         self:setWindowTitle("Bit's Battle")
     end
-    function BitsBattle.prototype.collisionDetection(self, newTile, x, y)
-        repeat
-            local ____switch12 = newTile
-            local ____cond12 = ____switch12 == 0
-            if ____cond12 then
-                return true
-            end
-            ____cond12 = ____cond12 or ____switch12 == 1
-            if ____cond12 then
-                return false
-            end
-            ____cond12 = ____cond12 or ____switch12 == 2
-            if ____cond12 then
-                do
-                    if self.blueKeys > 0 then
-                        self.map[y + 1][x + 1] = 0
-                        self.blueKeys = self.blueKeys - 1
-                        print("new blue keys: " .. tostring(self.blueKeys))
-                        return true
-                    end
-                    return false
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 3
-            if ____cond12 then
-                do
-                    if self.redKeys > 0 then
-                        self.map[y + 1][x + 1] = 0
-                        self.redKeys = self.redKeys - 1
-                        print("new red keys: " .. tostring(self.redKeys))
-                        return true
-                    end
-                    return false
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 4
-            if ____cond12 then
-                do
-                    if self.yellowKeys > 0 then
-                        self.map[y + 1][x + 1] = 0
-                        self.yellowKeys = self.yellowKeys - 1
-                        print("new yellow keys: " .. tostring(self.yellowKeys))
-                        return true
-                    end
-                    return false
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 5
-            if ____cond12 then
-                do
-                    if self.greenKeys > 0 then
-                        self.map[y + 1][x + 1] = 0
-                        self.greenKeys = self.greenKeys - 1
-                        print("new green keys: " .. tostring(self.greenKeys))
-                        return true
-                    end
-                    return false
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 6
-            if ____cond12 then
-                do
-                    self.blueKeys = self.blueKeys + 1
-                    print("new blue keys: " .. tostring(self.blueKeys))
-                    self.map[y + 1][x + 1] = 0
-                    return true
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 7
-            if ____cond12 then
-                do
-                    self.redKeys = self.redKeys + 1
-                    print("new red keys: " .. tostring(self.redKeys))
-                    self.map[y + 1][x + 1] = 0
-                    return true
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 8
-            if ____cond12 then
-                do
-                    self.yellowKeys = self.yellowKeys + 1
-                    print("new yellow keys: " .. tostring(self.yellowKeys))
-                    self.map[y + 1][x + 1] = 0
-                    return true
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 9
-            if ____cond12 then
-                do
-                    self.greenKeys = self.greenKeys + 1
-                    print("new green keys: " .. tostring(self.greenKeys))
-                    self.map[y + 1][x + 1] = 0
-                    return true
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 10
-            if ____cond12 then
-                do
-                    self.chipsRemaining = self.chipsRemaining - 1
-                    print("new chips remaining: " .. tostring(self.chipsRemaining))
-                    self.map[y + 1][x + 1] = 0
-                    return true
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 11
-            if ____cond12 then
-                do
-                    if self.chipsRemaining <= 0 then
-                        print("exit opened")
-                        self.map[y + 1][x + 1] = 0
-                        return true
-                    end
-                    return false
-                end
-            end
-            ____cond12 = ____cond12 or ____switch12 == 12
-            if ____cond12 then
-                do
-                    self:setWindowTitle("Blit's Battle | YOU WIN!")
-                    self.map[y + 1][x + 1] = 0
-                    return true
-                end
-            end
-            do
-                return false
-            end
-        until true
-    end
     function BitsBattle.prototype.update(self)
         local startX = self.pos.x - 4
         local startY = self.pos.y - 4
@@ -753,7 +623,7 @@ do
                             local realX = x + startX
                             local realY = y + startY
                             if realX < 0 or realY < 0 or realX >= self.MAP_WIDTH or realY >= self.MAP_HEIGHT then
-                                goto __continue31
+                                goto __continue13
                             end
                             local texture = mapToTexture(self.map[realY + 1][realX + 1])
                             if realX == self.pos.x and realY == self.pos.y then
@@ -765,7 +635,7 @@ do
                                 texture
                             )
                         end
-                        ::__continue31::
+                        ::__continue13::
                         y = y + 1
                     end
                 end
@@ -783,6 +653,32 @@ do
             "offset",
             self.windowPosition
         )
+        do
+            local x = 0
+            while x < self.VISIBLE_SIZE do
+                do
+                    local y = 0
+                    while y < self.VISIBLE_SIZE do
+                        do
+                            local layer = 0
+                            while layer <= 1 do
+                                self.renderer:setElementComponentValue(
+                                    self:grabTileKey(x, y, layer),
+                                    "offset",
+                                    create(
+                                        self:getPosX() + x * (self.TILE_PIXEL_SIZE * self.TILE_SCALE) + self.TILE_OFFSET,
+                                        self:getPosY() + y * (self.TILE_PIXEL_SIZE * self.TILE_SCALE) + self.TILE_OFFSET
+                                    )
+                                )
+                                layer = layer + 1
+                            end
+                        end
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
     end
     function BitsBattle.prototype.destructor(self)
         print("bits battle destroyed")
@@ -1088,6 +984,134 @@ do
         self.audioController:playSong("bitsTheme")
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
+    end
+    function BitsBattle.prototype.collisionDetection(self, newTile, x, y)
+        repeat
+            local ____switch24 = newTile
+            local ____cond24 = ____switch24 == 0
+            if ____cond24 then
+                return true
+            end
+            ____cond24 = ____cond24 or ____switch24 == 1
+            if ____cond24 then
+                return false
+            end
+            ____cond24 = ____cond24 or ____switch24 == 2
+            if ____cond24 then
+                do
+                    if self.blueKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.blueKeys = self.blueKeys - 1
+                        print("new blue keys: " .. tostring(self.blueKeys))
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 3
+            if ____cond24 then
+                do
+                    if self.redKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.redKeys = self.redKeys - 1
+                        print("new red keys: " .. tostring(self.redKeys))
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 4
+            if ____cond24 then
+                do
+                    if self.yellowKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.yellowKeys = self.yellowKeys - 1
+                        print("new yellow keys: " .. tostring(self.yellowKeys))
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 5
+            if ____cond24 then
+                do
+                    if self.greenKeys > 0 then
+                        self.map[y + 1][x + 1] = 0
+                        self.greenKeys = self.greenKeys - 1
+                        print("new green keys: " .. tostring(self.greenKeys))
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 6
+            if ____cond24 then
+                do
+                    self.blueKeys = self.blueKeys + 1
+                    print("new blue keys: " .. tostring(self.blueKeys))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 7
+            if ____cond24 then
+                do
+                    self.redKeys = self.redKeys + 1
+                    print("new red keys: " .. tostring(self.redKeys))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 8
+            if ____cond24 then
+                do
+                    self.yellowKeys = self.yellowKeys + 1
+                    print("new yellow keys: " .. tostring(self.yellowKeys))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 9
+            if ____cond24 then
+                do
+                    self.greenKeys = self.greenKeys + 1
+                    print("new green keys: " .. tostring(self.greenKeys))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 10
+            if ____cond24 then
+                do
+                    self.chipsRemaining = self.chipsRemaining - 1
+                    print("new chips remaining: " .. tostring(self.chipsRemaining))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 11
+            if ____cond24 then
+                do
+                    if self.chipsRemaining <= 0 then
+                        print("exit opened")
+                        self.map[y + 1][x + 1] = 0
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond24 = ____cond24 or ____switch24 == 12
+            if ____cond24 then
+                do
+                    self:setWindowTitle("Blit's Battle | YOU WIN!")
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            do
+                return false
+            end
+        until true
     end
     function BitsBattle.prototype.tryMove(self, x, y)
         local newX = self.pos.x + x
