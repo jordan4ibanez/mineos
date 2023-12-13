@@ -957,12 +957,26 @@ do
         self.loaded = true
         mineos.System.out:println("Bit's Battle loaded!")
     end
+    function BitsBattle.prototype.collisionDetection(self, newTile)
+        repeat
+            local ____switch21 = newTile
+            local ____cond21 = ____switch21 == 0
+            if ____cond21 then
+                return true
+            end
+            do
+                return false
+            end
+        until true
+    end
     function BitsBattle.prototype.tryMove(self, x, y)
         local newX = self.pos.x + x
         local newY = self.pos.y + y
-        self.pos.x = newX
-        self.pos.y = newY
-        self:update()
+        if self:collisionDetection(self.map[newY + 1][newX + 1]) then
+            self.pos.x = newX
+            self.pos.y = newY
+            self:update()
+        end
     end
     function BitsBattle.prototype.doControls(self)
         local upDown = self.system:isKeyDown("up")

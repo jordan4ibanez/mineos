@@ -273,14 +273,22 @@ namespace mineos {
       System.out.println("Bit's Battle loaded!");
     }
 
+    collisionDetection(newTile: number): boolean {
+      switch(newTile) {
+        case 0: return true
+
+        default: return false
+      }
+    }
+
     tryMove(x: number, y: number): void {
       const newX = this.pos.x + x
       const newY = this.pos.y + y
-      // if (this.map[newY][newX] == 0) {
+      if (this.collisionDetection(this.map[newY][newX])) {
         this.pos.x = newX
         this.pos.y = newY
         this.update()
-      // }
+      }
     }
 
     doControls(): void {
