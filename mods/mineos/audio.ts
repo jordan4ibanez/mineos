@@ -102,7 +102,7 @@ namespace mineos {
     update(delta: number) {
 
       if (this.updated) {
-        print("skipping")
+        // print("skipping")
         return
       }
       this.updated = true

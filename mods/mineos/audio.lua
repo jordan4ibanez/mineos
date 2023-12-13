@@ -237,7 +237,6 @@ do
     end
     function AudioController.prototype.update(self, delta)
         if self.updated then
-            print("skipping")
             return
         end
         self.updated = true
