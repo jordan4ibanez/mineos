@@ -2,6 +2,33 @@ namespace mineos {
 
   const create = vector.create2d;
 
+  /*
+  2 layers fg/bg
+
+  0 - bg_tile.png - nothing
+  1 - fg_tile.png - wall
+
+  2 - blue_lock.png   - aqua lock
+  3 - red_lock.png    - red lock
+  4 - yellow_lock.png - yellow lock
+  5 - green_lock.png  - green lock
+
+  6 - blue_key.png   - aqua key
+  7 - red_key.png    - red key
+  8 - yellow_key.png - yellow key
+  9 - green_key.png  - green key
+
+  10 - chip - computer chip
+
+  11 - socket - blocks exit until you collect all chips
+
+  12 - exit - exits the level
+
+  in this case it just changes the window title to "You win!"
+
+  No other levels, not enough time in this jam.
+  */
+
   class BitsBattle extends WindowProgram {
     loaded = false
 
