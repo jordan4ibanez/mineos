@@ -721,7 +721,7 @@ namespace mineos {
         let deleting = ""
         // window handles before any desktop components
         // let index = 0
-        for (const [index,winProgram] of Object.entries(this.runningPrograms)) {
+        for (const winProgram of this.runningPrograms) {
           if (winProgram.handle.pointWithin(this.mousePosition)) {
 
             const XAABB = new AABB(create(
@@ -746,7 +746,7 @@ namespace mineos {
         if (deleting != "") {
 
           let i = 0
-          for (const [index, winProgram] of Object.entries(this.runningPrograms)) {
+          for (const winProgram of this.runningPrograms) {
             if (winProgram.uuid == deleting) {
               this.runningPrograms[i].__INTERNALDELETION()
               this.runningPrograms[i].destructor()

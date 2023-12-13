@@ -915,9 +915,7 @@ do
         end
         if self.system:isMouseClicked() then
             local deleting = ""
-            for ____, ____value in ipairs(__TS__ObjectEntries(self.runningPrograms)) do
-                local index = ____value[1]
-                local winProgram = ____value[2]
+            for ____, winProgram in ipairs(self.runningPrograms) do
                 if winProgram.handle:pointWithin(self.mousePosition) then
                     local XAABB = __TS__New(
                         mineos.AABB,
@@ -937,9 +935,7 @@ do
             end
             if deleting ~= "" then
                 local i = 0
-                for ____, ____value in ipairs(__TS__ObjectEntries(self.runningPrograms)) do
-                    local index = ____value[1]
-                    local winProgram = ____value[2]
+                for ____, winProgram in ipairs(self.runningPrograms) do
                     if winProgram.uuid == deleting then
                         self.runningPrograms[i + 1]:__INTERNALDELETION()
                         self.runningPrograms[i + 1]:destructor()
