@@ -88,6 +88,7 @@ namespace mineos {
           if (this.blueKeys > 0) {
             this.map[y][x] = 0
             this.blueKeys--
+            print("new blue keys: " + this.blueKeys)
             return true
           }
           return false
@@ -96,6 +97,7 @@ namespace mineos {
           if (this.redKeys > 0) {
             this.map[y][x] = 0
             this.redKeys--
+            print("new red keys: " + this.redKeys)
             return true
           }
           return false
@@ -104,6 +106,7 @@ namespace mineos {
           if (this.yellowKeys > 0) {
             this.map[y][x] = 0
             this.yellowKeys--
+            print("new yellow keys: " + this.yellowKeys)
             return true
           }
           return false
@@ -112,27 +115,51 @@ namespace mineos {
           if (this.greenKeys > 0) {
             this.map[y][x] = 0
             this.greenKeys--
+            print("new green keys: " + this.greenKeys)
             return true
           }
           return false
         }
         case 6: {
           this.blueKeys++
+          print("new blue keys: " + this.blueKeys)
           this.map[y][x] = 0
           return true
         }
         case 7: {
           this.redKeys++
+          print("new red keys: " + this.redKeys)
           this.map[y][x] = 0
           return true
         }
         case 8: {
           this.yellowKeys++
+          print("new yellow keys: " + this.yellowKeys)
           this.map[y][x] = 0
           return true
         }
         case 9: {
           this.greenKeys++
+          print("new green keys: " + this.greenKeys)
+          this.map[y][x] = 0
+          return true
+        }
+        case 10: {
+          this.chipsRemaining--
+          print("new chips remaining: " + this.chipsRemaining)
+          this.map[y][x] = 0
+          return true
+        }
+        case 11: {
+          if (this.chipsRemaining <= 0) {
+            print("exit opened")
+            this.map[y][x] = 0
+            return true
+          }
+          return false
+        }
+        case 12: {
+          this.setWindowTitle("Blit's Battle | YOU WIN!")
           this.map[y][x] = 0
           return true
         }
@@ -371,10 +398,8 @@ namespace mineos {
 
       // Filter it like chips challenge, only one key at a time.
       if (upPressed) {
-        print("up")
         this.tryMove(0, -1)
       } else if (downPressed) {
-        print("down")
         this.tryMove(0, 1)
       } else if (leftPressed) {
         this.tryMove(-1, 0)

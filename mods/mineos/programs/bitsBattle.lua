@@ -629,6 +629,7 @@ do
                     if self.blueKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.blueKeys = self.blueKeys - 1
+                        print("new blue keys: " .. tostring(self.blueKeys))
                         return true
                     end
                     return false
@@ -640,6 +641,7 @@ do
                     if self.redKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.redKeys = self.redKeys - 1
+                        print("new red keys: " .. tostring(self.redKeys))
                         return true
                     end
                     return false
@@ -651,6 +653,7 @@ do
                     if self.yellowKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.yellowKeys = self.yellowKeys - 1
+                        print("new yellow keys: " .. tostring(self.yellowKeys))
                         return true
                     end
                     return false
@@ -662,6 +665,7 @@ do
                     if self.greenKeys > 0 then
                         self.map[y + 1][x + 1] = 0
                         self.greenKeys = self.greenKeys - 1
+                        print("new green keys: " .. tostring(self.greenKeys))
                         return true
                     end
                     return false
@@ -671,6 +675,7 @@ do
             if ____cond12 then
                 do
                     self.blueKeys = self.blueKeys + 1
+                    print("new blue keys: " .. tostring(self.blueKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -679,6 +684,7 @@ do
             if ____cond12 then
                 do
                     self.redKeys = self.redKeys + 1
+                    print("new red keys: " .. tostring(self.redKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -687,6 +693,7 @@ do
             if ____cond12 then
                 do
                     self.yellowKeys = self.yellowKeys + 1
+                    print("new yellow keys: " .. tostring(self.yellowKeys))
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -695,6 +702,35 @@ do
             if ____cond12 then
                 do
                     self.greenKeys = self.greenKeys + 1
+                    print("new green keys: " .. tostring(self.greenKeys))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 10
+            if ____cond12 then
+                do
+                    self.chipsRemaining = self.chipsRemaining - 1
+                    print("new chips remaining: " .. tostring(self.chipsRemaining))
+                    self.map[y + 1][x + 1] = 0
+                    return true
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 11
+            if ____cond12 then
+                do
+                    if self.chipsRemaining <= 0 then
+                        print("exit opened")
+                        self.map[y + 1][x + 1] = 0
+                        return true
+                    end
+                    return false
+                end
+            end
+            ____cond12 = ____cond12 or ____switch12 == 12
+            if ____cond12 then
+                do
+                    self:setWindowTitle("Blit's Battle | YOU WIN!")
                     self.map[y + 1][x + 1] = 0
                     return true
                 end
@@ -717,7 +753,7 @@ do
                             local realX = x + startX
                             local realY = y + startY
                             if realX < 0 or realY < 0 or realX >= self.MAP_WIDTH or realY >= self.MAP_HEIGHT then
-                                goto __continue27
+                                goto __continue31
                             end
                             local texture = mapToTexture(self.map[realY + 1][realX + 1])
                             if realX == self.pos.x and realY == self.pos.y then
@@ -729,7 +765,7 @@ do
                                 texture
                             )
                         end
-                        ::__continue27::
+                        ::__continue31::
                         y = y + 1
                     end
                 end
@@ -1076,10 +1112,8 @@ do
         local rightPressed = rightDown and not self.rightWasDown
         self.rightWasDown = rightDown
         if upPressed then
-            print("up")
             self:tryMove(0, -1)
         elseif downPressed then
-            print("down")
             self:tryMove(0, 1)
         elseif leftPressed then
             self:tryMove(-1, 0)
