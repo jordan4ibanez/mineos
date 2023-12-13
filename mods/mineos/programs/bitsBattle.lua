@@ -198,14 +198,14 @@ do
     end
     local _ = 0
     local w = 1
-    local b = 2
-    local r = 3
-    local y = 4
-    local g = 5
-    local B = 6
-    local R = 7
-    local Y = 8
-    local G = 9
+    local B = 2
+    local R = 3
+    local Y = 4
+    local G = 5
+    local b = 6
+    local r = 7
+    local y = 8
+    local g = 9
     local C = 10
     local S = 11
     local E = 12
@@ -577,9 +577,9 @@ do
                                 local realY = y + startY
                                 local tex = layer == 1 and "nothing.png" or "bg_tile.png"
                                 self.renderer:addElement(
-                                    "chips_challenge_bg" .. tostring(self.instance),
+                                    self:grabTileKey(x, y, layer),
                                     {
-                                        name = "chips_challenge_bg_" .. tostring(self.instance),
+                                        name = self:grabTileKey(x, y, layer),
                                         hud_elem_type = HudElementType.image,
                                         position = create(0, 0),
                                         text = tex,
@@ -601,10 +601,38 @@ do
                 x = x + 1
             end
         end
+        self:update()
         self:setWindowTitle("Bit's Battle")
     end
+    function BitsBattle.prototype.update(self)
+        local startX = self.pos.x - 4
+        local startY = self.pos.y - 4
+        do
+            local x = 0
+            while x < self.VISIBLE_SIZE do
+                do
+                    local y = 0
+                    while y < self.VISIBLE_SIZE do
+                        local realX = x + startX
+                        local realY = y + startY
+                        local texture = mapToTexture(self.map[realY + 1][realX + 1])
+                        if realX == self.pos.x and realY == self.pos.y then
+                            texture = "bit_byte.png"
+                        end
+                        self.renderer:setElementComponentValue(
+                            self:grabTileKey(x, y, 1),
+                            "text",
+                            texture
+                        )
+                        y = y + 1
+                    end
+                end
+                x = x + 1
+            end
+        end
+    end
     function BitsBattle.prototype.grabTileKey(self, x, y, layer)
-        return (((("chips_challenge_tile_" .. tostring(x)) .. "_") .. tostring(y)) .. "_") .. tostring(layer)
+        return (((((("chips_challenge_tile_" .. tostring(x)) .. "_") .. tostring(y)) .. "_") .. tostring(layer)) .. "_") .. tostring(self.instance)
     end
     function BitsBattle.prototype.move(self)
         print("moving bits battle")

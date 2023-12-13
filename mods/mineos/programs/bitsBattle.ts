@@ -58,17 +58,17 @@ namespace mineos {
   const _ = 0
   const w = 1
   
-  // keys
-  const b = 2
-  const r = 3
-  const y = 4
-  const g = 5
-
   // locks
-  const B = 6
-  const R = 7
-  const Y = 8
-  const G = 9
+  const B = 2
+  const R = 3
+  const Y = 4
+  const G = 5
+
+  // keys
+  const b = 6
+  const r = 7
+  const y = 8
+  const g = 9
 
   // chips & socket
   const C = 10
@@ -162,8 +162,8 @@ namespace mineos {
             // 1 is the foreground
             const tex = (layer == 1) ? "nothing.png" : "bg_tile.png"
 
-            this.renderer.addElement("chips_challenge_bg" + this.instance, {
-              name: "chips_challenge_bg_" + this.instance,
+            this.renderer.addElement(this.grabTileKey(x,y,layer), {
+              name: this.grabTileKey(x,y,layer),
               hud_elem_type: HudElementType.image,
               position: create(0,0),
               text: tex,
@@ -179,11 +179,32 @@ namespace mineos {
         }
       }
 
+      this.update()
+
       this.setWindowTitle("Bit's Battle")
     }
 
+    update(): void {
+      const startX = this.pos.x - 4
+      const startY = this.pos.y - 4
+      for (let x = 0; x < this.VISIBLE_SIZE; x++) {
+        for (let y = 0; y < this.VISIBLE_SIZE; y++) {
+          const realX = x + startX
+          const realY = y + startY
+
+          let texture = mapToTexture(this.map[realY][realX])
+
+          if (realX == this.pos.x && realY == this.pos.y) {
+            texture = "bit_byte.png"
+          }
+
+          this.renderer.setElementComponentValue(this.grabTileKey(x,y,1), "text", texture)
+        }
+      }
+    }
+
     grabTileKey(x: number, y: number, layer: number): string {
-      return "chips_challenge_tile_" + x + "_" + y + "_" + layer
+      return "chips_challenge_tile_" + x + "_" + y + "_" + layer + "_" + this.instance
     }
 
     move() {
