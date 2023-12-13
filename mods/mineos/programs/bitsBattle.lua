@@ -72,7 +72,7 @@ do
                 name = "chips_challenge_bg_" .. tostring(self.instance),
                 hud_elem_type = HudElementType.image,
                 position = create(0, 0),
-                text = ("pixel.png^[colorize:" .. colors.color(60, 60, 60)) .. ":255",
+                text = ("pixel.png^[colorize:" .. colors.color(70, 70, 70)) .. ":255",
                 scale = self.windowSize,
                 alignment = create(1, 1),
                 offset = create(
@@ -94,6 +94,7 @@ do
     end
     function BitsBattle.prototype.destructor(self)
         print("bits battle destroyed")
+        self.renderer:removeElement("chips_challenge_bg" .. tostring(self.instance))
     end
     function BitsBattle.prototype.load(self)
         mineos.System.out:println("Loading Bits' Battle!")

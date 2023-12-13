@@ -43,6 +43,7 @@ namespace mineos {
 
     destructor(): void {
       print("bits battle destroyed")
+      this.renderer.removeElement("chips_challenge_bg" + this.instance)
     }
 
     load() {
