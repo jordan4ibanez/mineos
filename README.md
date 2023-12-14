@@ -3,6 +3,8 @@
 
 Join my discord to watch me ramble like a maniac: https://discord.gg/Z2wCscTB4F
 
+## A ramble about this _"game"_
+
 Singleplayer only. If you run this on a server you should probably be using linux.
 
 Don't bother running make because I already did that for you. * see below if you want to mess with it.
@@ -27,6 +29,7 @@ A WindowProgram generally has a garbage collected nature. But like OpenGL in GC 
 
 I could have simplified the underlying infrastructure when working with the Renderer, but this is a gamejam game and I don't have much time.
 
+## Game controls
 
 Boom controls:
 wasd: move
@@ -40,11 +43,6 @@ wasd: move
 
 gong:
 ws: move
-
-
-
-
-A small note: You could technically make this run in multiplayer. You could even have it so there's a REAL email/IRC clients running on everyone's desktop then have multiplayer games on the server. This is way out of the scope of a gamejam game but I laid out the framework for you to build upon. I'm sure you can do it! I believe in you.
 
 ## Messing with this contraption.
 
@@ -66,3 +64,6 @@ Next you need Lua types for TS or else the compiler doesn't know what's going on
 ```
 sudo npm install --save-dev lua-types
 ```
+
+## A small note
+You could technically make this run in multiplayer. You could even have it so there's a REAL email/IRC clients running on everyone's desktop then have multiplayer games on the server. This is way out of the scope of a gamejam game but I laid out the framework for you to build upon. I'm sure you can do it! I believe in you.
