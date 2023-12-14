@@ -43,6 +43,13 @@ namespace mineos {
       create(0,0)
     )
 
+    // This var name is quite ominous
+    enemyPaddle = new AABB(
+      create(0,0),
+      create(getPixel(1),getPixel(4)),
+      create(0,0)
+    )
+
     constructor(system: System, renderer: Renderer, audio: AudioController, desktop: DesktopEnvironment, size: Vec2) {
       super(system, renderer, audio, desktop, size);
       this.instance = Gong.currentInstance
@@ -60,6 +67,13 @@ namespace mineos {
       )
     }
 
+    getEnemyPaddlePos(): Vec2 {
+      return create(
+        this.enemyPaddle.offset.x + this.windowPosition.x,
+        this.enemyPaddle.offset.y + this.windowPosition.y
+      )
+    }
+
     getBallPos(): Vec2 {
       return create(
         this.ball.offset.x + this.windowPosition.x,
@@ -72,7 +86,12 @@ namespace mineos {
       // Center the elements
       this.ball.offset.x = (this.windowSize.x / 2) - (this.ball.size.x / 2)
       this.ball.offset.y = (this.windowSize.y / 2) - (this.ball.size.y / 2)
+
       this.playerPaddle.offset.y = (this.windowSize.y / 2) - (this.playerPaddle.size.y / 2)
+
+      this.enemyPaddle.offset.x = this.windowSize.x - this.enemyPaddle.size.x
+      this.enemyPaddle.offset.y = (this.windowSize.y / 2) - (this.enemyPaddle.size.y / 2)
+
 
 
 
@@ -101,6 +120,17 @@ namespace mineos {
         z_index: 2
       })
 
+      this.renderer.addElement("gong_enemy_paddle_" + this.instance, {
+        name: "gong_enemy_paddle_" + this.instance,
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "pixel.png^[colorize:" + colors.color(100,100,100) + ":255",
+        scale: this.playerPaddle.size,
+        alignment: create(1,1),
+        offset: this.getEnemyPaddlePos(),
+        z_index: 2
+      })
+
       this.renderer.addElement("gong_ball_" + this.instance, {
         name: "gong_ball_" + this.instance,
         hud_elem_type: HudElementType.image,
@@ -121,6 +151,7 @@ namespace mineos {
 
     updateScene(): void {
       this.renderer.setElementComponentValue("gong_player_paddle_" + this.instance, "offset", this.getPlayerPaddlePos())
+      this.renderer.setElementComponentValue("gong_enemy_paddle_" + this.instance, "offset", this.getEnemyPaddlePos())
       this.renderer.setElementComponentValue("gong_ball_" + this.instance, "offset", this.getBallPos())
     }
 

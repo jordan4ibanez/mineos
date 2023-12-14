@@ -84,6 +84,15 @@ do
             ),
             create(0, 0)
         )
+        self.enemyPaddle = __TS__New(
+            mineos.AABB,
+            create(0, 0),
+            create(
+                getPixel(1),
+                getPixel(4)
+            ),
+            create(0, 0)
+        )
         self.instance = Gong.currentInstance
         Gong.currentInstance = Gong.currentInstance + 1
     end
@@ -97,6 +106,9 @@ do
     function Gong.prototype.getPlayerPaddlePos(self)
         return create(self.playerPaddle.offset.x + self.windowPosition.x, self.playerPaddle.offset.y + self.windowPosition.y)
     end
+    function Gong.prototype.getEnemyPaddlePos(self)
+        return create(self.enemyPaddle.offset.x + self.windowPosition.x, self.enemyPaddle.offset.y + self.windowPosition.y)
+    end
     function Gong.prototype.getBallPos(self)
         return create(self.ball.offset.x + self.windowPosition.x, self.ball.offset.y + self.windowPosition.y)
     end
@@ -104,6 +116,8 @@ do
         self.ball.offset.x = self.windowSize.x / 2 - self.ball.size.x / 2
         self.ball.offset.y = self.windowSize.y / 2 - self.ball.size.y / 2
         self.playerPaddle.offset.y = self.windowSize.y / 2 - self.playerPaddle.size.y / 2
+        self.enemyPaddle.offset.x = self.windowSize.x - self.enemyPaddle.size.x
+        self.enemyPaddle.offset.y = self.windowSize.y / 2 - self.enemyPaddle.size.y / 2
         self.renderer:addElement(
             "gong_bg_" .. tostring(self.instance),
             {
@@ -134,6 +148,19 @@ do
             }
         )
         self.renderer:addElement(
+            "gong_enemy_paddle_" .. tostring(self.instance),
+            {
+                name = "gong_enemy_paddle_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. colors.color(100, 100, 100)) .. ":255",
+                scale = self.playerPaddle.size,
+                alignment = create(1, 1),
+                offset = self:getEnemyPaddlePos(),
+                z_index = 2
+            }
+        )
+        self.renderer:addElement(
             "gong_ball_" .. tostring(self.instance),
             {
                 name = "gong_ball_" .. tostring(self.instance),
@@ -155,6 +182,11 @@ do
             "gong_player_paddle_" .. tostring(self.instance),
             "offset",
             self:getPlayerPaddlePos()
+        )
+        self.renderer:setElementComponentValue(
+            "gong_enemy_paddle_" .. tostring(self.instance),
+            "offset",
+            self:getEnemyPaddlePos()
         )
         self.renderer:setElementComponentValue(
             "gong_ball_" .. tostring(self.instance),
