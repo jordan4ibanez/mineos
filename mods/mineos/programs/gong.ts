@@ -206,6 +206,7 @@ namespace mineos {
       this.renderer.setElementComponentValue("gong_enemy_paddle_" + this.instance, "offset", this.getEnemyPaddlePos())
       this.renderer.setElementComponentValue("gong_ball_" + this.instance, "offset", this.getBallPos())
       this.renderer.setElementComponentValue("gong_player_score_" + this.instance, "text", tostring(this.scorePlayer))
+      this.renderer.setElementComponentValue("gong_enemy_score_" + this.instance, "text", tostring(this.scoreEnemy))
     }
 
     playerControls(delta: number): void {
@@ -324,9 +325,11 @@ namespace mineos {
       if (ballNewPos.x >= this.windowSize.x - this.ball.size.x) {
         ballNewPos.x = this.windowSize.x - this.ball.size.x
         this.ballVelocity.x *= -1
+        this.scorePlayer++
       } else if (ballNewPos.x <= 0) {
         ballNewPos.x = 0
         this.ballVelocity.x *= -1
+        this.scoreEnemy++
       }
 
       if (ballNewPos.y >= this.windowSize.y - this.ball.size.y) {

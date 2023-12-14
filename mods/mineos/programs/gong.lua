@@ -247,6 +247,11 @@ do
             "text",
             tostring(self.scorePlayer)
         )
+        self.renderer:setElementComponentValue(
+            "gong_enemy_score_" .. tostring(self.instance),
+            "text",
+            tostring(self.scoreEnemy)
+        )
     end
     function Gong.prototype.playerControls(self, delta)
         local up = self.system:isKeyDown("up")
@@ -326,10 +331,12 @@ do
             ballNewPos.x = self.windowSize.x - self.ball.size.x
             local ____self_ballVelocity_14, ____x_15 = self.ballVelocity, "x"
             ____self_ballVelocity_14[____x_15] = ____self_ballVelocity_14[____x_15] * -1
+            self.scorePlayer = self.scorePlayer + 1
         elseif ballNewPos.x <= 0 then
             ballNewPos.x = 0
             local ____self_ballVelocity_16, ____x_17 = self.ballVelocity, "x"
             ____self_ballVelocity_16[____x_17] = ____self_ballVelocity_16[____x_17] * -1
+            self.scoreEnemy = self.scoreEnemy + 1
         end
         if ballNewPos.y >= self.windowSize.y - self.ball.size.y then
             ballNewPos.y = self.windowSize.y - self.ball.size.y
