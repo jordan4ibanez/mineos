@@ -13,6 +13,21 @@ Moving around the desktop icons does literally nothing but it's cool.
 
 It tells you your local system time.
 
+You can move windows around, and close them. This is an actual multitasking OS.
+
+The audio controller is horrifically slapped together and you'll see why if you try to run two games at once that play songs.
+
+The Core of the operating system is System. This is the controller for everything. The computer basically.
+
+The Desktop is a Program that runs on the System. Yes this literally is a Progam that the System is running.
+
+The Desktop can run multiple Programs. These are WindowPrograms. They literally inherit from Program. So this means that this is basically a miniature tree-like hierarchy.
+
+A WindowProgram generally has a garbage collected nature. But like OpenGL in GC langs, you need to manually clean up the Renderer's memory. This is where the destructor comes in.
+
+I could have simplified the underlying infrastructure when working with the Renderer, but this is a gamejam game and I don't have much time.
+
+
 Boom controls:
 wasd: move
 mouse: look
@@ -29,10 +44,11 @@ ws: move
 
 
 
+A small note: You could technically make this run in multiplayer. You could even have it so there's a REAL email/IRC clients running on everyone's desktop then have multiplayer games on the server. This is way out of the scope of a gamejam game but I laid out the framework for you to build upon. I'm sure you can do it! I believe in you.
 
+## Messing with this contraption.
 
-
-
+I have set it up to specifically 
 
 I wouldn't mess with the Lua code, it's auto generated. Only mess with the TS code and run make. 
 There is ``make`` ``make linux`` and ``make windows``. The last two will attempt to auto start the game.
