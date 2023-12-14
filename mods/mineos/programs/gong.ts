@@ -29,6 +29,9 @@ namespace mineos {
 
     static currentInstance = 0
 
+    scorePlayer = 0
+    scoreEnemy = 0
+
     ball = new AABB(
       create(0,0),
       create(getPixel(1),getPixel(1)),
@@ -142,6 +145,55 @@ namespace mineos {
         z_index: 2
       })
 
+      this.renderer.addElement("separator_" + this.instance, {
+        name: "gong_ball_" + this.instance,
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "pixel.png^[colorize:" + colors.color(100,100,100) + ":255",
+        scale: create(
+          PIXEL_SIZE / 2,
+          this.windowSize.y
+        ),
+        alignment: create(1,1),
+        offset: create(
+          this.windowPosition.x + (this.windowSize.y / 2) - (PIXEL_SIZE / 4),
+          this.windowPosition.y
+        ),
+        z_index: 2
+      })
+
+      this.renderer.addElement("gong_player_score_" + this.instance, {
+        name: "gong_player_score_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: this.scorePlayer.toString(),
+        number: colors.colorHEX(100,100,100),
+        position: create(0,0),
+        alignment: create(0,1),
+        offset: create(
+          this.windowPosition.x + (this.windowSize.x / 2) - getPixel(2),
+          this.windowPosition.y + getPixel(1)
+        ),
+        // style: 4,
+        z_index: 3
+      })
+
+      this.renderer.addElement("gong_enemy_score_" + this.instance, {
+        name: "gong_enemy_score_" + this.instance,
+        hud_elem_type: HudElementType.text,
+        scale: create(1,1),
+        text: tostring(this.scoreEnemy),
+        number: colors.colorHEX(100,100,100),
+        position: create(0,0),
+        alignment: create(0,1),
+        offset: create(
+          this.windowPosition.x + (this.windowSize.x / 2) + getPixel(2),
+          this.windowPosition.y + getPixel(1)
+        ),
+        // style: 4,
+        z_index: 3
+      })
+
 
       this.setWindowTitle("Gong")
 
@@ -153,6 +205,7 @@ namespace mineos {
       this.renderer.setElementComponentValue("gong_player_paddle_" + this.instance, "offset", this.getPlayerPaddlePos())
       this.renderer.setElementComponentValue("gong_enemy_paddle_" + this.instance, "offset", this.getEnemyPaddlePos())
       this.renderer.setElementComponentValue("gong_ball_" + this.instance, "offset", this.getBallPos())
+      this.renderer.setElementComponentValue("gong_player_score_" + this.instance, "text", tostring(this.scorePlayer))
     }
 
     playerControls(delta: number): void {

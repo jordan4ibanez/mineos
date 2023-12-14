@@ -32,7 +32,7 @@ Join my discord to watch me ramble like a maniac: https://discord.gg/Z2wCscTB4F
 
 Please see the source code for more information. I would start in [programs/program.ts](https://github.com/jordan4ibanez/mineos/blob/main/mods/mineos/programs/programs.ts#L10) to see the underlying framework of a Program.
 
-Yes this does have ``System.out.println("hi")`` I don't recommend you use it. But you can if you want.
+Yes this does have ``System.out.println("hi")`` I don't recommend you use it. But you can if you want. This was added as a joke.
 
 ## Game controls
 

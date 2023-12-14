@@ -65,6 +65,8 @@ do
             size
         )
         self.loaded = false
+        self.scorePlayer = 0
+        self.scoreEnemy = 0
         self.ball = __TS__New(
             mineos.AABB,
             create(0, 0),
@@ -173,6 +175,53 @@ do
                 z_index = 2
             }
         )
+        self.renderer:addElement(
+            "separator_" .. tostring(self.instance),
+            {
+                name = "gong_ball_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. colors.color(100, 100, 100)) .. ":255",
+                scale = create(PIXEL_SIZE / 2, self.windowSize.y),
+                alignment = create(1, 1),
+                offset = create(self.windowPosition.x + self.windowSize.y / 2 - PIXEL_SIZE / 4, self.windowPosition.y),
+                z_index = 2
+            }
+        )
+        self.renderer:addElement(
+            "gong_player_score_" .. tostring(self.instance),
+            {
+                name = "gong_player_score_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = tostring(self.scorePlayer),
+                number = colors.colorHEX(100, 100, 100),
+                position = create(0, 0),
+                alignment = create(0, 1),
+                offset = create(
+                    self.windowPosition.x + self.windowSize.x / 2 - getPixel(2),
+                    self.windowPosition.y + getPixel(1)
+                ),
+                z_index = 3
+            }
+        )
+        self.renderer:addElement(
+            "gong_enemy_score_" .. tostring(self.instance),
+            {
+                name = "gong_enemy_score_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = tostring(self.scoreEnemy),
+                number = colors.colorHEX(100, 100, 100),
+                position = create(0, 0),
+                alignment = create(0, 1),
+                offset = create(
+                    self.windowPosition.x + self.windowSize.x / 2 + getPixel(2),
+                    self.windowPosition.y + getPixel(1)
+                ),
+                z_index = 3
+            }
+        )
         self:setWindowTitle("Gong")
         print("Gong loaded!")
         self.loaded = true
@@ -192,6 +241,11 @@ do
             "gong_ball_" .. tostring(self.instance),
             "offset",
             self:getBallPos()
+        )
+        self.renderer:setElementComponentValue(
+            "gong_player_score_" .. tostring(self.instance),
+            "text",
+            tostring(self.scorePlayer)
         )
     end
     function Gong.prototype.playerControls(self, delta)
