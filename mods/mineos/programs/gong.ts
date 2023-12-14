@@ -171,6 +171,31 @@ namespace mineos {
       }
     }
 
+    enemyLogic(delta: number): void {
+      const ballCenterY = this.ball.offset.y + (this.ball.size.y / 2)
+      const paddleCenterY = this.enemyPaddle.offset.y + (this.enemyPaddle.size.y / 2) 
+      const compare = ballCenterY - paddleCenterY
+
+      // Anything less than this and the game becomes impossible
+      const easiness = 1.5
+
+      const diffGoal = PIXEL_SIZE
+
+      if (math.abs(compare) < diffGoal) return
+
+      if (compare < diffGoal) {
+        this.enemyPaddle.offset.y -= delta * (MOVEMENT_MULTIPLIER / easiness)
+        if (this.enemyPaddle.offset.y <= 0) {
+          this.enemyPaddle.offset.y = 0
+        }
+      } else if (compare > diffGoal) {
+        this.enemyPaddle.offset.y += delta * (MOVEMENT_MULTIPLIER / easiness)
+        if (this.enemyPaddle.offset.y >= this.windowSize.y - this.enemyPaddle.size.y) {
+          this.enemyPaddle.offset.y = this.windowSize.y - this.enemyPaddle.size.y
+        }
+      }
+    }
+
     ballLogic(delta: number): void {
       const ballNewPos = create(
         this.ball.offset.x += this.ballVelocity.x * delta * MOVEMENT_MULTIPLIER,
@@ -231,6 +256,7 @@ namespace mineos {
     main(delta: number): void {
       if (!this.loaded) this.load()
       this.playerControls(delta)
+      this.enemyLogic(delta)
       this.ballLogic(delta)
       this.updateScene()
     }

@@ -211,14 +211,37 @@ do
             end
         end
     end
+    function Gong.prototype.enemyLogic(self, delta)
+        local ballCenterY = self.ball.offset.y + self.ball.size.y / 2
+        local paddleCenterY = self.enemyPaddle.offset.y + self.enemyPaddle.size.y / 2
+        local compare = ballCenterY - paddleCenterY
+        local easiness = 1.5
+        local diffGoal = PIXEL_SIZE
+        if math.abs(compare) < diffGoal then
+            return
+        end
+        if compare < diffGoal then
+            local ____self_enemyPaddle_offset_4, ____y_5 = self.enemyPaddle.offset, "y"
+            ____self_enemyPaddle_offset_4[____y_5] = ____self_enemyPaddle_offset_4[____y_5] - delta * (MOVEMENT_MULTIPLIER / easiness)
+            if self.enemyPaddle.offset.y <= 0 then
+                self.enemyPaddle.offset.y = 0
+            end
+        elseif compare > diffGoal then
+            local ____self_enemyPaddle_offset_6, ____y_7 = self.enemyPaddle.offset, "y"
+            ____self_enemyPaddle_offset_6[____y_7] = ____self_enemyPaddle_offset_6[____y_7] + delta * (MOVEMENT_MULTIPLIER / easiness)
+            if self.enemyPaddle.offset.y >= self.windowSize.y - self.enemyPaddle.size.y then
+                self.enemyPaddle.offset.y = self.windowSize.y - self.enemyPaddle.size.y
+            end
+        end
+    end
     function Gong.prototype.ballLogic(self, delta)
-        local ____self_ball_offset_4, ____x_5 = self.ball.offset, "x"
-        local ____self_ball_offset_x_6 = ____self_ball_offset_4[____x_5] + self.ballVelocity.x * delta * MOVEMENT_MULTIPLIER
-        ____self_ball_offset_4[____x_5] = ____self_ball_offset_x_6
-        local ____self_ball_offset_7, ____y_8 = self.ball.offset, "y"
-        local ____self_ball_offset_y_9 = ____self_ball_offset_7[____y_8] + self.ballVelocity.y * delta * MOVEMENT_MULTIPLIER
-        ____self_ball_offset_7[____y_8] = ____self_ball_offset_y_9
-        local ballNewPos = create(____self_ball_offset_x_6, ____self_ball_offset_y_9)
+        local ____self_ball_offset_8, ____x_9 = self.ball.offset, "x"
+        local ____self_ball_offset_x_10 = ____self_ball_offset_8[____x_9] + self.ballVelocity.x * delta * MOVEMENT_MULTIPLIER
+        ____self_ball_offset_8[____x_9] = ____self_ball_offset_x_10
+        local ____self_ball_offset_11, ____y_12 = self.ball.offset, "y"
+        local ____self_ball_offset_y_13 = ____self_ball_offset_11[____y_12] + self.ballVelocity.y * delta * MOVEMENT_MULTIPLIER
+        ____self_ball_offset_11[____y_12] = ____self_ball_offset_y_13
+        local ballNewPos = create(____self_ball_offset_x_10, ____self_ball_offset_y_13)
         do
             local ballCenterY = self.ball.offset.y + self.ball.size.y / 2
             local paddleCenterY = self.playerPaddle.offset.y + self.playerPaddle.size.y / 2
@@ -234,21 +257,21 @@ do
         end
         if ballNewPos.x >= self.windowSize.x - self.ball.size.x then
             ballNewPos.x = self.windowSize.x - self.ball.size.x
-            local ____self_ballVelocity_10, ____x_11 = self.ballVelocity, "x"
-            ____self_ballVelocity_10[____x_11] = ____self_ballVelocity_10[____x_11] * -1
+            local ____self_ballVelocity_14, ____x_15 = self.ballVelocity, "x"
+            ____self_ballVelocity_14[____x_15] = ____self_ballVelocity_14[____x_15] * -1
         elseif ballNewPos.x <= 0 then
             ballNewPos.x = 0
-            local ____self_ballVelocity_12, ____x_13 = self.ballVelocity, "x"
-            ____self_ballVelocity_12[____x_13] = ____self_ballVelocity_12[____x_13] * -1
+            local ____self_ballVelocity_16, ____x_17 = self.ballVelocity, "x"
+            ____self_ballVelocity_16[____x_17] = ____self_ballVelocity_16[____x_17] * -1
         end
         if ballNewPos.y >= self.windowSize.y - self.ball.size.y then
             ballNewPos.y = self.windowSize.y - self.ball.size.y
-            local ____self_ballVelocity_14, ____y_15 = self.ballVelocity, "y"
-            ____self_ballVelocity_14[____y_15] = ____self_ballVelocity_14[____y_15] * -1
+            local ____self_ballVelocity_18, ____y_19 = self.ballVelocity, "y"
+            ____self_ballVelocity_18[____y_19] = ____self_ballVelocity_18[____y_19] * -1
         elseif ballNewPos.y <= 0 then
             ballNewPos.y = 0
-            local ____self_ballVelocity_16, ____y_17 = self.ballVelocity, "y"
-            ____self_ballVelocity_16[____y_17] = ____self_ballVelocity_16[____y_17] * -1
+            local ____self_ballVelocity_20, ____y_21 = self.ballVelocity, "y"
+            ____self_ballVelocity_20[____y_21] = ____self_ballVelocity_20[____y_21] * -1
         end
         self.ball.offset = ballNewPos
     end
@@ -257,6 +280,7 @@ do
             self:load()
         end
         self:playerControls(delta)
+        self:enemyLogic(delta)
         self:ballLogic(delta)
         self:updateScene()
     end
