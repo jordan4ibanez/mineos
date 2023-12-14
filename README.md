@@ -1,6 +1,8 @@
 # mineos
  An operating system for Minetest
 
+Join my discord to watch me ramble like a maniac: https://discord.gg/Z2wCscTB4F
+
 Don't bother running make because I already did that for you.
 
 ### BUT
