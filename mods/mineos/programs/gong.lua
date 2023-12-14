@@ -255,6 +255,19 @@ do
                 self.ballVelocity.y = normalizedDir3d.z
             end
         end
+        do
+            local ballCenterY = self.ball.offset.y + self.ball.size.y / 2
+            local paddleCenterY = self.enemyPaddle.offset.y + self.enemyPaddle.size.y / 2
+            local upperRightPoint = create(self.ball.offset.x + self.enemyPaddle.size.x, self.ball.offset.y)
+            local lowerRightPoint = create(self.ball.offset.x + self.enemyPaddle.size.x, self.ball.offset.y + self.ball.size.y)
+            if self.enemyPaddle:pointWithin(upperRightPoint) or self.enemyPaddle:pointWithin(lowerRightPoint) then
+                ballNewPos.x = self.enemyPaddle.offset.x - self.enemyPaddle.size.x
+                local newDir3d = create3d(ballNewPos.x - self.enemyPaddle.offset.x, 0, (ballCenterY - paddleCenterY) / 2)
+                local normalizedDir3d = vector.normalize(newDir3d)
+                self.ballVelocity.x = normalizedDir3d.x
+                self.ballVelocity.y = normalizedDir3d.z
+            end
+        end
         if ballNewPos.x >= self.windowSize.x - self.ball.size.x then
             ballNewPos.x = self.windowSize.x - self.ball.size.x
             local ____self_ballVelocity_14, ____x_15 = self.ballVelocity, "x"

@@ -202,7 +202,8 @@ namespace mineos {
         this.ball.offset.y += this.ballVelocity.y * delta * MOVEMENT_MULTIPLIER
       )
 
-      { // Very cheap collision detection
+      // Very cheap collision detection
+      { // ? player
         const ballCenterY = this.ball.offset.y + (this.ball.size.y / 2)
 
         const paddleCenterY = this.playerPaddle.offset.y + (this.playerPaddle.size.y / 2)
@@ -226,6 +227,39 @@ namespace mineos {
             0,
             (ballCenterY - paddleCenterY) / 2
           )
+          const normalizedDir3d = vector.normalize(newDir3d)
+
+          this.ballVelocity.x = normalizedDir3d.x
+          this.ballVelocity.y = normalizedDir3d.z
+        }
+      }
+
+      { // ? enemy
+        const ballCenterY = this.ball.offset.y + (this.ball.size.y / 2)
+
+        const paddleCenterY = this.enemyPaddle.offset.y + (this.enemyPaddle.size.y / 2)
+        
+        const upperRightPoint = create(
+          this.ball.offset.x + this.enemyPaddle.size.x,
+          this.ball.offset.y
+        )
+
+        const lowerRightPoint = create(
+          this.ball.offset.x + this.enemyPaddle.size.x,
+          this.ball.offset.y + this.ball.size.y
+        )
+
+        if (this.enemyPaddle.pointWithin(upperRightPoint) || this.enemyPaddle.pointWithin(lowerRightPoint)) {
+
+          ballNewPos.x = this.enemyPaddle.offset.x - this.enemyPaddle.size.x
+
+          // This is surprisingly accurate.
+          const newDir3d = create3d(
+            ballNewPos.x - this.enemyPaddle.offset.x,
+            0,
+            (ballCenterY - paddleCenterY) / 2
+          )
+
           const normalizedDir3d = vector.normalize(newDir3d)
 
           this.ballVelocity.x = normalizedDir3d.x
