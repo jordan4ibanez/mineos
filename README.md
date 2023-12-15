@@ -7,7 +7,7 @@ Join my discord to watch me ramble like a maniac: https://discord.gg/Z2wCscTB4F
 
 - Singleplayer only. If you run this on a server you should probably be using linux.
 
-- Don't bother running make because I already did that for you. * see below if you want to mess with it.
+- Don't bother running make because I already did that for you. [see below if you want to mess with it.](https://github.com/jordan4ibanez/mineos#messing-with-this-contraption)
 
 - You can move around the desktop like a normal, hastily made, slapped together standard win-like DE.
 
