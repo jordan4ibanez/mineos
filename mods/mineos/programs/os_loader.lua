@@ -66,7 +66,6 @@ do
         else
             if not self.hit then
                 self.hit = true
-                mineos.System.out:println("added logo")
                 self.renderer:addElement(
                     "boot_logo",
                     {

@@ -36,7 +36,6 @@ namespace mineos {
       } else {
         if (!this.hit) {
           this.hit = true
-          System.out.println("added logo")
           this.renderer.addElement("boot_logo", {
             name: "boot_logo",
             hud_elem_type: HudElementType.image,

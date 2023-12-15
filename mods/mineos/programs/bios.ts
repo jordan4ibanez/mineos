@@ -173,7 +173,7 @@ namespace mineos {
               name: "block_check_passed",
               hud_elem_type: HudElementType.text,
               scale: create(1,1),
-              text: "passed",
+              text: "passed.",
               number: colors.colorHEX(100,100,100),
               position: create(0,0),
               alignment: create(1,1),
