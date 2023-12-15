@@ -3,7 +3,6 @@ namespace mineos {
   // Probably the simplest game
   const create = vector.create2d;
   const create3d = vector.create;
-  const dir_to_yaw = minetest.dir_to_yaw;
   const yaw_to_dir = minetest.yaw_to_dir;
 
   const PIXEL_SIZE = 16
@@ -38,7 +37,7 @@ namespace mineos {
       create(0,0)
     )
 
-    ballVelocity = create(1,0)//randomDir()
+    ballVelocity = randomDir()
 
     playerPaddle = new AABB(
       create(0,0),
@@ -250,6 +249,13 @@ namespace mineos {
       }
     }
 
+    playWall(): void {
+      this.audioController.playSound("gong_wall", 1)
+    }
+    playScore(): void {
+      this.audioController.playSound("gong_score", 1)
+    }
+
     ballLogic(delta: number): void {
       const ballNewPos = create(
         this.ball.offset.x += this.ballVelocity.x * delta * MOVEMENT_MULTIPLIER,
@@ -285,6 +291,8 @@ namespace mineos {
 
           this.ballVelocity.x = normalizedDir3d.x
           this.ballVelocity.y = normalizedDir3d.z
+
+          this.playWall()
         }
       }
 
@@ -318,6 +326,8 @@ namespace mineos {
 
           this.ballVelocity.x = normalizedDir3d.x
           this.ballVelocity.y = normalizedDir3d.z
+
+          this.playWall()
         }
       }
 
@@ -326,18 +336,22 @@ namespace mineos {
         ballNewPos.x = this.windowSize.x - this.ball.size.x
         this.ballVelocity.x *= -1
         this.scorePlayer++
+        this.playScore()
       } else if (ballNewPos.x <= 0) {
         ballNewPos.x = 0
         this.ballVelocity.x *= -1
         this.scoreEnemy++
+        this.playScore()
       }
 
       if (ballNewPos.y >= this.windowSize.y - this.ball.size.y) {
         ballNewPos.y = this.windowSize.y - this.ball.size.y
         this.ballVelocity.y *= -1
+        this.playWall()
       } else if (ballNewPos.y <= 0) {
         ballNewPos.y = 0
         this.ballVelocity.y *= -1
+        this.playWall()
       }
 
       this.ball.offset = ballNewPos

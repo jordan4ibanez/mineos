@@ -41,7 +41,6 @@ mineos = mineos or ({})
 do
     local create = vector.create2d
     local create3d = vector.create
-    local dir_to_yaw = minetest.dir_to_yaw
     local yaw_to_dir = minetest.yaw_to_dir
     local PIXEL_SIZE = 16
     local function getPixel(dimension)
@@ -76,7 +75,7 @@ do
             ),
             create(0, 0)
         )
-        self.ballVelocity = create(1, 0)
+        self.ballVelocity = randomDir()
         self.playerPaddle = __TS__New(
             mineos.AABB,
             create(0, 0),
@@ -293,6 +292,12 @@ do
             end
         end
     end
+    function Gong.prototype.playWall(self)
+        self.audioController:playSound("gong_wall", 1)
+    end
+    function Gong.prototype.playScore(self)
+        self.audioController:playSound("gong_score", 1)
+    end
     function Gong.prototype.ballLogic(self, delta)
         local ____self_ball_offset_8, ____x_9 = self.ball.offset, "x"
         local ____self_ball_offset_x_10 = ____self_ball_offset_8[____x_9] + self.ballVelocity.x * delta * MOVEMENT_MULTIPLIER
@@ -312,6 +317,7 @@ do
                 local normalizedDir3d = vector.normalize(newDir3d)
                 self.ballVelocity.x = normalizedDir3d.x
                 self.ballVelocity.y = normalizedDir3d.z
+                self:playWall()
             end
         end
         do
@@ -325,6 +331,7 @@ do
                 local normalizedDir3d = vector.normalize(newDir3d)
                 self.ballVelocity.x = normalizedDir3d.x
                 self.ballVelocity.y = normalizedDir3d.z
+                self:playWall()
             end
         end
         if ballNewPos.x >= self.windowSize.x - self.ball.size.x then
@@ -332,20 +339,24 @@ do
             local ____self_ballVelocity_14, ____x_15 = self.ballVelocity, "x"
             ____self_ballVelocity_14[____x_15] = ____self_ballVelocity_14[____x_15] * -1
             self.scorePlayer = self.scorePlayer + 1
+            self:playScore()
         elseif ballNewPos.x <= 0 then
             ballNewPos.x = 0
             local ____self_ballVelocity_16, ____x_17 = self.ballVelocity, "x"
             ____self_ballVelocity_16[____x_17] = ____self_ballVelocity_16[____x_17] * -1
             self.scoreEnemy = self.scoreEnemy + 1
+            self:playScore()
         end
         if ballNewPos.y >= self.windowSize.y - self.ball.size.y then
             ballNewPos.y = self.windowSize.y - self.ball.size.y
             local ____self_ballVelocity_18, ____y_19 = self.ballVelocity, "y"
             ____self_ballVelocity_18[____y_19] = ____self_ballVelocity_18[____y_19] * -1
+            self:playWall()
         elseif ballNewPos.y <= 0 then
             ballNewPos.y = 0
             local ____self_ballVelocity_20, ____y_21 = self.ballVelocity, "y"
             ____self_ballVelocity_20[____y_21] = ____self_ballVelocity_20[____y_21] * -1
+            self:playWall()
         end
         self.ball.offset = ballNewPos
     end
