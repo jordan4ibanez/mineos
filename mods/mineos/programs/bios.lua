@@ -33,6 +33,7 @@ end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
+    local create = vector.create2d
     local BiosProcedure = __TS__Class()
     BiosProcedure.name = "BiosProcedure"
     __TS__ClassExtends(BiosProcedure, mineos.Program)
@@ -41,9 +42,9 @@ do
         self.timer = 0
         self.stateTimer = 0
         self.state = 0
-        self.increments = 0.5
+        self.increments = 0.01
         self.memoryCounter = 0
-        self.impatience = 1
+        self.impatience = 10
     end
     function BiosProcedure.prototype.main(self, delta)
         if self.timer == 0 then
@@ -58,24 +59,117 @@ do
                 if ____cond6 then
                     do
                         self.audioController:playSound("computerBeep", 1)
+                        self.renderer:addElement(
+                            "bios_logo",
+                            {
+                                name = "bios_logo",
+                                hud_elem_type = HudElementType.image,
+                                position = create(0, 0),
+                                text = "minetest.png",
+                                scale = create(1 / 16, 1 / 16),
+                                alignment = create(1, 1),
+                                offset = create(0, 0),
+                                z_index = 1
+                            }
+                        )
+                        self.renderer:addElement(
+                            "bios_name",
+                            {
+                                name = "bios_name",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = " Minetest\nMegablocks",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(3, 3),
+                                offset = create(150, 20),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 6
                 if ____cond6 then
                     do
+                        self.renderer:addElement(
+                            "cpu_detection",
+                            {
+                                name = "cpu_detection",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "Detecting CPU...",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(20, 200),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 8
                 if ____cond6 then
                     do
+                        self.renderer:addElement(
+                            "cpu_detection_passed",
+                            {
+                                name = "cpu_detection_passed",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "MineRyzen 1300W detected.",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(200, 200),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 9
                 if ____cond6 then
                     do
+                        self.renderer:addElement(
+                            "mem_check",
+                            {
+                                name = "mem_check",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "Total Memory:",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(20, 300),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
+                        self.renderer:addElement(
+                            "mem_check_progress",
+                            {
+                                name = "mem_check_progress",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "0 KB",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(200, 300),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         self.stateTimer = 10
                         break
                     end
@@ -85,34 +179,86 @@ do
                     do
                         self.stateTimer = 10
                         self.memoryCounter = self.memoryCounter + (10 + math.floor(math.random() * 10)) * self.impatience
+                        local mem = tostring(self.memoryCounter) .. " KB"
                         if self.memoryCounter >= 4096 then
+                            mem = tostring(4096) .. " KB"
                             self.stateTimer = 0
                             self.state = self.state + 1
                         end
+                        self.renderer:setElementComponentValue("mem_check_progress", "text", mem)
                         return
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 11
                 if ____cond6 then
                     do
+                        self.renderer:addElement(
+                            "block_check",
+                            {
+                                name = "block_check",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "Checking nodes...",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(20, 400),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 13
                 if ____cond6 then
                     do
+                        self.renderer:addElement(
+                            "block_check_passed",
+                            {
+                                name = "block_check_passed",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "passed",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(200, 400),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 15
                 if ____cond6 then
                     do
+                        self.renderer:addElement(
+                            "all_passed",
+                            {
+                                name = "all_passed",
+                                hud_elem_type = HudElementType.text,
+                                scale = create(1, 1),
+                                text = "All system checks passed.",
+                                number = colors.colorHEX(100, 100, 100),
+                                position = create(0, 0),
+                                alignment = create(1, 1),
+                                size = create(1, 1),
+                                offset = create(20, 500),
+                                style = 4,
+                                z_index = 1
+                            }
+                        )
                         break
                     end
                 end
                 ____cond6 = ____cond6 or ____switch6 == 16
                 if ____cond6 then
                     do
+                        print("done")
                         self.iMem = 1
                         self.renderer:clearMemory()
                     end
