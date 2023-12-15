@@ -97,13 +97,6 @@ do
         self.instance = Gong.currentInstance
         Gong.currentInstance = Gong.currentInstance + 1
     end
-    function Gong.prototype.move(self)
-        self.renderer:setElementComponentValue(
-            "gong_bg_" .. tostring(self.instance),
-            "offset",
-            self.windowPosition
-        )
-    end
     function Gong.prototype.getPlayerPaddlePos(self)
         return create(self.playerPaddle.offset.x + self.windowPosition.x, self.playerPaddle.offset.y + self.windowPosition.y)
     end
@@ -175,15 +168,15 @@ do
             }
         )
         self.renderer:addElement(
-            "separator_" .. tostring(self.instance),
+            "gong_separator_" .. tostring(self.instance),
             {
-                name = "gong_ball_" .. tostring(self.instance),
+                name = "gong_separator_" .. tostring(self.instance),
                 hud_elem_type = HudElementType.image,
                 position = create(0, 0),
                 text = ("pixel.png^[colorize:" .. colors.color(100, 100, 100)) .. ":255",
                 scale = create(PIXEL_SIZE / 2, self.windowSize.y),
                 alignment = create(1, 1),
-                offset = create(self.windowPosition.x + self.windowSize.y / 2 - PIXEL_SIZE / 4, self.windowPosition.y),
+                offset = create(self.windowPosition.x + self.windowSize.x / 2 - PIXEL_SIZE / 4, self.windowPosition.y),
                 z_index = 2
             }
         )
@@ -224,6 +217,58 @@ do
         self:setWindowTitle("Gong")
         print("Gong loaded!")
         self.loaded = true
+    end
+    function Gong.prototype.move(self)
+        self.renderer:setElementComponentValue(
+            "gong_bg_" .. tostring(self.instance),
+            "offset",
+            self.windowPosition
+        )
+        self.renderer:setElementComponentValue(
+            "gong_player_paddle_" .. tostring(self.instance),
+            "offset",
+            self:getPlayerPaddlePos()
+        )
+        self.renderer:setElementComponentValue(
+            "gong_enemy_paddle_" .. tostring(self.instance),
+            "offset",
+            self:getEnemyPaddlePos()
+        )
+        self.renderer:setElementComponentValue(
+            "gong_ball_" .. tostring(self.instance),
+            "offset",
+            self:getBallPos()
+        )
+        self.renderer:setElementComponentValue(
+            "gong_player_score_" .. tostring(self.instance),
+            "offset",
+            create(
+                self.windowPosition.x + self.windowSize.x / 2 - getPixel(2),
+                self.windowPosition.y + getPixel(1)
+            )
+        )
+        self.renderer:setElementComponentValue(
+            "gong_enemy_score_" .. tostring(self.instance),
+            "offset",
+            create(
+                self.windowPosition.x + self.windowSize.x / 2 + getPixel(2),
+                self.windowPosition.y + getPixel(1)
+            )
+        )
+        self.renderer:setElementComponentValue(
+            "gong_separator_" .. tostring(self.instance),
+            "offset",
+            create(self.windowPosition.x + self.windowSize.x / 2 - PIXEL_SIZE / 4, self.windowPosition.y)
+        )
+    end
+    function Gong.prototype.destructor(self)
+        self.renderer:removeElement("gong_player_paddle_" .. tostring(self.instance))
+        self.renderer:removeElement("gong_enemy_paddle_" .. tostring(self.instance))
+        self.renderer:removeElement("gong_ball_" .. tostring(self.instance))
+        self.renderer:removeElement("gong_player_score_" .. tostring(self.instance))
+        self.renderer:removeElement("gong_enemy_score_" .. tostring(self.instance))
+        self.renderer:removeElement("gong_separator_" .. tostring(self.instance))
+        self.renderer:removeElement("gong_bg_" .. tostring(self.instance))
     end
     function Gong.prototype.updateScene(self)
         self.renderer:setElementComponentValue(

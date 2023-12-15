@@ -58,10 +58,6 @@ namespace mineos {
       Gong.currentInstance++
     }
 
-    move(): void {
-      this.renderer.setElementComponentValue("gong_bg_" + this.instance, "offset", this.windowPosition)
-    }
-
     getPlayerPaddlePos(): Vec2 {
       return create(
         this.playerPaddle.offset.x + this.windowPosition.x,
@@ -144,8 +140,9 @@ namespace mineos {
         z_index: 2
       })
 
-      this.renderer.addElement("separator_" + this.instance, {
-        name: "gong_ball_" + this.instance,
+
+      this.renderer.addElement("gong_separator_" + this.instance, {
+        name: "gong_separator_" + this.instance,
         hud_elem_type: HudElementType.image,
         position: create(0,0),
         text: "pixel.png^[colorize:" + colors.color(100,100,100) + ":255",
@@ -155,7 +152,7 @@ namespace mineos {
         ),
         alignment: create(1,1),
         offset: create(
-          this.windowPosition.x + (this.windowSize.y / 2) - (PIXEL_SIZE / 4),
+          this.windowPosition.x + (this.windowSize.x / 2) - (PIXEL_SIZE / 4),
           this.windowPosition.y
         ),
         z_index: 2
@@ -198,6 +195,37 @@ namespace mineos {
 
       print("Gong loaded!")
       this.loaded = true
+    }
+
+    move(): void {
+      this.renderer.setElementComponentValue("gong_bg_" + this.instance, "offset", this.windowPosition)
+      this.renderer.setElementComponentValue("gong_player_paddle_" + this.instance, "offset", this.getPlayerPaddlePos())
+      this.renderer.setElementComponentValue("gong_enemy_paddle_" + this.instance, "offset", this.getEnemyPaddlePos())
+      this.renderer.setElementComponentValue("gong_ball_" + this.instance, "offset", this.getBallPos())
+      this.renderer.setElementComponentValue("gong_player_score_" + this.instance, "offset", create(
+        this.windowPosition.x + (this.windowSize.x / 2) - getPixel(2),
+        this.windowPosition.y + getPixel(1)
+      ))
+
+      this.renderer.setElementComponentValue("gong_enemy_score_" + this.instance, "offset", create(
+        this.windowPosition.x + (this.windowSize.x / 2) + getPixel(2),
+          this.windowPosition.y + getPixel(1)
+      ))
+
+      this.renderer.setElementComponentValue("gong_separator_" + this.instance, "offset", create(
+        this.windowPosition.x + (this.windowSize.x / 2) - (PIXEL_SIZE / 4),
+        this.windowPosition.y
+      ))
+    }
+
+    destructor(): void {
+      this.renderer.removeElement("gong_player_paddle_" + this.instance)
+      this.renderer.removeElement("gong_enemy_paddle_" + this.instance)
+      this.renderer.removeElement("gong_ball_" + this.instance)
+      this.renderer.removeElement("gong_player_score_" + this.instance)
+      this.renderer.removeElement("gong_enemy_score_" + this.instance)
+      this.renderer.removeElement("gong_separator_" + this.instance)
+      this.renderer.removeElement("gong_bg_" + this.instance)
     }
 
     updateScene(): void {
