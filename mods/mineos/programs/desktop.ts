@@ -203,7 +203,7 @@ namespace mineos {
       this.menuEntries.push(new StartMenuEntry("boom", "Boom", "Boom", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("bitsBattle", "BitsBattle", "Bit's Battle", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("gong", "Gong", "Gong", "minetest.png"))
-      this.menuEntries.push(new StartMenuEntry("sledLiberty", "SledLiberty", "Sled Liberty", "minetest.png"))
+      // this.menuEntries.push(new StartMenuEntry("sledLiberty", "SledLiberty", "Sled Liberty", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("shutDown", "", "Shut Down...", "minetest.png", -65))
 
       for (const entry of this.menuEntries) {
@@ -567,7 +567,7 @@ namespace mineos {
     loadDesktop(): void {
       System.out.println("loading desktop environment")
 
-      // this.audioController.playSound("osStartup", 0.9)
+      this.audioController.playSound("osStartup", 0.9)
 
       // this.system.clearCallbacks()
       this.renderer.clearMemory()
@@ -645,9 +645,6 @@ namespace mineos {
         },
         () => {}
       ))
-
-      // //!!!! DEBUGGING Gong !!!!!!!
-      this.launchProgram("Gong", create(500, 500))
 
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")

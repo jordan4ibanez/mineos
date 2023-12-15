@@ -37,6 +37,9 @@ Yes this does have ``System.out.println("hi")`` I don't recommend you use it. Bu
 ## Game controls
 
 ### Boom
+
+warning: Due to a memory leak in MT, it will run your PC out of memory eventually.
+
 wasd - move
 
 mouse - look
