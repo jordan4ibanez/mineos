@@ -569,11 +569,6 @@ namespace mineos {
 
       this.audioController.playSound("osStartup", 0.9)
 
-      // this.system.clearCallbacks()
-      this.renderer.clearMemory()
-
-      this.renderer.setClearColor(0,0,0)
-
       this.renderer.setClearColor(0.39215686274, 50.9803921569, 50.5882352941)
 
       this.renderer.addElement("taskbar", {

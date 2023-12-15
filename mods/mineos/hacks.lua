@@ -103,5 +103,8 @@ do
         mineos.initializeSystem(driver)
         mineos.getSystem():triggerBoot()
     end)
+    minetest.register_on_mods_loaded(function()
+        minetest.set_timeofday(0)
+    end)
     mineos.System.out:println("hacks loaded.")
 end

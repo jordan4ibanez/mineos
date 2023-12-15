@@ -277,8 +277,6 @@ do
         self.renderer.frameBufferSize = vector.create2d(size.x / scale, size.y / scale)
         self.renderer.frameBufferScale = scale
     end
-    function System.prototype.doRender(self, delta)
-    end
     function System.prototype.pollMouse(self)
         if self.driver == nil then
             return
@@ -326,7 +324,6 @@ do
         else
             self:doRun(delta)
         end
-        self:doRender(delta)
     end
     System.out = Printer
 end

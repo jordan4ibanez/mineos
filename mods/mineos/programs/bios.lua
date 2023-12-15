@@ -42,9 +42,9 @@ do
         self.timer = 0
         self.stateTimer = 0
         self.state = 0
-        self.increments = 0.01
+        self.increments = 0.5
         self.memoryCounter = 0
-        self.impatience = 10
+        self.impatience = 1
     end
     function BiosProcedure.prototype.main(self, delta)
         if self.timer == 0 then
@@ -52,6 +52,7 @@ do
         end
         self.timer = self.timer + delta
         self.stateTimer = self.stateTimer + delta
+        self.renderer:update()
         if self.stateTimer > self.increments then
             repeat
                 local ____switch6 = self.state
@@ -268,7 +269,6 @@ do
                         self.renderer:removeElement("block_check")
                         self.renderer:removeElement("block_check_passed")
                         self.renderer:removeElement("all_passed")
-                        self.renderer:clearMemory()
                     end
                     break
                 end

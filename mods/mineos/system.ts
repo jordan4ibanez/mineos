@@ -163,11 +163,6 @@ namespace mineos {
       this.renderer.frameBufferScale = scale
     }
 
-    doRender(delta: number): void {
-      // this.renderer.draw()
-      // System.out.println("rendering")
-    }
-
     // GLFW Mouse simulation.
     pollMouse(): void {
       if (this.driver == null) return
@@ -235,7 +230,6 @@ namespace mineos {
       } else {
         this.doRun(delta);
       }
-      this.doRender(delta);
     }
   }
 }

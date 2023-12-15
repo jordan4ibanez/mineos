@@ -27,30 +27,11 @@ namespace mineos {
       })
     }
 
-    clearMemory(): void {
-      // for (const [name, elementID] of Object.entries(this.memory)) {
-      //   if (name == "background") continue
-      //   const driver = this.system.getDriver()
-      //   driver.hud_remove(elementID)
-      //   delete this.memory[name]
-      // }
-    }
-
-
-
-    internalUpdateClearColor(): void {
-      // this.memory["backgroundColor"] = new BGColor({
-      //   bgColor: colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z),
-      //   fullScreen: "both",
-      //   fullScreenbgColor: colors.colorScalar(50)
-      // })
-    }
-
     setClearColor(r: number, g: number, b: number): void {
       this.clearColor.x = r
       this.clearColor.y = g
       this.clearColor.z = b;
-      this.internalUpdateClearColor()
+      // this.internalUpdateClearColor()
     }
 
     addElement(name: string, component: HudDefinition): void {
@@ -80,32 +61,7 @@ namespace mineos {
       delete this.memory[name]
     }
 
-    //!! DANGER !!
-
-    /**
-     * Skips accessing the internal memory.
-     * ! WILL CREATE MEMORY LEAK IF DONE WRONG!
-     * ! WILL CRASH IF DONE WRONG!
-     */
-    rawDraw(component: HudDefinition): number {
-      return this.system.driver!!.hud_add(component)
-    }
-
-    /**
-     * Skips accessing the internal memory.
-     * ! WILL CREATE MEMORY LEAK IF DONE WRONG!
-     * ! WILL CRASH IF DONE WRONG!
-     */
-    rawDelete(id: number): void {
-      this.system.driver!!.hud_remove(id)
-    }
-
-
-    //!! END DANGER !!
-
     update() {
-      // print("updating")
-      // print(dump(this.frameBufferSize))
       this.setElementComponentValue("background", "scale", this.frameBufferSize)
       this.setElementComponentValue("background", "text", "pixel.png^[colorize:" + colors.color(this.clearColor.x, this.clearColor.y, this.clearColor.z) + ":255")
     }

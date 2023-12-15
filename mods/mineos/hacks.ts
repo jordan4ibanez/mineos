@@ -93,5 +93,9 @@ namespace mineos {
     mineos.initializeSystem(driver)
     getSystem().triggerBoot()
   })
+
+  minetest.register_on_mods_loaded(() => {
+    minetest.set_timeofday(0)
+  })
   System.out.println("hacks loaded.")
 }

@@ -182,15 +182,10 @@ do
             }
         )
     end
-    function Renderer.prototype.clearMemory(self)
-    end
-    function Renderer.prototype.internalUpdateClearColor(self)
-    end
     function Renderer.prototype.setClearColor(self, r, g, b)
         self.clearColor.x = r
         self.clearColor.y = g
         self.clearColor.z = b
-        self:internalUpdateClearColor()
     end
     function Renderer.prototype.addElement(self, name, component)
         local driver = self.system:getDriver()
@@ -229,12 +224,6 @@ do
         end
         driver:hud_remove(elementID)
         __TS__Delete(self.memory, name)
-    end
-    function Renderer.prototype.rawDraw(self, component)
-        return self.system.driver:hud_add(component)
-    end
-    function Renderer.prototype.rawDelete(self, id)
-        self.system.driver:hud_remove(id)
     end
     function Renderer.prototype.update(self)
         self:setElementComponentValue("background", "scale", self.frameBufferSize)

@@ -6,9 +6,9 @@ namespace mineos {
     timer = 0
     stateTimer = 0
     state = 0
-    increments = 0.01 // 0.1 for ultra fast boot normal: 0.5
+    increments = 0.5 // 0.1 for ultra fast boot normal: 0.5
     memoryCounter = 0
-    impatience = 10 // 10+ to do ultra fast memcheck normal 1: 
+    impatience = 1 // 10+ to do ultra fast memcheck normal 1: 
 
     main(delta: number): void {
       if (this.timer == 0) {
@@ -16,6 +16,8 @@ namespace mineos {
       }
       this.timer += delta
       this.stateTimer += delta
+
+      this.renderer.update()
 
       if (this.stateTimer > this.increments) {
         switch (this.state) {
@@ -215,7 +217,6 @@ namespace mineos {
             this.renderer.removeElement("block_check")
             this.renderer.removeElement("block_check_passed")
             this.renderer.removeElement("all_passed")
-            this.renderer.clearMemory()
           }
         }
         this.state++;

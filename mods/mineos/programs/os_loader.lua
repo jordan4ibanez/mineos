@@ -33,6 +33,7 @@ end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
+    local create = vector.create2d
     local BootProcedure = __TS__Class()
     BootProcedure.name = "BootProcedure"
     __TS__ClassExtends(BootProcedure, mineos.Program)
@@ -48,10 +49,11 @@ do
         self.dotsAccum = 0
     end
     function BootProcedure.prototype.main(self, delta)
-        if self.timer == 0 then
-        end
         self.timer = self.timer + delta
+        self.renderer:update()
         if self.timer > self.impatience then
+            self.renderer:removeElement("boot_logo")
+            self.renderer:removeElement("loading_mineos")
             self.iMem = 1
             return
         end
@@ -65,7 +67,53 @@ do
             if not self.hit then
                 self.hit = true
                 mineos.System.out:println("added logo")
+                self.renderer:addElement(
+                    "boot_logo",
+                    {
+                        name = "boot_logo",
+                        hud_elem_type = HudElementType.image,
+                        position = create(0, 0),
+                        text = "minetest.png",
+                        scale = create(512 / 1920, 512 / 1920),
+                        alignment = create(1, 1),
+                        offset = create(self.renderer.frameBufferSize.x / 2 - 512 / 2, 0),
+                        z_index = 1
+                    }
+                )
+                self.renderer:addElement(
+                    "loading_mineos",
+                    {
+                        name = "loading_mineos",
+                        hud_elem_type = HudElementType.text,
+                        scale = create(1, 1),
+                        text = "Loading mineos",
+                        number = colors.colorHEX(100, 100, 100),
+                        position = create(0, 0),
+                        alignment = create(1, 1),
+                        size = create(3, 3),
+                        offset = create(self.renderer.frameBufferSize.x / 2 - 240, 600),
+                        style = 4,
+                        z_index = 1
+                    }
+                )
             else
+                self.dotsAccum = self.dotsAccum + delta
+                if self.dotsAccum >= 0.25 then
+                    self.dots = self.dots + 1
+                    if self.dots > 3 then
+                        self.dots = 0
+                    end
+                    self.dotsAccum = self.dotsAccum - 0.25
+                end
+                local textAccum = "loading mineos"
+                do
+                    local i = 0
+                    while i < self.dots do
+                        textAccum = textAccum .. "."
+                        i = i + 1
+                    end
+                end
+                self.renderer:setElementComponentValue("loading_mineos", "text", textAccum)
             end
         end
     end
