@@ -205,8 +205,16 @@ namespace mineos {
             break;
           }
           case 16: {
-            print("done")
             this.iMem = 1
+            this.renderer.removeElement("bios_logo")
+            this.renderer.removeElement("bios_name")
+            this.renderer.removeElement("cpu_detection")
+            this.renderer.removeElement("cpu_detection_passed")
+            this.renderer.removeElement("mem_check")
+            this.renderer.removeElement("mem_check_progress")
+            this.renderer.removeElement("block_check")
+            this.renderer.removeElement("block_check_passed")
+            this.renderer.removeElement("all_passed")
             this.renderer.clearMemory()
           }
         }

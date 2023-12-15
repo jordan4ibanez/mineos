@@ -258,8 +258,16 @@ do
                 ____cond6 = ____cond6 or ____switch6 == 16
                 if ____cond6 then
                     do
-                        print("done")
                         self.iMem = 1
+                        self.renderer:removeElement("bios_logo")
+                        self.renderer:removeElement("bios_name")
+                        self.renderer:removeElement("cpu_detection")
+                        self.renderer:removeElement("cpu_detection_passed")
+                        self.renderer:removeElement("mem_check")
+                        self.renderer:removeElement("mem_check_progress")
+                        self.renderer:removeElement("block_check")
+                        self.renderer:removeElement("block_check_passed")
+                        self.renderer:removeElement("all_passed")
                         self.renderer:clearMemory()
                     end
                     break
