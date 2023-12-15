@@ -151,7 +151,7 @@ do
         )
     end
     mineos.loadFiles({
-        "programs/boot_loader",
+        "programs/bios",
         "programs/os_loader",
         "programs/desktop",
         "programs/bits_battle",

@@ -33,7 +33,7 @@ namespace mineos {
     // Literally a JVM feature LMAO
     static out = Printer
 
-    skipToDesktopHackjob = true
+    skipToDesktopHackjob = false
 
     booting = true
     bootProcess = 0
@@ -43,8 +43,6 @@ namespace mineos {
 
 
     programs: {[id: string] : typeof Program} = {}
-
-    // callbacks: {[id: string]: (fields: any) => void} = {}
 
     currentProgram: Program | null = null
     currentProgramName = ""
@@ -84,18 +82,6 @@ namespace mineos {
       return osKeyboardPoll(keyName)
     }
 
-    // registerCallback(name: string, callback: (fields: any) => void): void {
-    //   this.callbacks[name] = callback
-    // }
-
-    // triggerCallbacks(fields: {[id: string] : any}): void {
-    //   for (const [name, thing] of Object.entries(fields)) {
-    //     const pulledCallback = this.callbacks[name]
-    //     if (pulledCallback == null) return
-    //     pulledCallback(thing);
-    //   }
-    // }
-
     receivePrograms() {
       while (registrationQueue.length > 0) {
         const [name, prog] = registrationQueue.pop()!!
@@ -113,17 +99,6 @@ namespace mineos {
     }
 
     triggerBoot(): void {
-      if (this.skipToDesktopHackjob) {
-        System.out.println("HACK: SKIPPED BOOT PROCEDURE!")
-        this.booting = false
-        this.running = true
-        //! Testing desktop
-        this.changeProgram("DesktopEnvironment")
-        //! Testing games
-        // this.changeProgram("BitsBattle")
-
-        return
-      }
       this.booting = true
       this.running = true
       //! Note: this can be used to fade the hard drive sound when you shut off the computer.
@@ -132,12 +107,6 @@ namespace mineos {
       System.out.println("power button pushed.")
       System.out.println("starting computer.")
     }
-
-    // clearCallbacks() {
-    //   for (const [name,_] of Object.entries(this.callbacks)) {
-    //     delete this.callbacks[name]
-    //   }
-    // }
 
     doBoot(delta: number): void {
       if (this.bootProcess == 0) {

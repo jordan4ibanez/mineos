@@ -7,14 +7,13 @@ namespace mineos {
     increments = 0.5 // 0.1 for ultra fast boot normal: 0.5
     memoryCounter = 0
     impatience = 1 // 10+ to do ultra fast memcheck normal 1: 
+    
     main(delta: number): void {
       if (this.timer == 0) {
         System.out.println("bios started")
       }
       this.timer += delta
       this.stateTimer += delta
-      
-
 
       if (this.stateTimer > this.increments) {
         switch (this.state) {

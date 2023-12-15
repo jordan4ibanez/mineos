@@ -160,7 +160,7 @@ do
     function System.prototype.____constructor(self, driver)
         self.audioController = __TS__New(mineos.AudioController, self)
         self.driver = nil
-        self.skipToDesktopHackjob = true
+        self.skipToDesktopHackjob = false
         self.booting = true
         self.bootProcess = 0
         self.running = false
@@ -220,13 +220,6 @@ do
         end
     end
     function System.prototype.triggerBoot(self)
-        if self.skipToDesktopHackjob then
-            mineos.System.out:println("HACK: SKIPPED BOOT PROCEDURE!")
-            self.booting = false
-            self.running = true
-            self:changeProgram("DesktopEnvironment")
-            return
-        end
         self.booting = true
         self.running = true
         self.audioController:playSound("caseButton", 1)
