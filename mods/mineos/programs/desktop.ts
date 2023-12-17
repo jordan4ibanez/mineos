@@ -25,7 +25,7 @@ namespace mineos {
       return (point.x > pos.x && point.x < pos.x + this.size.x &&
               point.y > pos.y && point.y < pos.y + this.size.y)
     }
-  }
+  };
 
   class DesktopComponent {
     collisionBox: AABB

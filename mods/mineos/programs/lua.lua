@@ -227,6 +227,16 @@ do
         end
     end
 end
+
+local function __TS__ObjectEntries(obj)
+    local result = {}
+    local len = 0
+    for key in pairs(obj) do
+        len = len + 1
+        result[len] = {key, obj[key]}
+    end
+    return result
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
@@ -290,6 +300,12 @@ do
             local x = 0
             for ____, char in __TS__Iterator(__TS__StringTrim(tostring(charArray))) do
                 local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+                self.keyboardCbox[char] = __TS__New(
+                    mineos.AABB,
+                    rootPos,
+                    create(buttonSize, buttonSize),
+                    create(0, 0)
+                )
                 self.renderer:addElement(
                     (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
                     {
@@ -321,6 +337,86 @@ do
             end
             y = y + 1
         end
+        do
+            local char = "space"
+            local x = 15
+            local y = 2
+            local spaceWidth = 3
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.keyboardCbox[char] = __TS__New(
+                mineos.AABB,
+                rootPos,
+                create(buttonSize * spaceWidth, buttonSize),
+                create(0, 0)
+            )
+            self.renderer:addElement(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.image,
+                    position = create(0, 0),
+                    text = ("pixel.png^[colorize:" .. color(50, 50, 50)) .. ":255",
+                    scale = create(buttonSize * spaceWidth, buttonSize),
+                    alignment = create(1, 1),
+                    offset = rootPos,
+                    z_index = 2
+                }
+            )
+            self.renderer:addElement(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.text,
+                    scale = create(1, 1),
+                    text = char,
+                    number = colors.colorHEX(0, 0, 0),
+                    position = create(0, 0),
+                    alignment = create(1, 1),
+                    offset = create(rootPos.x + 4, rootPos.y),
+                    z_index = 3
+                }
+            )
+        end
+        do
+            local char = "run"
+            local x = 15
+            local y = 0
+            local spaceWidth = 3
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.keyboardCbox[char] = __TS__New(
+                mineos.AABB,
+                rootPos,
+                create(buttonSize * spaceWidth, buttonSize),
+                create(0, 0)
+            )
+            self.renderer:addElement(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.image,
+                    position = create(0, 0),
+                    text = ("pixel.png^[colorize:" .. color(50, 50, 50)) .. ":255",
+                    scale = create(buttonSize * spaceWidth, buttonSize),
+                    alignment = create(1, 1),
+                    offset = rootPos,
+                    z_index = 2
+                }
+            )
+            self.renderer:addElement(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.text,
+                    scale = create(1, 1),
+                    text = char,
+                    number = colors.colorHEX(0, 0, 0),
+                    position = create(0, 0),
+                    alignment = create(1, 1),
+                    offset = create(rootPos.x + 4, rootPos.y),
+                    z_index = 3
+                }
+            )
+        end
         self.instance = LuaVM.nextInstance
         LuaVM.nextInstance = LuaVM.nextInstance + 1
         self.loaded = true
@@ -342,11 +438,27 @@ do
     end
     function LuaVM.prototype.destructor(self)
     end
+    function LuaVM.prototype.mouseCollision(self)
+        if not self.system:isMouseClicked() then
+            return
+        end
+        local buttonSize = 20
+        local buttonSpacing = 21
+        local mousePos = self.desktop:getMousePos()
+        for ____, ____value in ipairs(__TS__ObjectEntries(self.keyboardCbox)) do
+            local char = ____value[1]
+            local aabb = ____value[2]
+            if aabb:pointWithin(mousePos) then
+                ____print(char)
+            end
+        end
+    end
     function LuaVM.prototype.main(self, delta)
         if not self.loaded then
             self:load()
         end
         self:floatError()
+        self:mouseCollision()
     end
     LuaVM.nextInstance = 0
     mineos.DesktopEnvironment:registerProgram(LuaVM)
