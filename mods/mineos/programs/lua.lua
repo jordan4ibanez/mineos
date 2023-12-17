@@ -258,6 +258,14 @@ do
         self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
         self.keyboardCbox = {}
     end
+    function LuaVM.prototype.updateIDEText(self)
+        ____print(self.myCoolProgram)
+        self.renderer:setElementComponentValue(
+            "lua_program_text_" .. tostring(self.instance),
+            "text",
+            self.myCoolProgram
+        )
+    end
     function LuaVM.prototype.charInput(self, char)
         if #char > 1 then
             error(
@@ -269,13 +277,15 @@ do
             __TS__StringSplit(
                 __TS__StringTrim(self.myCoolProgram .. char),
                 "\n",
-                3
+                self.programLineLimit
             ),
             ","
         )
+        self:updateIDEText()
     end
     function LuaVM.prototype.charDelete(self)
         self.myCoolProgram = string.sub(self.myCoolProgram, 1, -2)
+        self:updateIDEText()
     end
     function LuaVM.prototype.load(self)
         self.renderer:addElement(
@@ -413,10 +423,90 @@ do
             )
         end
         do
+            local char = "return"
+            local x = 15
+            local y = 1
+            local spaceWidth = 3
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.keyboardCbox[char] = __TS__New(
+                mineos.AABB,
+                rootPos,
+                create(buttonSize * spaceWidth, buttonSize),
+                create(0, 0)
+            )
+            self.renderer:addElement(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.image,
+                    position = create(0, 0),
+                    text = ("pixel.png^[colorize:" .. color(50, 50, 50)) .. ":255",
+                    scale = create(buttonSize * spaceWidth, buttonSize),
+                    alignment = create(1, 1),
+                    offset = rootPos,
+                    z_index = 2
+                }
+            )
+            self.renderer:addElement(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.text,
+                    scale = create(1, 1),
+                    text = char,
+                    number = colors.colorHEX(0, 0, 0),
+                    position = create(0, 0),
+                    alignment = create(1, 1),
+                    offset = create(rootPos.x + 4, rootPos.y),
+                    z_index = 3
+                }
+            )
+        end
+        do
             local char = "run"
             local x = 15
             local y = 0
             local spaceWidth = 3
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.keyboardCbox[char] = __TS__New(
+                mineos.AABB,
+                rootPos,
+                create(buttonSize * spaceWidth, buttonSize),
+                create(0, 0)
+            )
+            self.renderer:addElement(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.image,
+                    position = create(0, 0),
+                    text = ("pixel.png^[colorize:" .. color(50, 50, 50)) .. ":255",
+                    scale = create(buttonSize * spaceWidth, buttonSize),
+                    alignment = create(1, 1),
+                    offset = rootPos,
+                    z_index = 2
+                }
+            )
+            self.renderer:addElement(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                {
+                    name = (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                    hud_elem_type = HudElementType.text,
+                    scale = create(1, 1),
+                    text = char,
+                    number = colors.colorHEX(0, 0, 0),
+                    position = create(0, 0),
+                    alignment = create(1, 1),
+                    offset = create(rootPos.x + 4, rootPos.y),
+                    z_index = 3
+                }
+            )
+        end
+        do
+            local char = "backspace"
+            local x = 18
+            local y = 0
+            local spaceWidth = 5
             local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
             self.keyboardCbox[char] = __TS__New(
                 mineos.AABB,
@@ -510,8 +600,42 @@ do
             self.keyboardCbox[char].offset = rootPos
         end
         do
+            local char = "return"
+            local x = 15
+            local y = 1
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.renderer:setElementComponentValue(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                rootPos
+            )
+            self.renderer:setElementComponentValue(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                create(rootPos.x + 4, rootPos.y)
+            )
+            self.keyboardCbox[char].offset = rootPos
+        end
+        do
             local char = "run"
             local x = 15
+            local y = 0
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.renderer:setElementComponentValue(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                rootPos
+            )
+            self.renderer:setElementComponentValue(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                create(rootPos.x + 4, rootPos.y)
+            )
+            self.keyboardCbox[char].offset = rootPos
+        end
+        do
+            local char = "backspace"
+            local x = 18
             local y = 0
             local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
             self.renderer:setElementComponentValue(
@@ -545,13 +669,28 @@ do
         local buttonSize = 20
         local buttonSpacing = 21
         local mousePos = self.desktop:getMousePos()
+        local gottenChar = nil
         for ____, ____value in ipairs(__TS__ObjectEntries(self.keyboardCbox)) do
             local char = ____value[1]
             local aabb = ____value[2]
             if aabb:pointWithin(mousePos) then
                 ____print(char)
+                gottenChar = char
+                break
             end
         end
+        repeat
+            local ____switch35 = gottenChar
+            local ____cond35 = ____switch35 == "return"
+            if ____cond35 then
+                self:charInput("\n")
+                break
+            end
+            ____cond35 = ____cond35 or ____switch35 == ""
+            if ____cond35 then
+                break
+            end
+        until true
     end
     function LuaVM.prototype.main(self, delta)
         if not self.loaded then

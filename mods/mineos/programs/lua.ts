@@ -28,14 +28,21 @@ namespace mineos {
 
     keyboardCbox: {[id: string]: AABB} = {}
 
+    updateIDEText(): void {
+      print(this.myCoolProgram)
+      this.renderer.setElementComponentValue("lua_program_text_" + this.instance, "text", this.myCoolProgram)
+    }
+
     charInput(char: string): void {
       if (char.length > 1) throw new Error("How did this even happen?")
       // Don't allow the user to go past 3 lines.
-      this.myCoolProgram = (this.myCoolProgram + char).trim().split("\n", 3).join()
+      this.myCoolProgram = (this.myCoolProgram + char).trim().split("\n", this.programLineLimit).join()
+      this.updateIDEText()
     }
 
     charDelete(): void {
       this.myCoolProgram = this.myCoolProgram.slice(0, -1)
+      this.updateIDEText()
     }
 
     load() {
@@ -87,22 +94,6 @@ namespace mineos {
           z_index: 3
       })
 
-
-
-
-      // this.renderer.addElement("lua_ide_text_" + this.instance, {
-      //   name: "lua_bg_" + this.instance,
-      //   hud_elem_type: HudElementType.image,
-      //   position: create(0,0),
-      //   text: "pixel.png^[colorize:" + colors.color(30,30,30) + ":255",
-      //   scale: this.windowSize,
-      //   alignment: create(1,1),
-      //   offset: create(
-      //     this.getPosX(),
-      //     this.getPosY(),
-      //   ),
-      //   z_index: 1
-      // })
 
       // Make some terrible buttons.
       const buttonSize = 20
@@ -205,6 +196,53 @@ namespace mineos {
           z_index: 3
         })
       }
+
+      // Return bar
+      {
+        const char = "return"
+        let x = 15
+        let y = 1
+        let spaceWidth = 3
+        const rootPos = create(
+          this.windowPosition.x + (x * buttonSpacing),
+          this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+        )
+        
+        this.keyboardCbox[char] = new AABB(
+          rootPos,
+          create(buttonSize * spaceWidth, buttonSize),
+          create(0,0)
+        )
+
+        this.renderer.addElement("lua_button_bg_" + char + "_" + this.instance, {
+          name: "lua_button_bg_" + char + "_" + this.instance,
+          hud_elem_type: HudElementType.image,
+          position: create(0,0),
+          text: "pixel.png^[colorize:" + color(50,50,50) + ":255",
+          scale: create(
+            buttonSize * spaceWidth,
+            buttonSize
+          ),
+          alignment: create(1,1),
+          offset: rootPos,
+          z_index: 2
+        })
+
+        this.renderer.addElement("lua_button_text_" + char + "_" + this.instance, {
+          name: "lua_button_text_" + char + "_" + this.instance,
+          hud_elem_type: HudElementType.text,
+          scale: create(1,1),
+          text: char,
+          number: colors.colorHEX(0,0,0),
+          position: create(0,0),
+          alignment: create(1,1),
+          offset: create(
+            rootPos.x + 4,
+            rootPos.y
+          ),
+          z_index: 3
+        })
+      }
       
       // Run bar
       {
@@ -253,6 +291,53 @@ namespace mineos {
         })
       }
 
+      // Backspace bar
+      {
+        const char = "backspace"
+        let x = 18
+        let y = 0
+        let spaceWidth = 5
+        const rootPos = create(
+          this.windowPosition.x + (x * buttonSpacing),
+          this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+        )
+        
+        this.keyboardCbox[char] = new AABB(
+          rootPos,
+          create(buttonSize * spaceWidth, buttonSize),
+          create(0,0)
+        )
+
+        this.renderer.addElement("lua_button_bg_" + char + "_" + this.instance, {
+          name: "lua_button_bg_" + char + "_" + this.instance,
+          hud_elem_type: HudElementType.image,
+          position: create(0,0),
+          text: "pixel.png^[colorize:" + color(50,50,50) + ":255",
+          scale: create(
+            buttonSize * spaceWidth,
+            buttonSize
+          ),
+          alignment: create(1,1),
+          offset: rootPos,
+          z_index: 2
+        })
+
+        this.renderer.addElement("lua_button_text_" + char + "_" + this.instance, {
+          name: "lua_button_text_" + char + "_" + this.instance,
+          hud_elem_type: HudElementType.text,
+          scale: create(1,1),
+          text: char,
+          number: colors.colorHEX(0,0,0),
+          position: create(0,0),
+          alignment: create(1,1),
+          offset: create(
+            rootPos.x + 4,
+            rootPos.y
+          ),
+          z_index: 3
+        })
+      }
+            
 
       this.instance = LuaVM.nextInstance
       LuaVM.nextInstance++
@@ -315,8 +400,44 @@ namespace mineos {
       }
 
       {
+        const char = "return"
+        let x = 15
+        let y = 1
+        const rootPos = create(
+          this.windowPosition.x + (x * buttonSpacing),
+          this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+        )
+
+        this.renderer.setElementComponentValue("lua_button_bg_" + char + "_" + this.instance, "offset", rootPos)
+        this.renderer.setElementComponentValue("lua_button_text_" + char + "_" + this.instance, "offset", create(
+          rootPos.x + 4,
+          rootPos.y
+        ))
+
+        this.keyboardCbox[char].offset = rootPos
+      }
+
+      {
         const char = "run"
         let x = 15
+        let y = 0
+        const rootPos = create(
+          this.windowPosition.x + (x * buttonSpacing),
+          this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+        )
+
+        this.renderer.setElementComponentValue("lua_button_bg_" + char + "_" + this.instance, "offset", rootPos)
+        this.renderer.setElementComponentValue("lua_button_text_" + char + "_" + this.instance, "offset", create(
+          rootPos.x + 4,
+          rootPos.y
+        ))
+
+        this.keyboardCbox[char].offset = rootPos
+      }
+
+      {
+        const char = "backspace"
+        let x = 18
         let y = 0
         const rootPos = create(
           this.windowPosition.x + (x * buttonSpacing),
@@ -353,10 +474,24 @@ namespace mineos {
       const buttonSpacing = 21
       const mousePos = this.desktop.getMousePos()
 
+      let gottenChar: string | null = null
       for (const [char,aabb] of Object.entries(this.keyboardCbox)) {
         if (aabb.pointWithin(mousePos)) {
           print(char)
+          gottenChar = char
+          break
         }
+      }
+
+      switch (gottenChar) {
+        case "return":
+          this.charInput("\n")
+          break
+        case "":
+
+          break
+        default:
+
       }
     } 
 
