@@ -14,6 +14,7 @@ namespace mineos {
     loaded = false
     instance = 0
     static nextInstance = 0
+    readonly programLineLimit = 10
     myCoolProgram = ""
     version = 5.1000000000000
 
@@ -51,6 +52,57 @@ namespace mineos {
         ),
         z_index: 1
       })
+
+      const border = 4
+
+      this.renderer.addElement("lua_text_area_" + this.instance, {
+        name: "lua_text_area_" + this.instance,
+        hud_elem_type: HudElementType.image,
+        position: create(0,0),
+        text: "pixel.png^[colorize:" + colors.color(60,60,60) + ":255",
+        scale: create(
+          this.windowSize.x - (border * 2),
+          (this.windowSize.y / 2.5) - border
+        ),
+        alignment: create(1,1),
+        offset: create(
+          this.getPosX() + border,
+          this.getPosY() + border,
+        ),
+        z_index: 2
+      })
+
+      this.renderer.addElement("lua_program_text_" + this.instance, {
+        name: "lua_program_text_" + this.instance,
+          hud_elem_type: HudElementType.text,
+          scale: create(1,1),
+          text: this.myCoolProgram,
+          number: colors.colorHEX(0,0,0),
+          position: create(0,0),
+          alignment: create(1,1),
+          offset: create(
+            this.getPosX() + border,
+            this.getPosY() + border,
+          ),
+          z_index: 3
+      })
+
+
+
+
+      // this.renderer.addElement("lua_ide_text_" + this.instance, {
+      //   name: "lua_bg_" + this.instance,
+      //   hud_elem_type: HudElementType.image,
+      //   position: create(0,0),
+      //   text: "pixel.png^[colorize:" + colors.color(30,30,30) + ":255",
+      //   scale: this.windowSize,
+      //   alignment: create(1,1),
+      //   offset: create(
+      //     this.getPosX(),
+      //     this.getPosY(),
+      //   ),
+      //   z_index: 1
+      // })
 
       // Make some terrible buttons.
       const buttonSize = 20
@@ -279,6 +331,13 @@ namespace mineos {
 
         this.keyboardCbox[char].offset = rootPos
       }
+
+      const border = 4
+
+      this.renderer.setElementComponentValue("lua_text_area_" + this.instance, "offset", create(
+        this.getPosX() + border,
+          this.getPosY() + border,
+      ))
 
     }
 

@@ -252,6 +252,7 @@ do
         LuaVM.____super.prototype.____constructor(self, ...)
         self.loaded = false
         self.instance = 0
+        self.programLineLimit = 10
         self.myCoolProgram = ""
         self.version = 5.1
         self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
@@ -291,6 +292,40 @@ do
                     self:getPosY()
                 ),
                 z_index = 1
+            }
+        )
+        local border = 4
+        self.renderer:addElement(
+            "lua_text_area_" .. tostring(self.instance),
+            {
+                name = "lua_text_area_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. colors.color(60, 60, 60)) .. ":255",
+                scale = create(self.windowSize.x - border * 2, self.windowSize.y / 2.5 - border),
+                alignment = create(1, 1),
+                offset = create(
+                    self:getPosX() + border,
+                    self:getPosY() + border
+                ),
+                z_index = 2
+            }
+        )
+        self.renderer:addElement(
+            "lua_program_text_" .. tostring(self.instance),
+            {
+                name = "lua_program_text_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = self.myCoolProgram,
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(
+                    self:getPosX() + border,
+                    self:getPosY() + border
+                ),
+                z_index = 3
             }
         )
         local buttonSize = 20
@@ -491,6 +526,15 @@ do
             )
             self.keyboardCbox[char].offset = rootPos
         end
+        local border = 4
+        self.renderer:setElementComponentValue(
+            "lua_text_area_" .. tostring(self.instance),
+            "offset",
+            create(
+                self:getPosX() + border,
+                self:getPosY() + border
+            )
+        )
     end
     function LuaVM.prototype.destructor(self)
     end
