@@ -30,12 +30,17 @@ local function __TS__ClassExtends(target, base)
         target.prototype.__tostring = base.prototype.__tostring
     end
 end
+
+local function __TS__StringTrim(self)
+    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
+    return result
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
     local create = vector.create
     local function ____print(...)
-        mineos.System.out:println("Ye" .. "he")
+        mineos.System.out:println(...)
     end
     local LuaVM = __TS__Class()
     LuaVM.name = "LuaVM"
@@ -44,6 +49,7 @@ do
         LuaVM.____super.prototype.____constructor(self, ...)
         self.loaded = false
         self.instance = 0
+        self.testString = __TS__StringTrim("\n    --Also here are some words\n    local function thing()\n      print(\"hi\")\n    end\n    ")
     end
     function LuaVM.prototype.load(self)
         self.renderer:addElement(
@@ -62,7 +68,24 @@ do
                 z_index = 1
             }
         )
-        ____print()
+        local test = string.split(
+            self.testString,
+            "\n",
+            {},
+            -1,
+            false
+        )
+        local cache = {}
+        do
+            local i = 0
+            while i < 3 do
+                cache[#cache + 1] = test[i + 1]
+                i = i + 1
+            end
+        end
+        local finalResult = table.concat(cache, "\n")
+        ____print(finalResult)
+        ____print("herro, I am ding")
         self.instance = LuaVM.nextInstance
         LuaVM.nextInstance = LuaVM.nextInstance + 1
         self.loaded = true
@@ -78,7 +101,6 @@ do
         if not self.loaded then
             self:load()
         end
-        ____print("ye")
     end
     LuaVM.nextInstance = 0
     mineos.DesktopEnvironment:registerProgram(LuaVM)

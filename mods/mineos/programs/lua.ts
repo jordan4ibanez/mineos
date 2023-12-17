@@ -4,7 +4,7 @@ namespace mineos {
 
   // This was a joke, but now it's a real function. Hilarious.
   const print = function(...input: any) {
-    System.out.println("Ye" + "he")
+    System.out.println(...input)
   }
 
   // If you enter into a loop, you're gonna freeze the program WOOO.
@@ -13,6 +13,14 @@ namespace mineos {
     loaded = false
     instance = 0
     static nextInstance = 0
+
+
+    testString: string = `
+    --Also here are some words
+    local function thing()
+      print("hi")
+    end
+    `.trim()
 
     load() {
 
@@ -30,8 +38,24 @@ namespace mineos {
         z_index: 1
       })
 
+      // This is the dumbest and most brute force way to do this but IDGAF WOOOOOOOOO
 
-      print()
+      // Don't allow the user to go past 3 lines.
+      let test: string[] = string.split(this.testString, "\n",[], -1, false)
+      
+      let cache: string[] = []
+
+      for (let i = 0; i < 3; i++) {
+        cache.push(test[i])
+      }
+
+      let finalResult = cache.join("\n")
+
+      print(finalResult)
+
+
+      print("herro, I am ding")
+
       this.instance = LuaVM.nextInstance
       LuaVM.nextInstance++
 
@@ -44,7 +68,6 @@ namespace mineos {
 
     main(delta: number): void {
       if (!this.loaded) this.load()
-      print("ye")
     }
 
   }

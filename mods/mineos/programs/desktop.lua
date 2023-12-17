@@ -856,6 +856,10 @@ do
             function()
             end
         )
+        self:launchProgram(
+            "LuaVM",
+            create(500, 500)
+        )
         self.desktopLoaded = true
         mineos.System.out:println("desktop environment loaded")
     end

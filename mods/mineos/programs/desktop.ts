@@ -642,6 +642,11 @@ namespace mineos {
         () => {}
       ))
 
+
+      //!!!!!!!!! testing !!!!!!!!!!!!!!!!1
+
+      this.launchProgram("LuaVM", create(500,500))
+
       this.desktopLoaded = true
       System.out.println("desktop environment loaded")
     }

@@ -1726,7 +1726,7 @@ declare global {
   }
 
   export namespace string {
-    export function split(str: string, separator: string, includeEmpty: box, maxSplits: number, sepIsPattern: boolean): string
+    export function split(str: string, separator: string, includeEmpty: box, maxSplits: number, sepIsPattern: boolean): string[]
     export function trim(str: string): string
   }
   export namespace table {

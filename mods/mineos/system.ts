@@ -104,8 +104,6 @@ namespace mineos {
 
       if (this.skipToDesktopHackjob) {
         this.finishBoot()
-        // print("oof")
-        // this.changeProgram("DesktopProcedure")
         return
       }
 
