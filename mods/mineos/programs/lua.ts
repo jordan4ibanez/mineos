@@ -13,26 +13,25 @@ namespace mineos {
     loaded = false
     instance = 0
     static nextInstance = 0
+    myCoolProgram = ""
 
+    charInput(char: string): void {
+      if (char.length > 1) throw new Error("How did this even happen?")
 
-    testString: string = `
-    --Also here are some words
-    local function thing()
-      print("hi")
-    end
-    oh my god, they killed kenny
-    `.trim()
+      // Let's just create random memory everywhere because I'm an idiot.
 
-    filter(): void {
+      this.myCoolProgram += char
+      this.myCoolProgram = this.myCoolProgram.trim()
+
       // Don't allow the user to go past 3 lines.
-      let test: string[] = string.split(this.testString, "\n",[], -1, false)
+      let theThunderDome: string[] = string.split(this.myCoolProgram, "\n",[], -1, false)
       let cache: string[] = []
       for (let i = 0; i < 3; i++) {
-        cache.push(test[i])
+        cache.push(theThunderDome[i])
       }
       let finalResult = cache.join("\n")
 
-      print(finalResult)
+      this.myCoolProgram = finalResult
     }
 
     load() {
