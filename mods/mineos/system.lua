@@ -160,7 +160,7 @@ do
     function System.prototype.____constructor(self, driver)
         self.audioController = __TS__New(mineos.AudioController, self)
         self.driver = nil
-        self.skipToDesktopHackjob = true
+        self.skipToDesktopHackjob = false
         self.booting = true
         self.bootProcess = 0
         self.running = false
