@@ -24,8 +24,7 @@ namespace mineos {
     instance = 0
     static nextInstance = 0
     readonly programLineLimit = 10
-    myCoolProgram = 
-`print("my_test")`
+    myCoolProgram = `print("Hello, world!")`
     version = 5.1000000000000
 
     // This is the worst keyboard made by human beings.
@@ -36,17 +35,7 @@ namespace mineos {
     ="'.,()\\/-+~*!
     `.trim()
 
-    programOutput =
-`1
-2
-3
-4
-5
-6
-7
-8
-9
-10`
+    programOutput = ""
 
     keyboardCbox: {[id: string]: AABB} = {}
 

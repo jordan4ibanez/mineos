@@ -305,10 +305,10 @@ do
         self.loaded = false
         self.instance = 0
         self.programLineLimit = 10
-        self.myCoolProgram = "print(\"my_test\")"
+        self.myCoolProgram = "print(\"Hello, world!\")"
         self.version = 5.1
         self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
-        self.programOutput = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10"
+        self.programOutput = ""
         self.keyboardCbox = {}
         windowSize.x = 500
         windowSize.y = 500
