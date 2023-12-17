@@ -49,7 +49,26 @@ do
         LuaVM.____super.prototype.____constructor(self, ...)
         self.loaded = false
         self.instance = 0
-        self.testString = __TS__StringTrim("\n    --Also here are some words\n    local function thing()\n      print(\"hi\")\n    end\n    ")
+        self.testString = __TS__StringTrim("\n    --Also here are some words\n    local function thing()\n      print(\"hi\")\n    end\n    oh my god, they killed kenny\n    ")
+    end
+    function LuaVM.prototype.filter(self)
+        local test = string.split(
+            self.testString,
+            "\n",
+            {},
+            -1,
+            false
+        )
+        local cache = {}
+        do
+            local i = 0
+            while i < 3 do
+                cache[#cache + 1] = test[i + 1]
+                i = i + 1
+            end
+        end
+        local finalResult = table.concat(cache, "\n")
+        ____print(finalResult)
     end
     function LuaVM.prototype.load(self)
         self.renderer:addElement(
@@ -68,26 +87,9 @@ do
                 z_index = 1
             }
         )
-        local test = string.split(
-            self.testString,
-            "\n",
-            {},
-            -1,
-            false
-        )
-        local cache = {}
-        do
-            local i = 0
-            while i < 3 do
-                cache[#cache + 1] = test[i + 1]
-                i = i + 1
-            end
-        end
-        local finalResult = table.concat(cache, "\n")
-        ____print(finalResult)
-        ____print("herro, I am ding")
         self.instance = LuaVM.nextInstance
         LuaVM.nextInstance = LuaVM.nextInstance + 1
+        self:filter()
         self.loaded = true
     end
     function LuaVM.prototype.move(self)

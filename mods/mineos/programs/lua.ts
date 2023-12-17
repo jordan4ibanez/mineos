@@ -20,7 +20,20 @@ namespace mineos {
     local function thing()
       print("hi")
     end
+    oh my god, they killed kenny
     `.trim()
+
+    filter(): void {
+      // Don't allow the user to go past 3 lines.
+      let test: string[] = string.split(this.testString, "\n",[], -1, false)
+      let cache: string[] = []
+      for (let i = 0; i < 3; i++) {
+        cache.push(test[i])
+      }
+      let finalResult = cache.join("\n")
+
+      print(finalResult)
+    }
 
     load() {
 
@@ -38,26 +51,10 @@ namespace mineos {
         z_index: 1
       })
 
-      // This is the dumbest and most brute force way to do this but IDGAF WOOOOOOOOO
-
-      // Don't allow the user to go past 3 lines.
-      let test: string[] = string.split(this.testString, "\n",[], -1, false)
-      
-      let cache: string[] = []
-
-      for (let i = 0; i < 3; i++) {
-        cache.push(test[i])
-      }
-
-      let finalResult = cache.join("\n")
-
-      print(finalResult)
-
-
-      print("herro, I am ding")
-
       this.instance = LuaVM.nextInstance
       LuaVM.nextInstance++
+
+      this.filter()
 
       this.loaded = true
     }
