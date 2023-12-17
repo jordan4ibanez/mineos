@@ -17,11 +17,8 @@ namespace mineos {
 
     charInput(char: string): void {
       if (char.length > 1) throw new Error("How did this even happen?")
-
-      this.myCoolProgram = (this.myCoolProgram + char).trim()
       // Don't allow the user to go past 3 lines.
-      let finalResult = this.myCoolProgram.split("\n", 3).join()
-      this.myCoolProgram = finalResult
+      this.myCoolProgram = (this.myCoolProgram + char).trim().split("\n", 3).join()
     }
 
     charDelete(): void {
