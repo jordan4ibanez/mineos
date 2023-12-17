@@ -487,10 +487,18 @@ namespace mineos {
         case "return":
           this.charInput("\n")
           break
-        case "":
-
+        case "space":
+          this.charInput(" ")
           break
-        default:
+        case "backspace":
+          this.charDelete()
+          break
+        case "run":
+          print("run program")
+          break
+        default: {
+          if (gottenChar) this.charInput(gottenChar)
+        }
 
       }
     } 

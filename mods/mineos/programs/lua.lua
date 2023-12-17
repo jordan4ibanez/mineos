@@ -686,9 +686,27 @@ do
                 self:charInput("\n")
                 break
             end
-            ____cond35 = ____cond35 or ____switch35 == ""
+            ____cond35 = ____cond35 or ____switch35 == "space"
             if ____cond35 then
+                self:charInput(" ")
                 break
+            end
+            ____cond35 = ____cond35 or ____switch35 == "backspace"
+            if ____cond35 then
+                self:charDelete()
+                break
+            end
+            ____cond35 = ____cond35 or ____switch35 == "run"
+            if ____cond35 then
+                ____print("run program")
+                break
+            end
+            do
+                do
+                    if gottenChar then
+                        self:charInput(gottenChar)
+                    end
+                end
             end
         until true
     end
