@@ -22,7 +22,7 @@ namespace mineos {
     readonly keyboard = `
     abcdefghijklmn
     opqrstuvwxyz{}
-    ="'.,()\\/-+=*!
+    ="'.,()\\/-+~*!
     `.trim()
 
     keyboardCbox: {[id: string]: AABB} = {}
@@ -219,6 +219,67 @@ namespace mineos {
 
     move(): void {
       this.renderer.setElementComponentValue("lua_bg_" + this.instance, "offset", this.windowPosition)
+      // This is very lazy
+      const buttonSize = 20
+      const buttonSpacing = 21
+      let y = 0
+      for (const charArray of this.keyboard.split("\n")) {
+        let x = 0
+        for (const char of charArray.toString().trim()) {
+          const rootPos = create(
+            this.windowPosition.x + (x * buttonSpacing),
+            this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+          )
+
+          this.renderer.setElementComponentValue("lua_button_bg_" + char + "_" + this.instance, "offset", rootPos)
+          this.renderer.setElementComponentValue("lua_button_text_" + char + "_" + this.instance, "offset", create(
+            rootPos.x + 4,
+            rootPos.y
+          ))
+
+          this.keyboardCbox[char].offset = rootPos
+
+          x++
+        }
+        y++
+      }
+
+      {
+        const char = "space"
+        let x = 15
+        let y = 2
+        const rootPos = create(
+          this.windowPosition.x + (x * buttonSpacing),
+          this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+        )
+
+        this.renderer.setElementComponentValue("lua_button_bg_" + char + "_" + this.instance, "offset", rootPos)
+        this.renderer.setElementComponentValue("lua_button_text_" + char + "_" + this.instance, "offset", create(
+          rootPos.x + 4,
+          rootPos.y
+        ))
+
+        this.keyboardCbox[char].offset = rootPos
+      }
+
+      {
+        const char = "run"
+        let x = 15
+        let y = 0
+        const rootPos = create(
+          this.windowPosition.x + (x * buttonSpacing),
+          this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+        )
+
+        this.renderer.setElementComponentValue("lua_button_bg_" + char + "_" + this.instance, "offset", rootPos)
+        this.renderer.setElementComponentValue("lua_button_text_" + char + "_" + this.instance, "offset", create(
+          rootPos.x + 4,
+          rootPos.y
+        ))
+
+        this.keyboardCbox[char].offset = rootPos
+      }
+
     }
 
     destructor(): void {

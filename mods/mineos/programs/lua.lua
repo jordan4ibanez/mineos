@@ -254,7 +254,7 @@ do
         self.instance = 0
         self.myCoolProgram = ""
         self.version = 5.1
-        self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+=*!\n    ")
+        self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
         self.keyboardCbox = {}
     end
     function LuaVM.prototype.charInput(self, char)
@@ -435,6 +435,62 @@ do
             "offset",
             self.windowPosition
         )
+        local buttonSize = 20
+        local buttonSpacing = 21
+        local y = 0
+        for ____, charArray in ipairs(__TS__StringSplit(self.keyboard, "\n")) do
+            local x = 0
+            for ____, char in __TS__Iterator(__TS__StringTrim(tostring(charArray))) do
+                local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+                self.renderer:setElementComponentValue(
+                    (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                    "offset",
+                    rootPos
+                )
+                self.renderer:setElementComponentValue(
+                    (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                    "offset",
+                    create(rootPos.x + 4, rootPos.y)
+                )
+                self.keyboardCbox[char].offset = rootPos
+                x = x + 1
+            end
+            y = y + 1
+        end
+        do
+            local char = "space"
+            local x = 15
+            local y = 2
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.renderer:setElementComponentValue(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                rootPos
+            )
+            self.renderer:setElementComponentValue(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                create(rootPos.x + 4, rootPos.y)
+            )
+            self.keyboardCbox[char].offset = rootPos
+        end
+        do
+            local char = "run"
+            local x = 15
+            local y = 0
+            local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+            self.renderer:setElementComponentValue(
+                (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                rootPos
+            )
+            self.renderer:setElementComponentValue(
+                (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                "offset",
+                create(rootPos.x + 4, rootPos.y)
+            )
+            self.keyboardCbox[char].offset = rootPos
+        end
     end
     function LuaVM.prototype.destructor(self)
     end
