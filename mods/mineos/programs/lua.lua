@@ -31,6 +31,11 @@ local function __TS__ClassExtends(target, base)
     end
 end
 
+local function __TS__StringTrim(self)
+    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
+    return result
+end
+
 local function __TS__StringIncludes(self, searchString, position)
     if not position then
         position = 1
@@ -127,11 +132,6 @@ do
     URIError = createErrorClass(nil, "URIError")
 end
 
-local function __TS__StringTrim(self)
-    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
-    return result
-end
-
 local __TS__StringSplit
 do
     local sub = string.sub
@@ -168,10 +168,70 @@ do
         return result
     end
 end
+
+local __TS__Symbol, Symbol
+do
+    local symbolMetatable = {__tostring = function(self)
+        return ("Symbol(" .. (self.description or "")) .. ")"
+    end}
+    function __TS__Symbol(description)
+        return setmetatable({description = description}, symbolMetatable)
+    end
+    Symbol = {
+        asyncDispose = __TS__Symbol("Symbol.asyncDispose"),
+        dispose = __TS__Symbol("Symbol.dispose"),
+        iterator = __TS__Symbol("Symbol.iterator"),
+        hasInstance = __TS__Symbol("Symbol.hasInstance"),
+        species = __TS__Symbol("Symbol.species"),
+        toStringTag = __TS__Symbol("Symbol.toStringTag")
+    }
+end
+
+local __TS__Iterator
+do
+    local function iteratorGeneratorStep(self)
+        local co = self.____coroutine
+        local status, value = coroutine.resume(co)
+        if not status then
+            error(value, 0)
+        end
+        if coroutine.status(co) == "dead" then
+            return
+        end
+        return true, value
+    end
+    local function iteratorIteratorStep(self)
+        local result = self:next()
+        if result.done then
+            return
+        end
+        return true, result.value
+    end
+    local function iteratorStringStep(self, index)
+        index = index + 1
+        if index > #self then
+            return
+        end
+        return index, string.sub(self, index, index)
+    end
+    function __TS__Iterator(iterable)
+        if type(iterable) == "string" then
+            return iteratorStringStep, iterable, 0
+        elseif iterable.____coroutine ~= nil then
+            return iteratorGeneratorStep, iterable
+        elseif iterable[Symbol.iterator] then
+            local iterator = iterable[Symbol.iterator](iterable)
+            return iteratorIteratorStep, iterator
+        else
+            return ipairs(iterable)
+        end
+    end
+end
 -- End of Lua Library inline imports
 mineos = mineos or ({})
 do
     local create = vector.create
+    local color = colors.color
     local function ____print(...)
         mineos.System.out:println(...)
     end
@@ -183,7 +243,9 @@ do
         self.loaded = false
         self.instance = 0
         self.myCoolProgram = ""
-        self.version = 5.100000000000015
+        self.version = 5.1
+        self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+=*!\n    ")
+        self.keyboardCbox = {}
     end
     function LuaVM.prototype.charInput(self, char)
         if #char > 1 then
@@ -202,12 +264,7 @@ do
         )
     end
     function LuaVM.prototype.charDelete(self)
-        local length = #self.myCoolProgram - 1
-        if length < 0 then
-            length = 0
-        end
-        local finalResult = string.sub(self.myCoolProgram, 1, -2)
-        self.myCoolProgram = finalResult
+        self.myCoolProgram = string.sub(self.myCoolProgram, 1, -2)
     end
     function LuaVM.prototype.load(self)
         self.renderer:addElement(
@@ -226,10 +283,44 @@ do
                 z_index = 1
             }
         )
-        self:charInput("1")
-        ____print(self.myCoolProgram)
-        self:charDelete()
-        ____print(self.myCoolProgram)
+        local buttonSize = 20
+        local buttonSpacing = 21
+        local y = 0
+        for ____, charArray in ipairs(__TS__StringSplit(self.keyboard, "\n")) do
+            local x = 0
+            for ____, char in __TS__Iterator(__TS__StringTrim(tostring(charArray))) do
+                local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+                self.renderer:addElement(
+                    (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                    {
+                        name = (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
+                        hud_elem_type = HudElementType.image,
+                        position = create(0, 0),
+                        text = ("pixel.png^[colorize:" .. color(50, 50, 50)) .. ":255",
+                        scale = create(buttonSize, buttonSize),
+                        alignment = create(1, 1),
+                        offset = rootPos,
+                        z_index = 2
+                    }
+                )
+                self.renderer:addElement(
+                    (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                    {
+                        name = (("lua_button_text_" .. char) .. "_") .. tostring(self.instance),
+                        hud_elem_type = HudElementType.text,
+                        scale = create(1, 1),
+                        text = char,
+                        number = colors.colorHEX(0, 0, 0),
+                        position = create(0, 0),
+                        alignment = create(1, 1),
+                        offset = create(rootPos.x + 4, rootPos.y),
+                        z_index = 3
+                    }
+                )
+                x = x + 1
+            end
+            y = y + 1
+        end
         self.instance = LuaVM.nextInstance
         LuaVM.nextInstance = LuaVM.nextInstance + 1
         self.loaded = true
@@ -248,6 +339,8 @@ do
             "offset",
             self.windowPosition
         )
+    end
+    function LuaVM.prototype.destructor(self)
     end
     function LuaVM.prototype.main(self, delta)
         if not self.loaded then
