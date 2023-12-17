@@ -1,4 +1,20 @@
 -- Lua Library inline imports
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
+end
+
 local function __TS__Class(self)
     local c = {prototype = {}}
     c.prototype.__index = c.prototype
@@ -29,27 +45,6 @@ local function __TS__ClassExtends(target, base)
     if type(base.prototype.__tostring) == "function" then
         target.prototype.__tostring = base.prototype.__tostring
     end
-end
-
-local function __TS__StringTrim(self)
-    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
-    return result
-end
-
-local function __TS__StringIncludes(self, searchString, position)
-    if not position then
-        position = 1
-    else
-        position = position + 1
-    end
-    local index = string.find(self, searchString, position, true)
-    return index ~= nil
-end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
 end
 
 local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
@@ -132,6 +127,11 @@ do
     URIError = createErrorClass(nil, "URIError")
 end
 
+local function __TS__StringTrim(self)
+    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
+    return result
+end
+
 local __TS__StringSplit
 do
     local sub = string.sub
@@ -167,6 +167,42 @@ do
         end
         return result
     end
+end
+
+local function __TS__ArraySlice(self, first, last)
+    local len = #self
+    first = first or 0
+    if first < 0 then
+        first = len + first
+        if first < 0 then
+            first = 0
+        end
+    else
+        if first > len then
+            first = len
+        end
+    end
+    last = last or len
+    if last < 0 then
+        last = len + last
+        if last < 0 then
+            last = 0
+        end
+    else
+        if last > len then
+            last = len
+        end
+    end
+    local out = {}
+    first = first + 1
+    last = last + 1
+    local n = 1
+    while first < last do
+        out[n] = self[first]
+        first = first + 1
+        n = n + 1
+    end
+    return out
 end
 
 local __TS__Symbol, Symbol
@@ -242,28 +278,62 @@ mineos = mineos or ({})
 do
     local create = vector.create
     local color = colors.color
-    local function ____print(...)
-        mineos.System.out:println(...)
+    local focusedInstance = nil
+    local function ____print(thing)
+        if focusedInstance == nil then
+            error(
+                __TS__New(Error, "OOPS"),
+                0
+            )
+        end
+        do
+            local function ____catch(e)
+                mineos.System.out:println("You done goofed up boi!" .. tostring(e))
+            end
+            local ____try, ____hasReturned = pcall(function()
+                focusedInstance:pushOutput("\n" .. thing)
+            end)
+            if not ____try then
+                ____catch(____hasReturned)
+            end
+        end
     end
     local LuaVM = __TS__Class()
     LuaVM.name = "LuaVM"
     __TS__ClassExtends(LuaVM, mineos.WindowProgram)
-    function LuaVM.prototype.____constructor(self, ...)
-        LuaVM.____super.prototype.____constructor(self, ...)
+    function LuaVM.prototype.____constructor(self, system, renderer, audio, desktop, windowSize)
         self.loaded = false
         self.instance = 0
         self.programLineLimit = 10
-        self.myCoolProgram = ""
+        self.myCoolProgram = "print(\"my_test\")"
         self.version = 5.1
         self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
+        self.programOutput = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10"
         self.keyboardCbox = {}
+        windowSize.x = 500
+        windowSize.y = 500
+        LuaVM.____super.prototype.____constructor(
+            self,
+            system,
+            renderer,
+            audio,
+            desktop,
+            windowSize
+        )
+        focusedInstance = self
     end
     function LuaVM.prototype.updateIDEText(self)
-        ____print(self.myCoolProgram)
         self.renderer:setElementComponentValue(
             "lua_program_text_" .. tostring(self.instance),
             "text",
             self.myCoolProgram
+        )
+    end
+    function LuaVM.prototype.updateOutputText(self)
+        self.renderer:setElementComponentValue(
+            "program_output_text_" .. tostring(self.instance),
+            "text",
+            self.programOutput
         )
     end
     function LuaVM.prototype.charInput(self, char)
@@ -274,12 +344,8 @@ do
             )
         end
         self.myCoolProgram = table.concat(
-            __TS__StringSplit(
-                __TS__StringTrim(self.myCoolProgram .. char),
-                "\n",
-                self.programLineLimit
-            ),
-            ","
+            __TS__StringSplit(self.myCoolProgram .. char, "\n", self.programLineLimit),
+            "\n"
         )
         self:updateIDEText()
     end
@@ -287,7 +353,36 @@ do
         self.myCoolProgram = string.sub(self.myCoolProgram, 1, -2)
         self:updateIDEText()
     end
+    function LuaVM.prototype.execute(self)
+        local _, err = pcall(function()
+            local OLD_PRINT = _G.print
+            _G.print = ____print
+            local func, err = loadstring(self.myCoolProgram, "LuaVM", "t", _G)
+            if type(func) == "function" then
+                local callable = func
+                callable()
+            else
+                ____print(tostring(err))
+            end
+            _G.print = OLD_PRINT
+        end)
+        if err then
+            self:pushOutput(err)
+        end
+    end
+    function LuaVM.prototype.pushOutput(self, input)
+        local array = __TS__StringSplit(self.programOutput .. input, "\n")
+        local overshoot = #array - self.programLineLimit
+        local startIndex = overshoot > 0 and overshoot or 0
+        self.programOutput = table.concat(
+            __TS__ArraySlice(array, startIndex, #array),
+            "\n"
+        )
+        self:updateOutputText()
+    end
     function LuaVM.prototype.load(self)
+        self.instance = LuaVM.nextInstance
+        LuaVM.nextInstance = LuaVM.nextInstance + 1
         self.renderer:addElement(
             "lua_bg_" .. tostring(self.instance),
             {
@@ -334,6 +429,39 @@ do
                 offset = create(
                     self:getPosX() + border,
                     self:getPosY() + border
+                ),
+                z_index = 3
+            }
+        )
+        self.renderer:addElement(
+            "program_output_area_" .. tostring(self.instance),
+            {
+                name = "program_output_area_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.image,
+                position = create(0, 0),
+                text = ("pixel.png^[colorize:" .. colors.color(60, 60, 60)) .. ":255",
+                scale = create(self.windowSize.x - border * 2, self.windowSize.y / 2.5 - border),
+                alignment = create(1, 1),
+                offset = create(
+                    self:getPosX() + border,
+                    self:getPosY() + self.windowSize.y / 2.5 + border
+                ),
+                z_index = 2
+            }
+        )
+        self.renderer:addElement(
+            "program_output_text_" .. tostring(self.instance),
+            {
+                name = "program_output_text_" .. tostring(self.instance),
+                hud_elem_type = HudElementType.text,
+                scale = create(1, 1),
+                text = self.programOutput,
+                number = colors.colorHEX(0, 0, 0),
+                position = create(0, 0),
+                alignment = create(1, 1),
+                offset = create(
+                    self:getPosX() + border,
+                    self:getPosY() + self.windowSize.y / 2.5 + border
                 ),
                 z_index = 3
             }
@@ -542,8 +670,6 @@ do
                 }
             )
         end
-        self.instance = LuaVM.nextInstance
-        LuaVM.nextInstance = LuaVM.nextInstance + 1
         self.loaded = true
     end
     function LuaVM.prototype.floatError(self)
@@ -659,8 +785,47 @@ do
                 self:getPosY() + border
             )
         )
+        self.renderer:setElementComponentValue(
+            "lua_program_text_" .. tostring(self.instance),
+            "offset",
+            create(
+                self:getPosX() + border,
+                self:getPosY() + border
+            )
+        )
+        self.renderer:setElementComponentValue(
+            "program_output_area_" .. tostring(self.instance),
+            "offset",
+            create(
+                self:getPosX() + border,
+                self:getPosY() + self.windowSize.y / 2.5 + border
+            )
+        )
+        self.renderer:setElementComponentValue(
+            "program_output_text_" .. tostring(self.instance),
+            "offset",
+            create(
+                self:getPosX() + border,
+                self:getPosY() + self.windowSize.y / 2.5 + border
+            )
+        )
     end
     function LuaVM.prototype.destructor(self)
+        self.renderer:removeElement("lua_bg_" .. tostring(self.instance))
+        self.renderer:removeElement("lua_text_area_" .. tostring(self.instance))
+        self.renderer:removeElement("lua_program_text_" .. tostring(self.instance))
+        self.renderer:removeElement("program_output_area_" .. tostring(self.instance))
+        self.renderer:removeElement("program_output_text_" .. tostring(self.instance))
+        for ____, charArray in ipairs(__TS__StringSplit(self.keyboard, "\n")) do
+            for ____, char in __TS__Iterator(__TS__StringTrim(tostring(charArray))) do
+                self.renderer:removeElement((("lua_button_bg_" .. char) .. "_") .. tostring(self.instance))
+                self.renderer:removeElement((("lua_button_text_" .. char) .. "_") .. tostring(self.instance))
+            end
+        end
+        for ____, char in ipairs({"return", "backspace", "run", "space"}) do
+            self.renderer:removeElement((("lua_button_bg_" .. char) .. "_") .. tostring(self.instance))
+            self.renderer:removeElement((("lua_button_text_" .. char) .. "_") .. tostring(self.instance))
+        end
     end
     function LuaVM.prototype.mouseCollision(self)
         if not self.system:isMouseClicked() then
@@ -674,38 +839,35 @@ do
             local char = ____value[1]
             local aabb = ____value[2]
             if aabb:pointWithin(mousePos) then
-                ____print(char)
                 gottenChar = char
                 break
             end
         end
         repeat
-            local ____switch35 = gottenChar
-            local ____cond35 = ____switch35 == "return"
-            if ____cond35 then
+            local ____switch52 = gottenChar
+            local ____cond52 = ____switch52 == "return"
+            if ____cond52 then
                 self:charInput("\n")
                 break
             end
-            ____cond35 = ____cond35 or ____switch35 == "space"
-            if ____cond35 then
+            ____cond52 = ____cond52 or ____switch52 == "space"
+            if ____cond52 then
                 self:charInput(" ")
                 break
             end
-            ____cond35 = ____cond35 or ____switch35 == "backspace"
-            if ____cond35 then
+            ____cond52 = ____cond52 or ____switch52 == "backspace"
+            if ____cond52 then
                 self:charDelete()
                 break
             end
-            ____cond35 = ____cond35 or ____switch35 == "run"
-            if ____cond35 then
-                ____print("run program")
+            ____cond52 = ____cond52 or ____switch52 == "run"
+            if ____cond52 then
+                self:execute()
                 break
             end
             do
-                do
-                    if gottenChar then
-                        self:charInput(gottenChar)
-                    end
+                if gottenChar then
+                    self:charInput(gottenChar)
                 end
             end
         until true
