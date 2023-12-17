@@ -204,6 +204,7 @@ namespace mineos {
       this.menuEntries.push(new StartMenuEntry("bitsBattle", "BitsBattle", "Bit's Battle", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("gong", "Gong", "Gong", "minetest.png"))
       // this.menuEntries.push(new StartMenuEntry("sledLiberty", "SledLiberty", "Sled Liberty", "minetest.png"))
+      this.menuEntries.push(new StartMenuEntry("luaVm", "LuaVM", "Lua VM", "minetest.png"))
       this.menuEntries.push(new StartMenuEntry("shutDown", "", "Shut Down...", "minetest.png", -65))
 
       for (const entry of this.menuEntries) {

@@ -415,6 +415,14 @@ do
         local ____self_menuEntries_3 = self.menuEntries
         ____self_menuEntries_3[#____self_menuEntries_3 + 1] = __TS__New(
             StartMenuEntry,
+            "luaVm",
+            "LuaVM",
+            "Lua VM",
+            "minetest.png"
+        )
+        local ____self_menuEntries_4 = self.menuEntries
+        ____self_menuEntries_4[#____self_menuEntries_4 + 1] = __TS__New(
+            StartMenuEntry,
             "shutDown",
             "",
             "Shut Down...",
@@ -733,8 +741,8 @@ do
         programQueue[progBlueprint.name] = progBlueprint
     end
     function DesktopEnvironment.prototype.launchProgram(self, progName, windowSize)
-        local ____self_runningPrograms_4 = self.runningPrograms
-        ____self_runningPrograms_4[#____self_runningPrograms_4 + 1] = __TS__New(
+        local ____self_runningPrograms_5 = self.runningPrograms
+        ____self_runningPrograms_5[#____self_runningPrograms_5 + 1] = __TS__New(
             self.programBlueprints[progName],
             self.system,
             self.renderer,
@@ -833,8 +841,8 @@ do
                 z_index = 10000
             }
         )
-        local ____self_components_5 = self.components
-        ____self_components_5[#____self_components_5 + 1] = __TS__New(
+        local ____self_components_6 = self.components
+        ____self_components_6[#____self_components_6 + 1] = __TS__New(
             DesktopComponent,
             __TS__New(
                 mineos.AABB,
@@ -859,10 +867,10 @@ do
         )
         local screenSize = self.renderer.frameBufferSize
         local mouseDelta = self.system:getMouseDelta()
-        local ____self_mousePosition_6, ____x_7 = self.mousePosition, "x"
-        ____self_mousePosition_6[____x_7] = ____self_mousePosition_6[____x_7] + mouseDelta.x * self.acceleration
-        local ____self_mousePosition_8, ____y_9 = self.mousePosition, "y"
-        ____self_mousePosition_8[____y_9] = ____self_mousePosition_8[____y_9] + mouseDelta.y * self.acceleration
+        local ____self_mousePosition_7, ____x_8 = self.mousePosition, "x"
+        ____self_mousePosition_7[____x_8] = ____self_mousePosition_7[____x_8] + mouseDelta.x * self.acceleration
+        local ____self_mousePosition_9, ____y_10 = self.mousePosition, "y"
+        ____self_mousePosition_9[____y_10] = ____self_mousePosition_9[____y_10] + mouseDelta.y * self.acceleration
         if self.mousePosition.x >= screenSize.x then
             self.mousePosition.x = screenSize.x
         elseif self.mousePosition.x < 0 then
