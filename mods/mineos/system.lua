@@ -160,7 +160,7 @@ do
     function System.prototype.____constructor(self, driver)
         self.audioController = __TS__New(mineos.AudioController, self)
         self.driver = nil
-        self.skipToDesktopHackjob = false
+        self.skipToDesktopHackjob = true
         self.booting = true
         self.bootProcess = 0
         self.running = false
@@ -222,6 +222,10 @@ do
     function System.prototype.triggerBoot(self)
         self.booting = true
         self.running = true
+        if self.skipToDesktopHackjob then
+            self:finishBoot()
+            return
+        end
         self.audioController:playSound("caseButton", 1)
         self.audioController:playSoundRepeat("hardDrive", 0.5, 0.2)
         mineos.System.out:println("power button pushed.")

@@ -33,7 +33,7 @@ namespace mineos {
     // Literally a JVM feature LMAO
     static out = Printer
 
-    skipToDesktopHackjob = false
+    skipToDesktopHackjob = true
 
     booting = true
     bootProcess = 0
@@ -101,6 +101,14 @@ namespace mineos {
     triggerBoot(): void {
       this.booting = true
       this.running = true
+
+      if (this.skipToDesktopHackjob) {
+        this.finishBoot()
+        // print("oof")
+        // this.changeProgram("DesktopProcedure")
+        return
+      }
+
       //! Note: this can be used to fade the hard drive sound when you shut off the computer.
       this.audioController.playSound("caseButton", 1);
       this.audioController.playSoundRepeat("hardDrive", 0.5, 0.2)
