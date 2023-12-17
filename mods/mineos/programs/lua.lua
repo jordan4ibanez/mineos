@@ -183,6 +183,7 @@ do
         self.loaded = false
         self.instance = 0
         self.myCoolProgram = ""
+        self.version = 5.100000000000015
     end
     function LuaVM.prototype.charInput(self, char)
         if #char > 1 then
@@ -191,12 +192,14 @@ do
                 0
             )
         end
-        self.myCoolProgram = __TS__StringTrim(self.myCoolProgram .. char)
-        local finalResult = table.concat(
-            __TS__StringSplit(self.myCoolProgram, "\n", 3),
+        self.myCoolProgram = table.concat(
+            __TS__StringSplit(
+                __TS__StringTrim(self.myCoolProgram .. char),
+                "\n",
+                3
+            ),
             ","
         )
-        self.myCoolProgram = finalResult
     end
     function LuaVM.prototype.charDelete(self)
         local length = #self.myCoolProgram - 1
@@ -223,12 +226,21 @@ do
                 z_index = 1
             }
         )
+        self:charInput("1")
         ____print(self.myCoolProgram)
         self:charDelete()
         ____print(self.myCoolProgram)
         self.instance = LuaVM.nextInstance
         LuaVM.nextInstance = LuaVM.nextInstance + 1
         self.loaded = true
+    end
+    function LuaVM.prototype.floatError(self)
+        if math.random() > 0.5 then
+            self.version = self.version + 1e-14
+        else
+            self.version = self.version - 1e-14
+        end
+        self:setWindowTitle("LuaJIT " .. tostring(self.version))
     end
     function LuaVM.prototype.move(self)
         self.renderer:setElementComponentValue(
@@ -241,6 +253,7 @@ do
         if not self.loaded then
             self:load()
         end
+        self:floatError()
     end
     LuaVM.nextInstance = 0
     mineos.DesktopEnvironment:registerProgram(LuaVM)

@@ -14,6 +14,7 @@ namespace mineos {
     instance = 0
     static nextInstance = 0
     myCoolProgram = ""
+    version = 5.10000000000001456
 
     charInput(char: string): void {
       if (char.length > 1) throw new Error("How did this even happen?")
@@ -55,12 +56,23 @@ namespace mineos {
       this.loaded = true
     }
 
+    floatError(): void {
+      if (math.random() > 0.5) {
+        this.version += 0.00000000000001
+      } else {
+        this.version -= 0.00000000000001
+      }
+      this.setWindowTitle("LuaJIT " + tostring(this.version))
+    }
+
     move(): void {
       this.renderer.setElementComponentValue("lua_bg_" + this.instance, "offset", this.windowPosition)
     }
 
     main(delta: number): void {
       if (!this.loaded) this.load()
+
+      this.floatError()
     }
 
   }
