@@ -3,20 +3,6 @@ namespace mineos {
   const create = vector.create;
   const color = colors.color;
 
-
-  let focusedInstance: LuaVM | null = null
-  // This won't work with multiple instances. Oh well!
-  // Hijack the print function >:D
-  function print(thing: string) {
-    if (focusedInstance == null) throw new Error("OOPS")
-    // There's no way this can cause errors, impossible!
-    try {
-      focusedInstance.pushOutput("\n" + thing)
-    } catch (e) {
-      System.out.println("You done goofed up boi!" + e)
-    }
-  }
-
   // If you enter into a loop, you're gonna freeze the program WOOO.
   class LuaVM extends WindowProgram {
 
@@ -44,8 +30,6 @@ namespace mineos {
       windowSize.x = 500
       windowSize.y = 500
       super(system, renderer, audio, desktop, windowSize)
-
-      focusedInstance = this
     }
 
     updateIDEText(): void {
@@ -73,7 +57,9 @@ namespace mineos {
 
         // This isn't dangerous at all wooOOO
         const OLD_PRINT = _G.print;
-        _G.print = print;
+        _G.print = (any: any) => {
+          this.print(any)
+        };
 
         // Let's just pretend that second return doesn't exist
         let [func, err] = loadstring(this.myCoolProgram, 'LuaVM', 't', _G)
@@ -100,6 +86,10 @@ namespace mineos {
       const startIndex = (overshoot > 0) ? overshoot : 0
       this.programOutput = array.slice(startIndex, array.length).join("\n")
       this.updateOutputText()
+    }
+
+    print(thing: any): void {
+      this.pushOutput("\n" + thing)
     }
 
     load(): void {

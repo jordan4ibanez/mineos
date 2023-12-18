@@ -1,20 +1,4 @@
 -- Lua Library inline imports
-local function __TS__StringIncludes(self, searchString, position)
-    if not position then
-        position = 1
-    else
-        position = position + 1
-    end
-    local index = string.find(self, searchString, position, true)
-    return index ~= nil
-end
-
-local function __TS__New(target, ...)
-    local instance = setmetatable({}, target.prototype)
-    instance:____constructor(...)
-    return instance
-end
-
 local function __TS__Class(self)
     local c = {prototype = {}}
     c.prototype.__index = c.prototype
@@ -45,6 +29,27 @@ local function __TS__ClassExtends(target, base)
     if type(base.prototype.__tostring) == "function" then
         target.prototype.__tostring = base.prototype.__tostring
     end
+end
+
+local function __TS__StringTrim(self)
+    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
+    return result
+end
+
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
+local function __TS__New(target, ...)
+    local instance = setmetatable({}, target.prototype)
+    instance:____constructor(...)
+    return instance
 end
 
 local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
@@ -125,11 +130,6 @@ do
     SyntaxError = createErrorClass(nil, "SyntaxError")
     TypeError = createErrorClass(nil, "TypeError")
     URIError = createErrorClass(nil, "URIError")
-end
-
-local function __TS__StringTrim(self)
-    local result = string.gsub(self, "^[%s ﻿]*(.-)[%s ﻿]*$", "%1")
-    return result
 end
 
 local __TS__StringSplit
@@ -278,26 +278,6 @@ mineos = mineos or ({})
 do
     local create = vector.create
     local color = colors.color
-    local focusedInstance = nil
-    local function ____print(thing)
-        if focusedInstance == nil then
-            error(
-                __TS__New(Error, "OOPS"),
-                0
-            )
-        end
-        do
-            local function ____catch(e)
-                mineos.System.out:println("You done goofed up boi!" .. tostring(e))
-            end
-            local ____try, ____hasReturned = pcall(function()
-                focusedInstance:pushOutput("\n" .. thing)
-            end)
-            if not ____try then
-                ____catch(____hasReturned)
-            end
-        end
-    end
     local LuaVM = __TS__Class()
     LuaVM.name = "LuaVM"
     __TS__ClassExtends(LuaVM, mineos.WindowProgram)
@@ -320,7 +300,6 @@ do
             desktop,
             windowSize
         )
-        focusedInstance = self
     end
     function LuaVM.prototype.updateIDEText(self)
         self.renderer:setElementComponentValue(
@@ -356,13 +335,15 @@ do
     function LuaVM.prototype.execute(self)
         local _, err = pcall(function()
             local OLD_PRINT = _G.print
-            _G.print = ____print
+            _G.print = function(any)
+                self:print(any)
+            end
             local func, err = loadstring(self.myCoolProgram, "LuaVM", "t", _G)
             if type(func) == "function" then
                 local callable = func
                 callable()
             else
-                ____print(tostring(err))
+                print(tostring(err))
             end
             _G.print = OLD_PRINT
         end)
@@ -379,6 +360,9 @@ do
             "\n"
         )
         self:updateOutputText()
+    end
+    function LuaVM.prototype.print(self, thing)
+        self:pushOutput("\n" .. tostring(thing))
     end
     function LuaVM.prototype.load(self)
         self.instance = LuaVM.nextInstance
@@ -847,27 +831,27 @@ do
             end
         end
         repeat
-            local ____switch53 = gottenChar
-            local ____cond53 = ____switch53 == "return"
-            if ____cond53 then
+            local ____switch51 = gottenChar
+            local ____cond51 = ____switch51 == "return"
+            if ____cond51 then
                 self:playKeyboardNoise()
                 self:charInput("\n")
                 break
             end
-            ____cond53 = ____cond53 or ____switch53 == "space"
-            if ____cond53 then
+            ____cond51 = ____cond51 or ____switch51 == "space"
+            if ____cond51 then
                 self:playKeyboardNoise()
                 self:charInput(" ")
                 break
             end
-            ____cond53 = ____cond53 or ____switch53 == "backspace"
-            if ____cond53 then
+            ____cond51 = ____cond51 or ____switch51 == "backspace"
+            if ____cond51 then
                 self:playKeyboardNoise()
                 self:charDelete()
                 break
             end
-            ____cond53 = ____cond53 or ____switch53 == "run"
-            if ____cond53 then
+            ____cond51 = ____cond51 or ____switch51 == "run"
+            if ____cond51 then
                 self:playKeyboardNoise()
                 self:execute()
                 break
