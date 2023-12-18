@@ -326,7 +326,7 @@ do
         self.renderer:setElementComponentValue(
             "lua_program_text_" .. tostring(self.instance),
             "text",
-            self.myCoolProgram
+            self.myCoolProgram .. "|"
         )
     end
     function LuaVM.prototype.updateOutputText(self)
@@ -422,7 +422,7 @@ do
                 name = "lua_program_text_" .. tostring(self.instance),
                 hud_elem_type = HudElementType.text,
                 scale = create(1, 1),
-                text = self.myCoolProgram,
+                text = self.myCoolProgram .. "|",
                 number = colors.colorHEX(0, 0, 0),
                 position = create(0, 0),
                 alignment = create(1, 1),

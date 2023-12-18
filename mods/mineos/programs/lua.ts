@@ -49,7 +49,7 @@ namespace mineos {
     }
 
     updateIDEText(): void {
-      this.renderer.setElementComponentValue("lua_program_text_" + this.instance, "text", this.myCoolProgram)
+      this.renderer.setElementComponentValue("lua_program_text_" + this.instance, "text", this.myCoolProgram + "|")
     }
 
     updateOutputText(): void {
@@ -144,7 +144,7 @@ namespace mineos {
         name: "lua_program_text_" + this.instance,
           hud_elem_type: HudElementType.text,
           scale: create(1,1),
-          text: this.myCoolProgram,
+          text: this.myCoolProgram + "|",
           number: colors.colorHEX(0,0,0),
           position: create(0,0),
           alignment: create(1,1),
