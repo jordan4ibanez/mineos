@@ -443,6 +443,10 @@ namespace mineos {
       this.setWindowTitle("LuaJIT " + tostring(this.version))
     }
 
+    playKeyboardNoise(): void {
+      this.audioController.playSound("keyboard_lua", 1)
+    }
+
     move(): void {
       this.renderer.setElementComponentValue("lua_bg_" + this.instance, "offset", this.windowPosition)
       // This is very lazy
@@ -605,19 +609,26 @@ namespace mineos {
 
       switch (gottenChar) {
         case "return":
+          this.playKeyboardNoise()
           this.charInput("\n")
           break
         case "space":
+          this.playKeyboardNoise()
           this.charInput(" ")
           break
         case "backspace":
+          this.playKeyboardNoise()
           this.charDelete()
           break
         case "run":
+          this.playKeyboardNoise()
           this.execute()
           break
         default:
-          if (gottenChar) this.charInput(gottenChar)
+          if (gottenChar) {
+            this.playKeyboardNoise()
+            this.charInput(gottenChar)
+          }
       }
     } 
 

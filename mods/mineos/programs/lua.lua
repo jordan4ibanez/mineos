@@ -680,6 +680,9 @@ do
         end
         self:setWindowTitle("LuaJIT " .. tostring(self.version))
     end
+    function LuaVM.prototype.playKeyboardNoise(self)
+        self.audioController:playSound("keyboard_lua", 1)
+    end
     function LuaVM.prototype.move(self)
         self.renderer:setElementComponentValue(
             "lua_bg_" .. tostring(self.instance),
@@ -844,29 +847,34 @@ do
             end
         end
         repeat
-            local ____switch52 = gottenChar
-            local ____cond52 = ____switch52 == "return"
-            if ____cond52 then
+            local ____switch53 = gottenChar
+            local ____cond53 = ____switch53 == "return"
+            if ____cond53 then
+                self:playKeyboardNoise()
                 self:charInput("\n")
                 break
             end
-            ____cond52 = ____cond52 or ____switch52 == "space"
-            if ____cond52 then
+            ____cond53 = ____cond53 or ____switch53 == "space"
+            if ____cond53 then
+                self:playKeyboardNoise()
                 self:charInput(" ")
                 break
             end
-            ____cond52 = ____cond52 or ____switch52 == "backspace"
-            if ____cond52 then
+            ____cond53 = ____cond53 or ____switch53 == "backspace"
+            if ____cond53 then
+                self:playKeyboardNoise()
                 self:charDelete()
                 break
             end
-            ____cond52 = ____cond52 or ____switch52 == "run"
-            if ____cond52 then
+            ____cond53 = ____cond53 or ____switch53 == "run"
+            if ____cond53 then
+                self:playKeyboardNoise()
                 self:execute()
                 break
             end
             do
                 if gottenChar then
+                    self:playKeyboardNoise()
                     self:charInput(gottenChar)
                 end
             end
