@@ -33,7 +33,7 @@ namespace mineos {
     // Literally a JVM feature LMAO
     static out = Printer
 
-    skipToDesktopHackjob = false
+    skipToDesktopHackjob = true
 
     booting = true
     bootProcess = 0

@@ -307,7 +307,7 @@ do
         self.programLineLimit = 10
         self.myCoolProgram = "print(\"Hello, world!\")"
         self.version = 5.1
-        self.keyboard = __TS__StringTrim("\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
+        self.keyboard = __TS__StringTrim("\n    1234567890_^#$\n    abcdefghijklmn\n    opqrstuvwxyz{}\n    =\"'.,()\\/-+~*!\n    ")
         self.programOutput = ""
         self.keyboardCbox = {}
         windowSize.x = 500
@@ -472,7 +472,7 @@ do
         for ____, charArray in ipairs(__TS__StringSplit(self.keyboard, "\n")) do
             local x = 0
             for ____, char in __TS__Iterator(__TS__StringTrim(tostring(charArray))) do
-                local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+                local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + (y - 1) * buttonSpacing)
                 self.keyboardCbox[char] = __TS__New(
                     mineos.AABB,
                     rootPos,
@@ -692,7 +692,7 @@ do
         for ____, charArray in ipairs(__TS__StringSplit(self.keyboard, "\n")) do
             local x = 0
             for ____, char in __TS__Iterator(__TS__StringTrim(tostring(charArray))) do
-                local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + y * buttonSpacing)
+                local rootPos = create(self.windowPosition.x + x * buttonSpacing, self.windowPosition.y + self.windowSize.y - buttonSpacing * 3 + (y - 1) * buttonSpacing)
                 self.renderer:setElementComponentValue(
                     (("lua_button_bg_" .. char) .. "_") .. tostring(self.instance),
                     "offset",

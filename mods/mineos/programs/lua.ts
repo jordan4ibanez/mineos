@@ -30,6 +30,7 @@ namespace mineos {
     // This is the worst keyboard made by human beings.
     // And probably aliens.
     readonly keyboard = `
+    1234567890_^#$
     abcdefghijklmn
     opqrstuvwxyz{}
     ="'.,()\\/-+~*!
@@ -197,7 +198,7 @@ namespace mineos {
 
           const rootPos = create(
             this.windowPosition.x + (x * buttonSpacing),
-            this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+            this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + ((y - 1) * buttonSpacing)
           )
           
           this.keyboardCbox[char] = new AABB(
@@ -453,7 +454,7 @@ namespace mineos {
         for (const char of charArray.toString().trim()) {
           const rootPos = create(
             this.windowPosition.x + (x * buttonSpacing),
-            this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + (y * buttonSpacing)
+            this.windowPosition.y + this.windowSize.y - (buttonSpacing * 3) + ((y - 1) * buttonSpacing)
           )
 
           this.renderer.setElementComponentValue("lua_button_bg_" + char + "_" + this.instance, "offset", rootPos)
